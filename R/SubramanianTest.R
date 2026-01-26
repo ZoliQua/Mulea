@@ -58,10 +58,11 @@ setMethod("initialize", "SubramanianTest",
                         nr_common_genes_ontology_background <-
                             length(df_row[, 'list_of_values'][[1]])
                         cbind(df_row, nr_common_genes_ontology_background)
-                    })[c("ontology_id", "ontology_name", "size", "pval", 
-                        "padj")]
+                    })[c("ontology_id", "ontology_name", "size", "pval", "ES", 
+                         "NES", "padj")]
                 colnames(resultDf) <- c("ontology_id", "ontology_name",
                     "nr_common_with_tested_elements", "p_value",
+                    "enrichment_score", "normalised_enrichment_score",
                     "adjusted_p_value")
                 resultDf
                 }
