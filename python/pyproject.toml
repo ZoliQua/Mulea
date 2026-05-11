@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mulealab"
+dynamic = ["version"]
+description = "Headless multi-ontology enrichment analysis — companion to the muleaLab web tool and the mulea R package."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-2.0-only" }
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10"]
+
+[project.scripts]
+mulealab = "mulealab.cli:app"
+
+[tool.hatch.version]
+path = "src/mulealab/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mulealab"]
