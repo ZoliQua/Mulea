@@ -5,6 +5,7 @@
 inst/doc/
 development/
 workdir/
+docs/
 *.o
 *.so
 src/mulea.dll
@@ -12,6 +13,7 @@ multipleTesting.pdf
 src-i386/*
 src-x64/*
 .DS_Store
+.claude/settings.local.json
 README_cache/*
 README.html
 mulea.Rproj
