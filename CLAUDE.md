@@ -58,15 +58,20 @@ docs/                  gitignored: the paper PDF + the muleaLab spec
 
 ## Planned architecture — "muleaLab" (target; NOT yet in this repo)
 
-Per the spec, mulea evolves into a vennDiagramLab-style monorepo, all components kept in
-numerical **parity**. Build in phases (Phase 1 first); full feature catalog & risks in the spec.
+Per the spec, mulea grows new legs (web tool + Python companion) kept in numerical **parity**
+with the R package. **Decision (2026-06-02): the R package stays at the repo root** as the
+anchor — it remains an installable CRAN/Bioconductor package and stays mergeable with upstream
+`ELTEbioinformatics/mulea`. The new legs are sibling directories (a polyglot repo, *not* a
+fully symmetric `r/ python/ web/` layout). Build in phases (Phase 1 first); full catalog & risks
+in the spec.
 
-- `r/`      — the existing mulea package, the **canonical reference** (eFDR parity oracle).
-  When the monorepo is formed, today's top-level `R/` + `src/` move under `r/`.
+- root      — the existing mulea **R package** (DESCRIPTION, `R/`, `src/`, `man/`, …), the
+  **canonical reference** / eFDR parity oracle. Stays in place; do not move it under `r/`.
 - `python/` — headless companion: pip library + Typer CLI. Target tooling (mirrors
   vennDiagramLab): hatchling build, pytest, ruff, mypy.
-- `src/`    — web tool: React + TypeScript + Vite, **100% client-side / static (Vercel), no
-  backend** — all computation in-browser. Target tooling: Vitest, eslint.
+- `web/`    — web tool: React + TypeScript + Vite, **100% client-side / static (Vercel), no
+  backend** — all computation in-browser. Target tooling: Vitest, eslint. (Named `web/`, not
+  `src/`, because the root `src/` already holds the R package's C++.)
 - shared    — versioned ontology/sample data; a sync script feeds the Python side from one source.
 - **eFDR core → WASM (locked decision):** compile the C++ eFDR core
   (`src/set-based-enrichment-test.cpp`) to WebAssembly via Emscripten so web + Python + R run the
@@ -76,8 +81,8 @@ numerical **parity**. Build in phases (Phase 1 first); full feature catalog & ri
 **Parity strategy:** golden-fixture + byte-equality for the deterministic parts
 (GMT IO / ORA / BH / Bonferroni); shared WASM core (or tolerance-based) for eFDR.
 
-> Until these directories exist, treat the above as design intent — do not reference
-> `python/`, web `src/`, or `r/` as if present. Verify before citing.
+> Until `python/` and `web/` exist, treat the above as design intent — do not reference them
+> as if present. Verify before citing. (The root `src/` C++ is real, today.)
 
 ## Dev commands
 
