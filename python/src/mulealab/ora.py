@@ -46,5 +46,5 @@ def ora(
             "p_value": p_values,
         }
     )
-    result["adjusted_p_value"] = p_adjust(result["p_value"].to_numpy(), p_value_adjustment_method)
+    result["adjusted_p_value"] = p_adjust(p_values, p_value_adjustment_method)
     return result

@@ -27,3 +27,7 @@ path = "src/mulealab/version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mulealab"]
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
