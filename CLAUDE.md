@@ -29,10 +29,10 @@ These apply to **every component** — the R package and the planned Python comp
   **no** "Co-Authored-By" / "Generated with Claude" trailers (enforced in
   `.claude/settings.local.json`).
 - **Commit only when explicitly asked.**
-- **Commit dates start 2026-05-11.** Max **6 commits per calendar day**; the 7th rolls to the
-  next day (2026-05-12, …). Set both author and committer date when committing, e.g.
+- **Commit dates start 2026-05-11.** Max **8 commits per calendar day**; the 9th rolls to the
+  next day. Set both author and committer date when committing, e.g.
   `GIT_AUTHOR_DATE` and `GIT_COMMITTER_DATE`.
-- **Push is mandatory after every 6 commits.**
+- **Push is mandatory after every 8 commits.**
 
 ### Versioning
 - SemVer. Bump `Version:` in `DESCRIPTION` and add an entry to `NEWS.md` before a release commit.
