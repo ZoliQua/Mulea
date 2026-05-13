@@ -29,8 +29,21 @@ def test_ora_columns_and_values():
     assert t1["p_value"] < res.set_index("ontology_id").loc["T2"]["p_value"]
 
 
-def test_ora_eFDR_not_supported_here():
-    with pytest.raises(Exception) as exc:
+def test_ora_efdr_returns_efdr_columns():
+    gmt = _gmt()
+    res = ora(gmt, element_names=["g1", "g2", "g3", "g4", "g6"],
+              background_element_names=[f"g{i}" for i in range(1, 21)],
+              p_value_adjustment_method="eFDR")
+    assert list(res.columns) == [
+        "ontology_id", "ontology_name",
+        "nr_common_with_tested_elements", "nr_common_with_background_elements",
+        "p_value", "eFDR",
+    ]
+    assert (res["eFDR"] >= 0).all() and (res["eFDR"] <= 1).all()
+
+
+def test_ora_unknown_method_still_raises():
+    import pytest
+    with pytest.raises(Exception):
         ora(_gmt(), element_names=["g1"], background_element_names=["g1", "g2"],
-            p_value_adjustment_method="eFDR")
-    assert "eFDR" in str(exc.value)
+            p_value_adjustment_method="not_a_method")

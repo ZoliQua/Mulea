@@ -4,7 +4,7 @@ from collections.abc import Sequence
 
 import pandas as pd
 
-from mulealab.errors import MuleaLabError
+from mulealab.efdr import set_based_enrichment_test
 from mulealab.statistics import hypergeometric_pvalue, p_adjust
 
 
@@ -13,20 +13,29 @@ def ora(
     element_names: Sequence[str],
     background_element_names: Sequence[str],
     p_value_adjustment_method: str = "BH",
+    *,
+    efdr_mode: str = "exact",
+    number_of_permutations: int = 10000,
+    random_seed: int = 0,
 ) -> pd.DataFrame:
-    """Deterministic overrepresentation analysis (hypergeometric test + p.adjust).
+    """Overrepresentation analysis.
 
-    Returns a DataFrame [ontology_id, ontology_name, p_value, adjusted_p_value].
-    eFDR is not implemented in the Python core (resampling-based; see the WASM-core plan).
+    For p_value_adjustment_method in stats methods ('BH', 'bonferroni') returns
+    [ontology_id, ontology_name, p_value, adjusted_p_value]. For 'eFDR' returns the
+    eFDR schema (see efdr.EFDR_COLUMNS); efdr_mode selects the 'exact' or 'mc' engine.
     """
     if p_value_adjustment_method == "eFDR":
-        raise MuleaLabError(
-            "eFDR is not available in the deterministic Python ORA core; "
-            "use the eFDR WASM core (separate plan), or choose 'BH'/'bonferroni'."
+        return set_based_enrichment_test(
+            gmt,
+            element_names,
+            background_element_names,
+            mode=efdr_mode,
+            number_of_permutations=number_of_permutations,
+            random_seed=random_seed,
         )
 
     pool = set(background_element_names)
-    select = set(element_names) & pool          # R: select <- intersect(select, pool)
+    select = set(element_names) & pool
     pool_size = len(pool)
     select_size = len(select)
 
