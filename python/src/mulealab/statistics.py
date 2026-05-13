@@ -39,4 +39,7 @@ def p_adjust(pvalues: Sequence[float], method: str) -> np.ndarray:
         out = np.empty(n, dtype=float)
         out[order] = adj_sorted
         return out
-    raise MuleaLabError(f"Unsupported p.adjust method: {method!r} (Phase 1a supports 'BH', 'bonferroni')")
+    raise MuleaLabError(
+        f"Unsupported p.adjust method: {method!r} "
+        "(supported: 'BH', 'bonferroni'; for eFDR use ora(..., p_value_adjustment_method='eFDR'))"
+    )

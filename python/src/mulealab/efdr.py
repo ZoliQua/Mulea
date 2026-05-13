@@ -171,7 +171,7 @@ def _simulate_null_pvalues(term_pool_indices, pool_size, select_size, n_perm, rn
     if n_terms == 0:
         return np.empty(0, dtype=float)
     rows = np.concatenate([np.full(len(t), i, dtype=int) for i, t in enumerate(term_pool_indices)])
-    cols = np.concatenate(term_pool_indices).astype(int) if n_terms else np.empty(0, dtype=int)
+    cols = np.concatenate(term_pool_indices).astype(int)
     incidence = csr_matrix(
         (np.ones(cols.size, dtype=np.int32), (rows, cols)), shape=(n_terms, pool_size)
     )
