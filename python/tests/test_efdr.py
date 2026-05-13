@@ -63,3 +63,36 @@ def test_exact_efdr_capped_at_one_and_in_unit_interval():
         g, element_names=["g3"], background_element_names=["g1", "g2", "g3", "g4"], mode="exact"
     )
     assert (res["eFDR"] >= 0).all() and (res["eFDR"] <= 1).all()
+
+
+def test_mc_is_reproducible_with_seed():
+    g = _hand_gmt()
+    kw = dict(
+        element_names=["g1", "g2"],
+        background_element_names=["g1", "g2", "g3", "g4"],
+        mode="mc",
+        number_of_permutations=2000,
+        random_seed=123,
+    )
+    a = set_based_enrichment_test(g, **kw)
+    b = set_based_enrichment_test(g, **kw)
+    assert list(a["eFDR"]) == list(b["eFDR"])
+
+
+def test_mc_converges_to_exact():
+    background = [f"g{i}" for i in range(60)]
+    gmt = pd.DataFrame(
+        {
+            "ontology_id": [f"T{j}" for j in range(8)],
+            "ontology_name": [f"T{j}" for j in range(8)],
+            "list_of_values": [[f"g{(j * 5 + t) % 60}" for t in range(10)] for j in range(8)],
+        }
+    )
+    target = [f"g{i}" for i in range(0, 20)]
+    exact = set_based_enrichment_test(gmt, element_names=target,
+                                      background_element_names=background, mode="exact")
+    mc = set_based_enrichment_test(gmt, element_names=target, background_element_names=background,
+                                   mode="mc", number_of_permutations=40000, random_seed=7)
+    assert np.max(np.abs(exact["eFDR"].to_numpy() - mc["eFDR"].to_numpy())) < 0.05
+    assert list(exact["p_value"]) == list(mc["p_value"])
+    assert list(exact["nr_common_with_tested_elements"]) == list(mc["nr_common_with_tested_elements"])

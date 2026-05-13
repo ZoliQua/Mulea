@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy.sparse import csr_matrix
 from scipy.stats import hypergeom
 
 from mulealab.errors import MuleaLabError
@@ -157,3 +158,33 @@ def set_based_enrichment_test(
             "eFDR": efdr,
         }
     )
+
+
+def _simulate_null_pvalues(term_pool_indices, pool_size, select_size, n_perm, rng):
+    """Monte-Carlo pooled null p-values, mirroring mulea's resampling.
+
+    For each of ``n_perm`` permutations, draw ``select_size`` pool elements uniformly at
+    random (without replacement) and record every term's overlap p-value. Returns all
+    ``n_perm * n_terms`` simulated p-values, rounded to 15 digits and sorted ascending.
+    """
+    n_terms = len(term_pool_indices)
+    if n_terms == 0:
+        return np.empty(0, dtype=float)
+    rows = np.concatenate([np.full(len(t), i, dtype=int) for i, t in enumerate(term_pool_indices)])
+    cols = np.concatenate(term_pool_indices).astype(int) if n_terms else np.empty(0, dtype=int)
+    incidence = csr_matrix(
+        (np.ones(cols.size, dtype=np.int32), (rows, cols)), shape=(n_terms, pool_size)
+    )
+    common_in_pool = np.array([len(t) for t in term_pool_indices], dtype=int)
+    lookups = [_term_pvalue_lookup(int(m), pool_size, select_size) for m in common_in_pool]
+
+    out = np.empty(n_perm * n_terms, dtype=float)
+    for s in range(n_perm):
+        sampled = rng.choice(pool_size, size=select_size, replace=False)
+        vec = np.zeros(pool_size, dtype=np.int32)
+        vec[sampled] = 1
+        overlaps = incidence.dot(vec)  # per-term overlap counts
+        out[s * n_terms : (s + 1) * n_terms] = [lookups[j][overlaps[j]] for j in range(n_terms)]
+    out = np.round(out, 15)
+    out.sort()
+    return out
