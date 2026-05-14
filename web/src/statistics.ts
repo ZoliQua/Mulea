@@ -23,7 +23,7 @@ export function hypergeometricPValue(
   poolSize: number,
   selectSize: number,
 ): number {
-  if (selectSize === 0 || commonInPool === 0) return 1.0;
+  if (selectSize === 0 || commonInPool === 0 || commonInSelect === 0) return 1.0;
   const upper = Math.min(commonInPool, selectSize);
   if (commonInSelect > upper) return 0.0; // overlap exceeds the maximum possible → impossible event
   const logDenom = logChoose(poolSize, selectSize);

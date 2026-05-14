@@ -14,6 +14,10 @@ describe('hypergeometricPValue', () => {
     // commonInSelect=5 exceeds selectSize=4 → impossible → 0
     expect(hypergeometricPValue(5, 5, 10, 4)).toBe(0);
   });
+  it('returns EXACTLY 1 for zero overlap (no float drift)', () => {
+    expect(hypergeometricPValue(0, 5, 10, 4)).toBe(1);
+    expect(hypergeometricPValue(0, 148, 7381, 241)).toBe(1); // realistic-scale no-overlap term
+  });
 });
 
 describe('hypergeometricPmf', () => {
