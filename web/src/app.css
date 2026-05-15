@@ -1,3 +1,17 @@
 :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 * { box-sizing: border-box; }
 body { margin: 0; }
+.layout { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { padding: 10px 16px; border-bottom: 1px solid #e2e2e2; }
+.two-panel { display: grid; grid-template-columns: 320px 1fr; gap: 16px; padding: 16px; align-items: start; }
+.left section { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.left textarea { width: 100%; font-family: ui-monospace, monospace; font-size: 12px; }
+.actions { display: flex; gap: 8px; }
+.privacy { color: #2e7d32; font-size: 13px; }
+.controls { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; }
+.results { border-collapse: collapse; font-size: 13px; width: 100%; }
+.results th, .results td { border: 1px solid #eee; padding: 4px 8px; text-align: left; }
+.results th { cursor: pointer; user-select: none; background: #fafafa; }
+.results tr.sig { background: #fff4f0; }
+.muted { color: #888; } .error { color: #c0392b; } .warn { color: #b8860b; font-size: 13px; }
+.lollipop text { fill: #333; }
