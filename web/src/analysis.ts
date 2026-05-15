@@ -17,6 +17,12 @@ export function runAnalysis(input: AnalysisInput): AnalysisResult {
     rows = ora(gmt, input.target, input.background, input.method);
   }
 
+  const select = new Set(input.target.filter((g) => pool.has(g)));
+  const rowsWithHits: ResultRow[] = rows.map((row, i) => ({
+    ...row,
+    hits: (gmt[i]?.list_of_values ?? []).filter((g) => select.has(g)),
+  }));
+
   const warnings: string[] = [];
   if (nTargetDropped > 0) {
     warnings.push(`${nTargetDropped} target gene(s) are not in the background and were dropped.`);
@@ -24,7 +30,7 @@ export function runAnalysis(input: AnalysisInput): AnalysisResult {
   if (gmt.length === 0) warnings.push('No ontology terms passed the size filter.');
 
   return {
-    rows,
+    rows: rowsWithHits,
     method: input.method,
     meta: { nTerms: gmt.length, nTargetDropped, poolSize: pool.size },
     warnings,

@@ -17,6 +17,7 @@ export interface ResultRow {
   eFDR?: number;
   nr_common_with_tested_elements?: number;
   nr_common_with_background_elements?: number;
+  hits?: string[];
 }
 
 export interface AnalysisResult {

@@ -66,3 +66,19 @@ describe('runAnalysis', () => {
     expect(res.warnings.some((w) => w.includes('not in the background'))).toBe(true);
   });
 });
+
+describe('runAnalysis hits', () => {
+  it('attaches the target genes present in each term', () => {
+    const res = runAnalysis({
+      gmtText: 'T1\tt1\tg1\tg2\tg3\nT2\tt2\tg3\tg4\tg5',
+      target: ['g1', 'g3', 'gX'], // gX not in background -> dropped from select
+      background: ['g1', 'g2', 'g3', 'g4', 'g5'],
+      method: 'BH',
+      minNrOfElements: 0,
+      maxNrOfElements: 999,
+    });
+    const byId = Object.fromEntries(res.rows.map((r) => [r.ontology_id, r.hits]));
+    expect(byId['T1']).toEqual(['g1', 'g3']);
+    expect(byId['T2']).toEqual(['g3']);
+  });
+});
