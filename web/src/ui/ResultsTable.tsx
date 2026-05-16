@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { AnalysisResult } from '../appTypes.ts';
 import { columnsFor, filterSignificant, isSignificant, sortRows } from '../tableView.ts';
 
-export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean }) {
+export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; onSelect?: (id: string) => void }) {
   const cols = columnsFor(props.result.method);
   const defaultKey = props.result.method === 'eFDR' ? 'eFDR' : 'adjusted_p_value';
   const [sortKey, setSortKey] = useState(defaultKey);
@@ -27,7 +27,7 @@ export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean }
       </thead>
       <tbody>
         {rows.map((row) => (
-          <tr key={row.ontology_id} className={isSignificant(row) ? 'sig' : ''}>
+          <tr key={row.ontology_id} className={isSignificant(row) ? 'sig' : ''} onClick={() => props.onSelect?.(row.ontology_id)} style={{ cursor: 'pointer' }}>
             {cols.map((c) => <td key={c}>{fmt(c, (row as unknown as Record<string, unknown>)[c])}</td>)}
           </tr>
         ))}

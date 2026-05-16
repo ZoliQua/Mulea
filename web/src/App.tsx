@@ -7,12 +7,19 @@ import { ResultsTable } from './ui/ResultsTable.tsx';
 import { LollipopChart } from './ui/LollipopChart.tsx';
 import { PrivacyNote } from './ui/PrivacyNote.tsx';
 import { downloadTsv } from './exportTsv.ts';
+import { ViewTabs, type ViewId } from './ui/ViewTabs.tsx';
+import { Barplot } from './ui/Barplot.tsx';
+import { NetworkPlot } from './ui/NetworkPlot.tsx';
+import { Heatmap } from './ui/Heatmap.tsx';
+import { DrilldownPanel } from './ui/DrilldownPanel.tsx';
 
 export default function App() {
   const { state, run } = useAnalysis();
   const [method, setMethod] = useState<Method>('eFDR');
   const [sigOnly, setSigOnly] = useState(false);
   const [lastInputs, setLastInputs] = useState<Omit<AnalysisInput, 'method' | 'minNrOfElements' | 'maxNrOfElements'> | null>(null);
+  const [viewId, setViewId] = useState<ViewId>('table');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setLastInputs(i);
@@ -40,8 +47,20 @@ export default function App() {
             <>
               {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
               <button type="button" onClick={() => downloadTsv(state.result)}>⤓ TSV</button>
-              <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} />
-              <LollipopChart result={state.result} />
+              <ViewTabs active={viewId} onChange={setViewId} />
+              <div className="view-row">
+                <div className="view-main">
+                  {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
+                  {viewId === 'lollipop' && <LollipopChart result={state.result} />}
+                  {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
+                  {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
+                  {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
+                </div>
+                {selectedId && (() => {
+                  const row = state.result.rows.find((r) => r.ontology_id === selectedId);
+                  return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
+                })()}
+              </div>
             </>
           )}
         </main>

@@ -15,3 +15,12 @@ body { margin: 0; }
 .results tr.sig { background: #fff4f0; }
 .muted { color: #888; } .error { color: #c0392b; } .warn { color: #b8860b; font-size: 13px; }
 .lollipop text { fill: #333; }
+.tabs { display: flex; gap: 4px; margin: 8px 0; }
+.tab { border: 1px solid #ddd; background: #fafafa; padding: 4px 10px; cursor: pointer; border-radius: 4px; }
+.tab.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+.view-row { display: flex; gap: 16px; align-items: flex-start; }
+.view-main { flex: 1; overflow: auto; }
+.drilldown { width: 280px; border: 1px solid #eee; border-radius: 6px; padding: 12px; position: relative; font-size: 13px; }
+.drilldown .close { position: absolute; top: 6px; right: 8px; border: none; background: none; font-size: 18px; cursor: pointer; }
+.drilldown .hits { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-word; max-height: 240px; overflow: auto; }
+.network text, .heatmap text, .barplot text { fill: #333; }
