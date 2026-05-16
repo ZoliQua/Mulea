@@ -24,3 +24,7 @@ body { margin: 0; }
 .drilldown .close { position: absolute; top: 6px; right: 8px; border: none; background: none; font-size: 18px; cursor: pointer; }
 .drilldown .hits { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-word; max-height: 240px; overflow: auto; }
 .network text, .heatmap text, .barplot text { fill: #333; }
+.methods-venn { display: flex; flex-direction: column; gap: 8px; }
+.venn-legend { list-style: none; padding: 0; margin: 0; font-size: 13px; display: flex; gap: 16px; }
+.venn-legend li { white-space: nowrap; }
+.venn-region { font-size: 12px; font-family: ui-monospace, monospace; word-break: break-word; max-width: 460px; }

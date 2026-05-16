@@ -12,6 +12,7 @@ import { Barplot } from './ui/Barplot.tsx';
 import { NetworkPlot } from './ui/NetworkPlot.tsx';
 import { Heatmap } from './ui/Heatmap.tsx';
 import { DrilldownPanel } from './ui/DrilldownPanel.tsx';
+import { MethodsVenn } from './ui/MethodsVenn.tsx';
 
 export default function App() {
   const { state, run } = useAnalysis();
@@ -55,6 +56,7 @@ export default function App() {
                   {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
                   {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
                   {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
+                  {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
                 </div>
                 {selectedId && (() => {
                   const row = state.result.rows.find((r) => r.ontology_id === selectedId);

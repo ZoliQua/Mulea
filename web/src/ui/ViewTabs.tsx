@@ -1,7 +1,7 @@
-export type ViewId = 'table' | 'lollipop' | 'barplot' | 'network' | 'heatmap';
+export type ViewId = 'table' | 'lollipop' | 'barplot' | 'network' | 'heatmap' | 'venn';
 const VIEWS: { id: ViewId; label: string }[] = [
   { id: 'table', label: 'Table' }, { id: 'lollipop', label: 'Lollipop' }, { id: 'barplot', label: 'Barplot' },
-  { id: 'network', label: 'Network' }, { id: 'heatmap', label: 'Heatmap' },
+  { id: 'network', label: 'Network' }, { id: 'heatmap', label: 'Heatmap' }, { id: 'venn', label: 'Methods Venn' },
 ];
 
 export function ViewTabs(props: { active: ViewId; onChange: (v: ViewId) => void }) {
