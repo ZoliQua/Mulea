@@ -20,3 +20,6 @@ All computation runs client-side in a Web Worker; user data never leaves the bro
 - `src/analysis.ts`, `src/exportTsv.ts`, `src/lollipop.ts`, `src/tableView.ts` — pure app logic (tested)
 - `src/worker/`, `src/hooks/`, `src/ui/`, `src/App.tsx` — the React UI (verified by typecheck + build)
 - `public/examples/` — bundled E. coli RegulonDB example
+
+## Visualizations
+Visualizations: results table, lollipop, barplot, network (deterministic force layout), and heatmap — plus a per-term drill-down (hit genes + overlap counts) — all rendered client-side from pure, tested layout functions, behind a tab switcher.
