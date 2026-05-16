@@ -22,4 +22,4 @@ All computation runs client-side in a Web Worker; user data never leaves the bro
 - `public/examples/` — bundled E. coli RegulonDB example
 
 ## Visualizations
-Visualizations: results table, lollipop, barplot, network (deterministic force layout), and heatmap — plus a per-term drill-down (hit genes + overlap counts) — all rendered client-side from pure, tested layout functions, behind a tab switcher.
+Visualizations: results table, lollipop, barplot, network (deterministic force layout), and heatmap — plus a per-term drill-down (hit genes + overlap counts) — all rendered client-side from pure, tested layout functions, behind a tab switcher, plus a Methods Venn comparing which terms are significant under eFDR vs BH vs Bonferroni (the paper's Fig 1, computed on your data).
