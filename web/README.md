@@ -23,3 +23,6 @@ All computation runs client-side in a Web Worker; user data never leaves the bro
 
 ## Visualizations
 Visualizations: results table, lollipop, barplot, network (deterministic force layout), and heatmap — plus a per-term drill-down (hit genes + overlap counts) — all rendered client-side from pure, tested layout functions, behind a tab switcher, plus a Methods Venn comparing which terms are significant under eFDR vs BH vs Bonferroni (the paper's Fig 1, computed on your data).
+
+## Shareable link
+After a run, the "🔗 Share link" button encodes the full analysis (inputs + method + result fingerprint) into a `#c=…` URL fragment. Opening that URL in any browser re-runs the analysis deterministically (no server, no RNG for ORA/BH/Bonferroni) and verifies an FNV-1a fingerprint of the significant rows, showing "✓ Reproduced exactly (matches the shared fingerprint)" on match. A corrupted or tampered fragment shows "This shared link is invalid." and leaves the app in idle state. Scope: small inputs (the full capsule must fit within ~8 KB of URL); downloadable-file and compression support are deferred.

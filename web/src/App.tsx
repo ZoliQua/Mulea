@@ -39,10 +39,12 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
+    setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
     setLastInputs(i);
     run({ ...i, method, ...RUN_DEFAULTS });
   };
   useEffect(() => {
+    setShareUrl(null);
     if (lastInputs) run({ ...lastInputs, method, ...RUN_DEFAULTS });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [method]);
@@ -72,7 +74,8 @@ export default function App() {
         </aside>
         <main className="right">
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly} />
-          {state.status === 'idle' && <p className="muted">Load inputs (or the example) and press Run.</p>}
+          {replay === 'invalid' && <p className="error">This shared link is invalid.</p>}
+          {state.status === 'idle' && replay !== 'invalid' && <p className="muted">Load inputs (or the example) and press Run.</p>}
           {state.status === 'running' && <p className="muted">Computing…</p>}
           {state.status === 'error' && <p className="error">Error: {state.error}</p>}
           {state.status === 'done' && (
