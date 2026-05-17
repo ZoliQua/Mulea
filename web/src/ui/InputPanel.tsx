@@ -4,10 +4,11 @@ import { loadExample } from '../samples.ts';
 export function InputPanel(props: {
   onRun: (i: { gmtText: string; target: string[]; background: string[] }) => void;
   disabled: boolean;
+  initial?: { gmtText: string; target: string[]; background: string[] };
 }) {
-  const [gmtText, setGmtText] = useState('');
-  const [targetText, setTargetText] = useState('');
-  const [backgroundText, setBackgroundText] = useState('');
+  const [gmtText, setGmtText] = useState(props.initial?.gmtText ?? '');
+  const [targetText, setTargetText] = useState(props.initial ? props.initial.target.join('\n') : '');
+  const [backgroundText, setBackgroundText] = useState(props.initial ? props.initial.background.join('\n') : '');
 
   const lines = (t: string) => t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const ready = gmtText.trim() !== '' && lines(targetText).length > 0 && lines(backgroundText).length > 0;

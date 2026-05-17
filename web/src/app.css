@@ -28,3 +28,6 @@ body { margin: 0; }
 .venn-legend { list-style: none; padding: 0; margin: 0; font-size: 13px; display: flex; gap: 16px; }
 .venn-legend li { white-space: nowrap; }
 .venn-region { font-size: 12px; font-family: ui-monospace, monospace; word-break: break-word; max-width: 460px; }
+.capsule-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; font-size: 13px; }
+.capsule-bar .ok { color: #2e7d32; }
+.share-url { font-family: ui-monospace, monospace; font-size: 11px; width: 320px; }
