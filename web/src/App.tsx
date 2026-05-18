@@ -16,6 +16,7 @@ import { MethodsVenn } from './ui/MethodsVenn.tsx';
 import { CapsuleBar } from './ui/CapsuleBar.tsx';
 import { fingerprintResult, encodeCapsule, decodeCapsule, capsuleFitsUrl, type Capsule } from './capsule.ts';
 import { ReportView } from './ui/ReportView.tsx';
+import { OfflineBadge } from './ui/OfflineBadge.tsx';
 
 const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
 
@@ -67,7 +68,7 @@ export default function App() {
 
   return (
     <div className="layout">
-      <header className="topbar"><strong>muleaLab</strong> · client-side enrichment + eFDR</header>
+      <header className="topbar"><strong>muleaLab</strong> · client-side enrichment + eFDR<OfflineBadge /></header>
       <div className="two-panel">
         <aside className="left">
           <InputPanel onRun={start} disabled={state.status === 'running'}

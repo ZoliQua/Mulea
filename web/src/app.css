@@ -44,6 +44,10 @@ body { margin: 0; }
 .report-section { margin: 14px 0; break-inside: avoid; }
 .report-section h3 { font-size: 14px; margin: 0 0 6px; }
 
+.netbadge { float: right; font-size: 12px; }
+.netbadge.online { color: #2e7d32; opacity: 0.7; }
+.netbadge.offline { color: #b26a00; font-weight: 600; }
+
 @media print {
   .topbar, .left, .tabs, .capsule-bar, .controls, .report-actions, .drilldown, .warn, .share-url, button { display: none !important; }
   .layout, .two-panel, .right, .view-main { display: block !important; margin: 0; padding: 0; box-shadow: none; }
