@@ -26,3 +26,9 @@ Visualizations: results table, lollipop, barplot, network (deterministic force l
 
 ## Shareable link
 After a run, the "🔗 Share link" button encodes the full analysis (inputs + method + result fingerprint) into a `#c=…` URL fragment. Opening that URL in any browser re-runs the analysis deterministically (no server, no RNG for ORA/BH/Bonferroni) and verifies an FNV-1a fingerprint of the significant rows, showing "✓ Reproduced exactly (matches the shared fingerprint)" on match. A corrupted or tampered fragment shows "This shared link is invalid." and leaves the app in idle state. Scope: small inputs (the full capsule must fit within ~8 KB of URL); downloadable-file and compression support are deferred.
+
+## PDF report
+One click on "⎙ Report" renders a print-ready report — provenance header (method, counts, run timestamp), the significant-terms table, and all five figure panels — that the browser saves as a vector PDF via `window.print()`. No server, no upload; the report is generated entirely from the in-memory result.
+
+## Offline / PWA
+The app installs and runs fully offline as a Progressive Web App. A service worker precaches the entire bundle (including the bundled E. coli example) on first visit, so every subsequent visit — and every analysis — works without a network connection. A status badge in the top bar shows "● online" or "● offline — running locally" and updates in real time. This is the strongest form of the privacy guarantee: after the first load, no data ever reaches any server.
