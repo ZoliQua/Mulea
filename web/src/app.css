@@ -31,3 +31,22 @@ body { margin: 0; }
 .capsule-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; font-size: 13px; }
 .capsule-bar .ok { color: #2e7d32; }
 .share-url { font-family: ui-monospace, monospace; font-size: 11px; width: 320px; }
+
+/* --- UI-5 report --- */
+.report-actions { display: flex; gap: 8px; margin: 8px 0; }
+.report-header h1 { font-size: 18px; margin: 0 0 4px; }
+.report-method { margin: 0 0 8px; }
+.report-prov { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; margin: 0 0 8px; font-size: 13px; }
+.report-prov div { display: flex; gap: 6px; }
+.report-prov dt { font-weight: 600; margin: 0; }
+.report-prov dd { margin: 0; }
+.report-note { font-size: 12px; color: #555; margin: 0 0 12px; }
+.report-section { margin: 14px 0; break-inside: avoid; }
+.report-section h3 { font-size: 14px; margin: 0 0 6px; }
+
+@media print {
+  .topbar, .left, .tabs, .capsule-bar, .controls, .report-actions, .drilldown, .warn, .share-url, button { display: none !important; }
+  .layout, .two-panel, .right, .view-main { display: block !important; margin: 0; padding: 0; box-shadow: none; }
+  .report-section { page-break-inside: avoid; break-inside: avoid; }
+  @page { margin: 12mm; }
+}

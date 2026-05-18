@@ -15,6 +15,7 @@ import { DrilldownPanel } from './ui/DrilldownPanel.tsx';
 import { MethodsVenn } from './ui/MethodsVenn.tsx';
 import { CapsuleBar } from './ui/CapsuleBar.tsx';
 import { fingerprintResult, encodeCapsule, decodeCapsule, capsuleFitsUrl, type Capsule } from './capsule.ts';
+import { ReportView } from './ui/ReportView.tsx';
 
 const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
 
@@ -37,6 +38,7 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [viewId, setViewId] = useState<ViewId>('table');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [report, setReport] = useState(false);
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
@@ -82,6 +84,7 @@ export default function App() {
             <>
               {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
               <button type="button" onClick={() => downloadTsv(state.result)}>⤓ TSV</button>
+              <button type="button" onClick={() => setReport(true)}>⎙ Report</button>
               <CapsuleBar
                 onShare={() => {
                   if (!lastInputs || !currentFp) return;
@@ -95,21 +98,27 @@ export default function App() {
                 shareUrl={shareUrl}
                 replay={replay}
               />
-              <ViewTabs active={viewId} onChange={setViewId} />
-              <div className="view-row">
-                <div className="view-main">
-                  {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
-                  {viewId === 'lollipop' && <LollipopChart result={state.result} />}
-                  {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
-                  {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
-                  {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
-                  {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
-                </div>
-                {selectedId && (() => {
-                  const row = state.result.rows.find((r) => r.ontology_id === selectedId);
-                  return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
-                })()}
-              </div>
+              {report ? (
+                <ReportView result={state.result} inputs={lastInputs} method={method} onBack={() => setReport(false)} />
+              ) : (
+                <>
+                  <ViewTabs active={viewId} onChange={setViewId} />
+                  <div className="view-row">
+                    <div className="view-main">
+                      {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
+                      {viewId === 'lollipop' && <LollipopChart result={state.result} />}
+                      {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
+                      {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
+                      {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
+                      {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
+                    </div>
+                    {selectedId && (() => {
+                      const row = state.result.rows.find((r) => r.ontology_id === selectedId);
+                      return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
+                    })()}
+                  </div>
+                </>
+              )}
             </>
           )}
         </main>
