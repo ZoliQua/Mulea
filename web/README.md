@@ -30,5 +30,8 @@ After a run, the "🔗 Share link" button encodes the full analysis (inputs + me
 ## PDF report
 One click on "⎙ Report" renders a print-ready report — provenance header (method, counts, run timestamp), the significant-terms table, and all five figure panels — that the browser saves as a vector PDF via `window.print()`. No server, no upload; the report is generated entirely from the in-memory result.
 
+## Multi-contrast
+Multi-contrast: compare several target gene lists against one shared ontology + background on a dot-plot matrix (rows = significant terms, columns = contrasts, dot size = gene overlap, color = score), with click-to-drill-down — each contrast runs the same exact-eFDR engine, identical to single-contrast mode.
+
 ## Offline / PWA
 The app installs and runs fully offline as a Progressive Web App. A service worker precaches the entire bundle (including the bundled E. coli example) on first visit, so every subsequent visit — and every analysis — works without a network connection. A status badge in the top bar shows "● online" or "● offline — running locally" and updates in real time. This is the strongest form of the privacy guarantee: after the first load, no data ever reaches any server.
