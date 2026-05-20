@@ -4,6 +4,63 @@ Client-side enrichment analysis (ORA + exact eFDR) that runs entirely in the bro
 Companion to the [mulea](https://github.com/ELTEbioinformatics/mulea) R package and the
 `mulealab` Python package; numerically in parity with both.
 
+## How it works
+
+muleaLab finds gene-set categories (ontology terms) that are over-represented in a list of
+genes of interest, and corrects for multiple testing — all in the browser. Open the `?` button
+in the top bar for the same walkthrough inside the app.
+
+### Inputs
+- **Ontology (GMT)** — one term per line: a term ID/name followed by its member genes.
+- **Target list** — your genes of interest (e.g. differentially expressed genes).
+- **Background list** — the universe of genes the target was drawn from.
+
+The "★ Load E. coli example" button fills all three with a bundled *E. coli* RegulonDB set so you
+can try the tool without your own data.
+
+### Methods
+Each term is tested for over-representation against the background with the **hypergeometric
+test**. You then pick a multiple-testing correction:
+
+- **eFDR** — resampling-based **empirical false discovery rate** (Turek et al. 2024). The
+  background is repeatedly resampled to build a null distribution of how often terms reach a
+  given p-value by chance; the eFDR is the resampling-estimated rate. It is typically **less
+  conservative than BH or Bonferroni**, so it recovers more true terms.
+- **BH** — Benjamini–Hochberg FDR.
+- **Bonferroni** — most conservative (family-wise error rate).
+
+A term is reported **significant when its score (eFDR or adjusted p-value) is below 0.05**.
+
+### Visualizations
+Switch views with the tabs:
+
+- **Table** — sortable significant-terms table.
+- **Lollipop**, **bar** — ranked effect-size / score plots.
+- **Network** — term–gene graph (deterministic force layout).
+- **Heatmap** — terms × genes overlap.
+- **Methods Venn** — which terms are called significant under eFDR vs BH vs Bonferroni
+  (the paper's comparison, computed on your data).
+- **Term drill-down** — click a term/dot to see its hit genes and overlap counts.
+
+### Multi-contrast
+Switch to "Multi-contrast" to compare several target lists against one shared ontology +
+background on a **dot-plot matrix** (rows = terms, columns = contrasts, dot size = gene overlap,
+color = score). Each contrast runs the same eFDR engine as single-contrast mode.
+
+### Reproduce & share
+- **Share link** — encodes the full analysis (inputs + method + a result fingerprint) into a URL
+  that re-runs deterministically in any browser and verifies the fingerprint matches.
+- **Report** — a print-ready PDF (provenance header, significant-terms table, and figures) via
+  the browser's print dialog.
+
+### Offline & privacy
+After the first visit the app installs as a **PWA** and runs fully offline; **all computation is
+client-side** and no data is ever sent to a server. A **light/dark theme** toggle (☾/☀) sits in
+the top bar and persists across sessions.
+
+> Method reference: Turek et al., *mulea: an R package for enrichment analysis using multiple
+> ontologies and empirical false discovery rate*, **BMC Bioinformatics** 2024, **25**:334.
+
 ## Develop
 - `npm install`
 - `npm run dev` — local dev server
