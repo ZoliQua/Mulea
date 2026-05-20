@@ -11,7 +11,7 @@ export default defineConfig({
         name: 'muleaLab',
         short_name: 'muleaLab',
         description: 'Client-side functional enrichment analysis with empirical FDR',
-        theme_color: '#2e7d32',
+        theme_color: '#2f7d5d',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '.',
