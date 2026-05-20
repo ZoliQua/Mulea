@@ -17,7 +17,6 @@ export function InputPanel(props: {
 
   return (
     <div className="input-panel">
-      <h2>Inputs</h2>
       <section>
         <label>Ontology (GMT)</label>
         <input type="file" accept=".gmt,.txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setGmtText)} />
@@ -47,6 +46,7 @@ export function InputPanel(props: {
         </button>
         <button
           type="button"
+          className="primary"
           disabled={!ready || props.disabled}
           onClick={() => props.onRun({ gmtText, target: lines(targetText), background: lines(backgroundText) })}
         >

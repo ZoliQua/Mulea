@@ -21,6 +21,8 @@ import { MultiContrastPanel } from './ui/MultiContrastPanel.tsx';
 import { DotPlot } from './ui/DotPlot.tsx';
 import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
+import { ThemeToggle } from './ui/ThemeToggle.tsx';
+import { HelpDrawer } from './ui/HelpDrawer.tsx';
 
 const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
 
@@ -47,6 +49,7 @@ export default function App() {
   const [viewId, setViewId] = useState<ViewId>('table');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [report, setReport] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
@@ -82,21 +85,28 @@ export default function App() {
   return (
     <div className="layout">
       <header className="topbar">
-        <strong>muleaLab</strong> · client-side enrichment + eFDR
+        <strong>muleaLab</strong>
+        <span className="muted">· client-side enrichment + eFDR</span>
         <span className="mode-toggle">
           <button type="button" className={mode === 'single' ? 'active' : ''} onClick={() => switchMode('single')}>Single</button>
           <button type="button" className={mode === 'multi' ? 'active' : ''} onClick={() => switchMode('multi')}>Multi-contrast</button>
         </span>
+        <span className="spacer"></span>
+        <button type="button" className="icon-btn" aria-label="Help" title="How to use muleaLab" onClick={() => setHelpOpen(true)}>?</button>
+        <ThemeToggle />
         <OfflineBadge />
       </header>
       <div className="two-panel">
         <aside className="left">
-          {mode === 'single' ? (
-            <InputPanel onRun={start} disabled={state.status === 'running'}
-              initial={loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : undefined} />
-          ) : (
-            <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} />
-          )}
+          <details className="input-disclosure" open>
+            <summary>{mode === 'single' ? 'Inputs' : 'Multi-contrast'}</summary>
+            {mode === 'single' ? (
+              <InputPanel onRun={start} disabled={state.status === 'running'}
+                initial={loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : undefined} />
+            ) : (
+              <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} />
+            )}
+          </details>
           <PrivacyNote />
         </aside>
         <main className="right">
@@ -170,6 +180,8 @@ export default function App() {
           )}
         </main>
       </div>
+      {helpOpen && <div className="help-overlay" onClick={() => setHelpOpen(false)} />}
+      <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }

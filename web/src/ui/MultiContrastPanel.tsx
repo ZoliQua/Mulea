@@ -24,7 +24,6 @@ export function MultiContrastPanel(props: {
 
   return (
     <div className="input-panel">
-      <h2>Multi-contrast</h2>
       <section>
         <label>Ontology (GMT)</label>
         <input type="file" accept=".gmt,.txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setGmtText)} />
@@ -65,7 +64,7 @@ export function MultiContrastPanel(props: {
         >
           ★ Load example (2 contrasts)
         </button>
-        <button type="button" disabled={!ready || props.disabled}
+        <button type="button" className="primary" disabled={!ready || props.disabled}
           onClick={() => props.onRun({ gmtText, background: lines(backgroundText), contrasts })}>
           Compare ▶
         </button>
