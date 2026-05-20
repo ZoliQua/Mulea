@@ -13,7 +13,7 @@ export function Heatmap(props: { result: AnalysisResult; onSelect?: (id: string)
       ))}
       {layout.cells.filter((c) => c.on).map((c) => (
         <rect key={`${c.r}-${c.c}`} x={layout.cols[c.c]!.x} y={layout.rows[c.r]!.y}
-          width={layout.cellW - 1} height={layout.cellH - 1} fill={scoreToColor(c.score)} />
+          width={layout.cellW - 1} height={layout.cellH - 1} style={{ fill: scoreToColor(c.score) }} />
       ))}
     </svg>
   );

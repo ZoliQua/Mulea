@@ -5,9 +5,9 @@ import { venn3Regions, type RegionKey } from '../venn3.ts';
 interface VennInputs { gmtText: string; target: string[]; background: string[] }
 
 const CIRCLES = [
-  { key: 'A', cx: 130, cy: 120, label: 'eFDR', fill: '#c0392b' },
-  { key: 'B', cx: 210, cy: 120, label: 'BH', fill: '#2e3192' },
-  { key: 'C', cx: 170, cy: 190, label: 'Bonferroni', fill: '#2e7d32' },
+  { key: 'A', cx: 130, cy: 120, label: 'eFDR', fill: 'var(--method-efdr)' },
+  { key: 'B', cx: 210, cy: 120, label: 'BH', fill: 'var(--method-bh)' },
+  { key: 'C', cx: 170, cy: 190, label: 'Bonferroni', fill: 'var(--method-bonf)' },
 ] as const;
 const R = 70;
 const CENTROIDS: Record<RegionKey, { x: number; y: number }> = {
@@ -29,7 +29,7 @@ export function MethodsVenn(props: { inputs: VennInputs | null }) {
     <div className="methods-venn">
       <svg width={340} height={280} role="img" aria-label="Significant terms by correction method">
         {CIRCLES.map((c) => (
-          <circle key={c.key} cx={c.cx} cy={c.cy} r={R} fill={c.fill} fillOpacity={0.18} stroke={c.fill} />
+          <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: 0.18 }} />
         ))}
         {(Object.keys(CENTROIDS) as RegionKey[]).map((k) => (
           <text key={k} x={CENTROIDS[k].x} y={CENTROIDS[k].y} textAnchor="middle" fontSize={13}
@@ -39,9 +39,9 @@ export function MethodsVenn(props: { inputs: VennInputs | null }) {
         ))}
       </svg>
       <ul className="venn-legend">
-        <li><span style={{ color: '#c0392b' }}>●</span> eFDR — {comparison.efdr.length} significant</li>
-        <li><span style={{ color: '#2e3192' }}>●</span> BH — {comparison.bh.length} significant</li>
-        <li><span style={{ color: '#2e7d32' }}>●</span> Bonferroni — {comparison.bonferroni.length} significant</li>
+        <li><span style={{ color: 'var(--method-efdr)' }}>●</span> eFDR — {comparison.efdr.length} significant</li>
+        <li><span style={{ color: 'var(--method-bh)' }}>●</span> BH — {comparison.bh.length} significant</li>
+        <li><span style={{ color: 'var(--method-bonf)' }}>●</span> Bonferroni — {comparison.bonferroni.length} significant</li>
       </ul>
       {region && (
         <div className="venn-region">

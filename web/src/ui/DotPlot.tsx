@@ -32,8 +32,8 @@ export function DotPlot(props: { matrix: DotMatrix; onSelect?: (sel: { contrast:
             <circle
               key={`${cell.term}|${cell.contrast}`}
               cx={colX(ci)} cy={rowY(ti)} r={radius(cell.nHits)}
-              fill={scoreToColor(cell.score)} opacity={cell.significant ? 1 : 0.25}
-              style={{ cursor: 'pointer' }}
+              opacity={cell.significant ? 1 : 0.25}
+              style={{ fill: scoreToColor(cell.score), cursor: 'pointer' }}
               onClick={() => props.onSelect?.({ contrast: cell.contrast, term: cell.term })}
             >
               <title>{`${cell.term} @ ${cell.contrast}: score ${cell.score.toPrecision(3)}, ${cell.nHits} hit gene(s)`}</title>

@@ -10,8 +10,8 @@ export function LollipopChart(props: { result: AnalysisResult; width?: number })
       {layout.items.map((it) => (
         <g key={it.id}>
           <text x={layout.plot.x - 6} y={it.y} textAnchor="end" dominantBaseline="middle" fontSize={11}>{it.label}</text>
-          <line x1={layout.plot.x} y1={it.y} x2={it.x} y2={it.y} stroke="#888" strokeWidth={1} />
-          <circle cx={it.x} cy={it.y} r={4} fill="#c0392b" />
+          <line x1={layout.plot.x} y1={it.y} x2={it.x} y2={it.y} strokeWidth={1} />
+          <circle cx={it.x} cy={it.y} r={4} />
         </g>
       ))}
     </svg>

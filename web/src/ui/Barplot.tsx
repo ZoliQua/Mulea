@@ -10,7 +10,7 @@ export function Barplot(props: { result: AnalysisResult; onSelect?: (id: string)
       {layout.items.map((it) => (
         <g key={it.id} onClick={() => props.onSelect?.(it.id)} style={{ cursor: 'pointer' }}>
           <text x={layout.plot.x - 6} y={it.y + 14} textAnchor="end" fontSize={11}>{it.label}</text>
-          <rect x={layout.plot.x} y={it.y + 4} width={it.barWidth} height={14} fill="#c0392b" />
+          <rect x={layout.plot.x} y={it.y + 4} width={it.barWidth} height={14} />
         </g>
       ))}
     </svg>
