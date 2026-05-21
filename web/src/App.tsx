@@ -23,8 +23,15 @@ import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
+import { FigureCard } from './ui/FigureCard.tsx';
 
 const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
+
+const VIEW_TITLES: Record<ViewId, string> = {
+  table: 'Results table', lollipop: 'Lollipop', barplot: 'Bar plot',
+  network: 'Term–gene network', heatmap: 'Heatmap', venn: 'Methods Venn',
+};
+const titleForView = (v: ViewId): string => VIEW_TITLES[v];
 
 function readCapsuleFromHash(): { cap?: Capsule; invalid?: boolean } | null {
   if (typeof window === 'undefined') return null;
@@ -50,6 +57,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [report, setReport] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<'focused' | 'dashboard'>('focused');
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
@@ -139,21 +147,44 @@ export default function App() {
                     <ReportView result={state.result} inputs={lastInputs} method={method} onBack={() => setReport(false)} />
                   ) : (
                     <>
-                      <ViewTabs active={viewId} onChange={setViewId} />
-                      <div className="view-row">
-                        <div className="view-main">
-                          {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
-                          {viewId === 'lollipop' && <LollipopChart result={state.result} />}
-                          {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
-                          {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
-                          {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
-                          {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
-                        </div>
-                        {selectedId && (() => {
-                          const row = state.result.rows.find((r) => r.ontology_id === selectedId);
-                          return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
-                        })()}
+                      <div className="layout-toggle">
+                        <button type="button" className={layoutMode === 'focused' ? 'active' : ''} onClick={() => setLayoutMode('focused')}>Focused</button>
+                        <button type="button" className={layoutMode === 'dashboard' ? 'active' : ''} onClick={() => setLayoutMode('dashboard')}>Dashboard</button>
                       </div>
+                      {layoutMode === 'dashboard' ? (
+                        <div className="dashboard">
+                          {selectedId && (() => {
+                            const row = state.result.rows.find((r) => r.ontology_id === selectedId);
+                            return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
+                          })()}
+                          <FigureCard title="Results table"><ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} /></FigureCard>
+                          <FigureCard title="Lollipop" svgExport><LollipopChart result={state.result} /></FigureCard>
+                          <FigureCard title="Bar plot" svgExport><Barplot result={state.result} onSelect={setSelectedId} /></FigureCard>
+                          <FigureCard title="Term–gene network" svgExport><NetworkPlot result={state.result} onSelect={setSelectedId} /></FigureCard>
+                          <FigureCard title="Heatmap" svgExport><Heatmap result={state.result} onSelect={setSelectedId} /></FigureCard>
+                          <FigureCard title="Methods Venn" svgExport><MethodsVenn inputs={lastInputs} /></FigureCard>
+                        </div>
+                      ) : (
+                        <>
+                          <ViewTabs active={viewId} onChange={setViewId} />
+                          <div className="view-row">
+                            <div className="view-main">
+                              <FigureCard title={titleForView(viewId)} svgExport={viewId !== 'table'}>
+                                {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
+                                {viewId === 'lollipop' && <LollipopChart result={state.result} />}
+                                {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
+                                {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
+                                {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
+                                {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
+                              </FigureCard>
+                            </div>
+                            {selectedId && (() => {
+                              const row = state.result.rows.find((r) => r.ontology_id === selectedId);
+                              return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
+                            })()}
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </>
