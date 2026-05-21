@@ -109,6 +109,17 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .contrasts-files { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; font-size: 12px; }
 .contrasts-files .chip { background: var(--surface-2); color: var(--text); border-radius: 10px; padding: 1px 8px; }
 
+/* --- P2a figure cards + layout toggle --- */
+.layout-toggle { display: inline-flex; gap: 4px; margin: var(--sp-2) 0; }
+.layout-toggle button.active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.dashboard { display: flex; flex-direction: column; }
+.figure-card { border: 1px solid var(--border); background: var(--surface); border-radius: var(--r-2); padding: var(--sp-3); margin-bottom: var(--sp-3); }
+.figure-card-head { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+.figure-card-head strong { font-size: 13px; }
+.figure-card-tools { margin-left: auto; display: inline-flex; gap: var(--sp-1); }
+.figure-card-tools button { font-size: 12px; padding: 2px 8px; }
+.figure-card-body { overflow: auto; }
+
 /* help drawer */
 .help-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 40; }
 .help-drawer { position: fixed; top: 0; right: 0; height: 100%; width: 380px; max-width: 90vw; background: var(--surface); color: var(--text); border-left: 1px solid var(--border); box-shadow: -4px 0 16px rgba(0,0,0,0.18); z-index: 41; overflow-y: auto; padding: var(--sp-4); transform: translateX(100%); transition: transform 0.2s ease; }
