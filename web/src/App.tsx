@@ -24,6 +24,8 @@ import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
+import { SettingsDrawer } from './ui/SettingsDrawer.tsx';
+import { effectiveSettings, type FigureSettings, type Palette } from './figureSettings.ts';
 
 const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
 
@@ -58,6 +60,11 @@ export default function App() {
   const [report, setReport] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<'focused' | 'dashboard'>('focused');
+  const [globalSettings, setGlobalSettings] = useState<Partial<FigureSettings>>({});
+  const [perFigure, setPerFigure] = useState<Record<string, Partial<FigureSettings>>>({});
+  const [palette, setPalette] = useState<Palette>('default');
+  const [settingsFor, setSettingsFor] = useState<ViewId | null>(null);
+  const [settingsTab, setSettingsTab] = useState<'global' | 'figure'>('figure');
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
@@ -90,8 +97,19 @@ export default function App() {
     mc.run({ ...i, method, ...RUN_DEFAULTS });
   const switchMode = (m: 'single' | 'multi') => { setMode(m); setReport(false); setSelectedId(null); setMcSelected(null); };
 
+  const settingsOf = (id: ViewId): FigureSettings => effectiveSettings(globalSettings, perFigure[id] ?? {});
+  const openSettings = (id: ViewId) => { setSettingsFor(id); setSettingsTab('figure'); };
+  const drawerValue: FigureSettings = settingsTab === 'global' || !settingsFor
+    ? effectiveSettings(globalSettings, {})
+    : settingsOf(settingsFor);
+  const applyDrawerPatch = (patch: Partial<FigureSettings>) => {
+    if (settingsTab === 'global' || !settingsFor) { setGlobalSettings((g) => ({ ...g, ...patch })); return; }
+    const id = settingsFor;
+    setPerFigure((m) => ({ ...m, [id]: { ...(m[id] ?? {}), ...patch } }));
+  };
+
   return (
-    <div className="layout">
+    <div className="layout" data-palette={palette}>
       <header className="topbar">
         <strong>muleaLab</strong>
         <span className="muted">· client-side enrichment + eFDR</span>
@@ -157,25 +175,25 @@ export default function App() {
                             const row = state.result.rows.find((r) => r.ontology_id === selectedId);
                             return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
                           })()}
-                          <FigureCard title="Results table"><ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} /></FigureCard>
-                          <FigureCard title="Lollipop" svgExport><LollipopChart result={state.result} /></FigureCard>
-                          <FigureCard title="Bar plot" svgExport><Barplot result={state.result} onSelect={setSelectedId} /></FigureCard>
-                          <FigureCard title="Term–gene network" svgExport><NetworkPlot result={state.result} onSelect={setSelectedId} /></FigureCard>
-                          <FigureCard title="Heatmap" svgExport><Heatmap result={state.result} onSelect={setSelectedId} /></FigureCard>
-                          <FigureCard title="Methods Venn" svgExport><MethodsVenn inputs={lastInputs} /></FigureCard>
+                          <FigureCard title="Results table" onSettings={() => openSettings('table')}><ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} settings={settingsOf('table')} /></FigureCard>
+                          <FigureCard title="Lollipop" svgExport onSettings={() => openSettings('lollipop')}><LollipopChart result={state.result} settings={settingsOf('lollipop')} /></FigureCard>
+                          <FigureCard title="Bar plot" svgExport onSettings={() => openSettings('barplot')}><Barplot result={state.result} onSelect={setSelectedId} settings={settingsOf('barplot')} /></FigureCard>
+                          <FigureCard title="Term–gene network" svgExport onSettings={() => openSettings('network')}><NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} /></FigureCard>
+                          <FigureCard title="Heatmap" svgExport onSettings={() => openSettings('heatmap')}><Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} /></FigureCard>
+                          <FigureCard title="Methods Venn" svgExport onSettings={() => openSettings('venn')}><MethodsVenn inputs={lastInputs} settings={settingsOf('venn')} /></FigureCard>
                         </div>
                       ) : (
                         <>
                           <ViewTabs active={viewId} onChange={setViewId} />
                           <div className="view-row">
                             <div className="view-main">
-                              <FigureCard title={titleForView(viewId)} svgExport={viewId !== 'table'}>
-                                {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} />}
-                                {viewId === 'lollipop' && <LollipopChart result={state.result} />}
-                                {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} />}
-                                {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} />}
-                                {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} />}
-                                {viewId === 'venn' && <MethodsVenn inputs={lastInputs} />}
+                              <FigureCard title={titleForView(viewId)} svgExport={viewId !== 'table'} onSettings={() => openSettings(viewId)}>
+                                {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} settings={settingsOf('table')} />}
+                                {viewId === 'lollipop' && <LollipopChart result={state.result} settings={settingsOf('lollipop')} />}
+                                {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} settings={settingsOf('barplot')} />}
+                                {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} />}
+                                {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} />}
+                                {viewId === 'venn' && <MethodsVenn inputs={lastInputs} settings={settingsOf('venn')} />}
                               </FigureCard>
                             </div>
                             {selectedId && (() => {
@@ -213,6 +231,18 @@ export default function App() {
       </div>
       {helpOpen && <div className="help-overlay" onClick={() => setHelpOpen(false)} />}
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+      {settingsFor && <div className="help-overlay" onClick={() => setSettingsFor(null)} />}
+      <SettingsDrawer
+        open={settingsFor !== null}
+        onClose={() => setSettingsFor(null)}
+        figureTitle={settingsFor ? titleForView(settingsFor) : 'This figure'}
+        tab={settingsTab}
+        onTab={setSettingsTab}
+        value={drawerValue}
+        onChange={applyDrawerPatch}
+        palette={palette}
+        onPalette={setPalette}
+      />
     </div>
   );
 }

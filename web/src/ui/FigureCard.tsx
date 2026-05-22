@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from 'react';
-import { downloadSvg, downloadPng, safeFilename } from '../figureExport';
+import { downloadSvg, downloadPng, safeFilename } from '../figureExport.ts';
 
-export function FigureCard(props: { title: string; svgExport?: boolean; children: ReactNode }) {
+export function FigureCard(props: { title: string; svgExport?: boolean; onSettings?: () => void; children: ReactNode }) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const getSvg = (): SVGSVGElement | null => bodyRef.current?.querySelector('svg') ?? null;
 
@@ -9,12 +9,15 @@ export function FigureCard(props: { title: string; svgExport?: boolean; children
     <section className="figure-card">
       <header className="figure-card-head">
         <strong>{props.title}</strong>
-        {props.svgExport && (
-          <span className="figure-card-tools">
-            <button type="button" onClick={() => { const s = getSvg(); if (s) void downloadPng(s, safeFilename(props.title, 'png')).catch(() => {}); }}>⤓ PNG</button>
-            <button type="button" onClick={() => { const s = getSvg(); if (s) downloadSvg(s, safeFilename(props.title, 'svg')); }}>⤓ SVG</button>
-          </span>
-        )}
+        <span className="figure-card-tools">
+          {props.onSettings && <button type="button" aria-label="Figure settings" title="Settings" onClick={props.onSettings}>⚙</button>}
+          {props.svgExport && (
+            <>
+              <button type="button" onClick={() => { const s = getSvg(); if (s) void downloadPng(s, safeFilename(props.title, 'png')).catch(() => {}); }}>⤓ PNG</button>
+              <button type="button" onClick={() => { const s = getSvg(); if (s) downloadSvg(s, safeFilename(props.title, 'svg')); }}>⤓ SVG</button>
+            </>
+          )}
+        </span>
       </header>
       <div className="figure-card-body" ref={bodyRef}>{props.children}</div>
     </section>
