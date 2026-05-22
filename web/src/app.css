@@ -46,7 +46,7 @@ button.primary:hover { filter: brightness(1.06); }
 .icon-btn { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
 select { font-family: var(--font); background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-1); padding: 3px 6px; }
 
-.results { border-collapse: collapse; font-size: 13px; width: 100%; }
+.results { border-collapse: collapse; font-family: var(--fig-font, var(--font)); font-size: var(--fig-label, 13px); width: 100%; }
 .results th, .results td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; }
 .results th { cursor: pointer; user-select: none; background: var(--surface-2); }
 .results tr.sig { background: var(--accent-weak); }
@@ -68,11 +68,17 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .drilldown .hits { font-family: var(--mono); font-size: 12px; word-break: break-word; max-height: 240px; overflow: auto; }
 
 /* charts: fixed colors via CSS (overrides SVG presentation attributes); variable colors set inline via style */
-.lollipop text, .network text, .heatmap text, .barplot text, .dotplot text { fill: var(--text); }
+.lollipop text, .network text, .heatmap text, .barplot text, .dotplot text, .methods-venn text {
+  fill: var(--text); font-family: var(--fig-font, var(--font));
+}
+.lollipop text, .barplot text, .dotplot text { font-size: var(--fig-label, 11px); }
+.network text, .heatmap text { font-size: var(--fig-label, 10px); }
+.methods-venn text { font-size: var(--fig-label, 13px); }
 .lollipop line { stroke: var(--muted); }
-.lollipop circle { fill: var(--accent); }
-.barplot rect { fill: var(--accent); }
+.lollipop circle { fill: var(--fig-accent, var(--accent)); }
+.barplot rect { fill: var(--fig-accent, var(--accent)); }
 .network line { stroke: var(--border); }
+.network circle { stroke: var(--fig-outline, transparent); stroke-width: var(--fig-outline-w, 0); }
 
 .methods-venn { display: flex; flex-direction: column; gap: var(--sp-2); }
 .venn-legend { list-style: none; padding: 0; margin: 0; font-size: 13px; display: flex; flex-wrap: wrap; gap: var(--sp-4); }
@@ -129,6 +135,9 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .help-drawer h3 { font-size: 13px; margin: var(--sp-3) 0 2px; }
 .help-drawer p, .help-drawer li { font-size: 13px; line-height: 1.45; }
 .help-drawer .cite { font-size: 12px; color: var(--muted); margin-top: var(--sp-4); }
+
+[data-palette="colorblind"] { --score-strong: #0072b2; --score-mid: #009e73; --score-weak: #e69f00; }
+[data-theme="dark"][data-palette="colorblind"] { --score-strong: #4ea6d6; --score-mid: #43c39b; --score-weak: #f0b84f; }
 
 /* responsive */
 @media (max-width: 900px) {
