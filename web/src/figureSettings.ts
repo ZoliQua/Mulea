@@ -36,11 +36,14 @@ export function fontStack(f: FontFamily): string {
 
 /** CSS custom properties to set on a figure's SVG/table root so the token CSS picks them up. */
 export function figureVars(s: FigureSettings): CSSProperties {
-  return {
+  const vars: Record<string, string> = {
     '--fig-font': fontStack(s.fontFamily),
-    '--fig-label': `${s.labelFontSize}px`,
     '--fig-accent': s.accentColor,
     '--fig-outline': s.outlineColor,
     '--fig-outline-w': String(s.outlineWidth),
-  } as CSSProperties;
+  };
+  // Only override the label size when the user changed it, so each figure keeps its own
+  // CSS default size (table 13 / charts 10–11 / venn 13) until explicitly customised.
+  if (s.labelFontSize !== DEFAULT_SETTINGS.labelFontSize) vars['--fig-label'] = `${s.labelFontSize}px`;
+  return vars as CSSProperties;
 }
