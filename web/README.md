@@ -42,6 +42,10 @@ Switch views with the tabs:
   (the paper's comparison, computed on your data).
 - **Term drill-down** — click a term/dot to see its hit genes and overlap counts.
 
+Each figure has a settings panel (the ⚙ button): adjust font, label size, scale, accent/outline
+colours, and (for the Methods Venn) transparency — globally or per-figure — plus a global
+colour-blind-safe palette. Export any figure as PNG or SVG (⤓).
+
 ### Multi-contrast
 Switch to "Multi-contrast" to compare several target lists against one shared ontology +
 background on a **dot-plot matrix** (rows = terms, columns = contrasts, dot size = gene overlap,
