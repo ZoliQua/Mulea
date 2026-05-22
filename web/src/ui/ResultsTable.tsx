@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { AnalysisResult } from '../appTypes.ts';
 import { columnsFor, filterSignificant, isSignificant, sortRows } from '../tableView.ts';
+import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
 
-export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; onSelect?: (id: string) => void }) {
+export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; onSelect?: (id: string) => void; settings?: FigureSettings }) {
   const cols = columnsFor(props.result.method);
   const defaultKey = props.result.method === 'eFDR' ? 'eFDR' : 'adjusted_p_value';
   const [sortKey, setSortKey] = useState(defaultKey);
@@ -20,8 +21,9 @@ export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; 
   const fmt = (c: string, v: unknown) =>
     v === undefined ? '' : c === 'p_value' ? Number(v).toExponential(2) : c.includes('eFDR') || c.includes('adjusted') ? Number(v).toPrecision(3) : String(v);
 
+  const s = props.settings ?? DEFAULT_SETTINGS;
   return (
-    <table className="results">
+    <table className="results" style={figureVars(s)}>
       <thead>
         <tr>{cols.map((c) => <th key={c} onClick={() => onHeader(c)}>{c}{sortKey === c ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</th>)}</tr>
       </thead>

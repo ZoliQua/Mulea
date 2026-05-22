@@ -1,14 +1,16 @@
 import type { AnalysisResult } from '../appTypes.ts';
 import { heatmapLayout } from '../heatmap.ts';
 import { scoreToColor } from './colorScale.ts';
+import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
 
-export function Heatmap(props: { result: AnalysisResult; onSelect?: (id: string) => void }) {
-  const layout = heatmapLayout(props.result, { topN: 30, cellW: 12, cellH: 16, threshold: 0.05 });
+export function Heatmap(props: { result: AnalysisResult; onSelect?: (id: string) => void; settings?: FigureSettings }) {
+  const s = props.settings ?? DEFAULT_SETTINGS;
+  const layout = heatmapLayout(props.result, { topN: 30, cellW: 12 * s.scale, cellH: 16 * s.scale, threshold: 0.05 });
   if (layout.rows.length === 0) return <p className="muted">No significant terms to show.</p>;
   return (
-    <svg className="heatmap" width={layout.width} height={layout.height} role="img" aria-label="Heatmap of terms by hit genes">
+    <svg className="heatmap" style={figureVars(s)} width={layout.width} height={layout.height} role="img" aria-label="Heatmap of terms by hit genes">
       {layout.rows.map((r) => (
-        <text key={r.id} x={layout.labelW - 4} y={r.y + layout.cellH * 0.7} textAnchor="end" fontSize={10}
+        <text key={r.id} x={layout.labelW - 4} y={r.y + layout.cellH * 0.7} textAnchor="end"
           style={{ cursor: 'pointer' }} onClick={() => props.onSelect?.(r.id)}>{r.label}</text>
       ))}
       {layout.cells.filter((c) => c.on).map((c) => (

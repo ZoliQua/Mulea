@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { runComparison } from '../comparison.ts';
 import { venn3Regions, type RegionKey } from '../venn3.ts';
+import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
 
 interface VennInputs { gmtText: string; target: string[]; background: string[] }
 
@@ -15,7 +16,7 @@ const CENTROIDS: Record<RegionKey, { x: number; y: number }> = {
   AB: { x: 170, y: 95 }, AC: { x: 125, y: 175 }, BC: { x: 215, y: 175 }, ABC: { x: 170, y: 150 },
 };
 
-export function MethodsVenn(props: { inputs: VennInputs | null }) {
+export function MethodsVenn(props: { inputs: VennInputs | null; settings?: FigureSettings }) {
   const comparison = useMemo(
     () => (props.inputs ? runComparison({ ...props.inputs, minNrOfElements: 3, maxNrOfElements: 400 }) : null),
     [props.inputs],
@@ -23,16 +24,17 @@ export function MethodsVenn(props: { inputs: VennInputs | null }) {
   const [region, setRegion] = useState<RegionKey | null>(null);
 
   if (!comparison) return <p className="muted">Run an analysis first.</p>;
+  const s = props.settings ?? DEFAULT_SETTINGS;
   const regions = venn3Regions(comparison.efdr, comparison.bh, comparison.bonferroni);
 
   return (
     <div className="methods-venn">
-      <svg width={340} height={280} role="img" aria-label="Significant terms by correction method">
+      <svg style={figureVars(s)} width={340 * s.scale} height={280 * s.scale} viewBox="0 0 340 280" role="img" aria-label="Significant terms by correction method">
         {CIRCLES.map((c) => (
-          <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: 0.18 }} />
+          <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: s.vennTransparency }} />
         ))}
         {(Object.keys(CENTROIDS) as RegionKey[]).map((k) => (
-          <text key={k} x={CENTROIDS[k].x} y={CENTROIDS[k].y} textAnchor="middle" fontSize={13}
+          <text key={k} x={CENTROIDS[k].x} y={CENTROIDS[k].y} textAnchor="middle"
             style={{ cursor: 'pointer', fontWeight: region === k ? 700 : 400 }} onClick={() => setRegion(k)}>
             {regions[k].count}
           </text>
