@@ -136,6 +136,14 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .help-drawer p, .help-drawer li { font-size: 13px; line-height: 1.45; }
 .help-drawer .cite { font-size: 12px; color: var(--muted); margin-top: var(--sp-4); }
 
+.settings-drawer .seg { display: inline-flex; gap: 4px; margin: var(--sp-2) 0; }
+.settings-drawer .seg button.active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.settings-drawer .ctl { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); font-size: 12px; margin: 4px 0; }
+.settings-drawer .ctl input[type="number"] { width: 64px; }
+.settings-drawer .ctl input[type="range"] { width: 130px; }
+.settings-drawer .ctl-check { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
+.settings-drawer h3 { margin-top: var(--sp-3); }
+
 [data-palette="colorblind"] { --score-strong: #0072b2; --score-mid: #009e73; --score-weak: #e69f00; }
 [data-theme="dark"][data-palette="colorblind"] { --score-strong: #4ea6d6; --score-mid: #43c39b; --score-weak: #f0b84f; }
 
