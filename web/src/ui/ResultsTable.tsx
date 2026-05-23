@@ -24,7 +24,7 @@ export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; 
   const s = props.settings ?? DEFAULT_SETTINGS;
   return (
     <table className="results" style={figureVars(s)}>
-      {s.titleText && <caption className="fig-title-html" style={{ captionSide: 'top', textAlign: 'left' }}>{s.titleText}</caption>}
+      {s.titleText && <caption className="fig-title-html" style={{ captionSide: 'top', textAlign: 'left', fontSize: s.titleFontSize }}>{s.titleText}</caption>}
       <thead>
         <tr>{cols.map((c) => <th key={c} onClick={() => onHeader(c)}>{c}{sortKey === c ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</th>)}</tr>
       </thead>
