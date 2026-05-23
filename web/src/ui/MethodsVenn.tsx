@@ -29,6 +29,7 @@ export function MethodsVenn(props: { inputs: VennInputs | null; settings?: Figur
 
   return (
     <div className="methods-venn">
+      {s.titleText && <h4 className="fig-title-html">{s.titleText}</h4>}
       <svg style={figureVars(s)} width={340 * s.scale} height={280 * s.scale} viewBox="0 0 340 280" role="img" aria-label="Significant terms by correction method">
         {CIRCLES.map((c) => (
           <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: s.vennTransparency }} />
