@@ -144,6 +144,10 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .settings-drawer .ctl-check { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
 .settings-drawer h3 { margin-top: var(--sp-3); }
 
+.fig-title { font-weight: 600; fill: var(--text); }
+.fig-title-html { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+.settings-drawer .ctl input[type="text"] { width: 120px; }
+
 [data-palette="colorblind"] { --score-strong: #0072b2; --score-mid: #009e73; --score-weak: #e69f00; }
 [data-theme="dark"][data-palette="colorblind"] { --score-strong: #4ea6d6; --score-mid: #43c39b; --score-weak: #f0b84f; }
 

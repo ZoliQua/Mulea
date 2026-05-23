@@ -1,7 +1,9 @@
 import type { CSSProperties } from 'react';
+import type { SortOrder } from './lollipop.ts';
 
 export type FontFamily = 'sans' | 'serif' | 'mono';
 export type Palette = 'default' | 'colorblind';
+export type { SortOrder };
 
 export interface FigureSettings {
   fontFamily: FontFamily;
@@ -11,6 +13,9 @@ export interface FigureSettings {
   outlineColor: string;
   outlineWidth: number;
   vennTransparency: number;
+  titleText: string;
+  titleFontSize: number;
+  sortOrder: SortOrder;
 }
 
 export const DEFAULT_SETTINGS: FigureSettings = {
@@ -21,6 +26,9 @@ export const DEFAULT_SETTINGS: FigureSettings = {
   outlineColor: '#1f2933',
   outlineWidth: 0,
   vennTransparency: 0.18,
+  titleText: '',
+  titleFontSize: 14,
+  sortOrder: 'score',
 };
 
 /** Merge a global partial then a per-figure partial over the defaults (per-figure wins). Pure. */

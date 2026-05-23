@@ -1,4 +1,4 @@
-import type { FigureSettings, FontFamily, Palette } from '../figureSettings.ts';
+import type { FigureSettings, FontFamily, Palette, SortOrder } from '../figureSettings.ts';
 
 type Tab = 'global' | 'figure';
 
@@ -31,6 +31,21 @@ export function SettingsDrawer(props: {
       </label>
       <label className="ctl">Label size
         <input type="number" min={6} max={28} value={v.labelFontSize} onChange={(e) => props.onChange({ labelFontSize: clamp(+e.target.value, 6, 28) })} />
+      </label>
+
+      <h3>Title</h3>
+      <label className="ctl">Text
+        <input type="text" value={v.titleText} placeholder="(none)" onChange={(e) => props.onChange({ titleText: e.target.value })} />
+      </label>
+      <label className="ctl">Title size
+        <input type="number" min={10} max={28} value={v.titleFontSize} onChange={(e) => props.onChange({ titleFontSize: clamp(+e.target.value, 10, 28) })} />
+      </label>
+
+      <h3>Order</h3>
+      <label className="ctl">Sort by
+        <select value={v.sortOrder} onChange={(e) => props.onChange({ sortOrder: e.target.value as SortOrder })}>
+          <option value="score">Significance</option><option value="name">Name</option><option value="hits">Gene overlap</option>
+        </select>
       </label>
 
       <h3>Size</h3>
