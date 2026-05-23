@@ -43,8 +43,9 @@ Switch views with the tabs:
 - **Term drill-down** — click a term/dot to see its hit genes and overlap counts.
 
 Each figure has a settings panel (the ⚙ button): adjust font, label size, scale, accent/outline
-colours, and (for the Methods Venn) transparency — globally or per-figure — plus a global
-colour-blind-safe palette. Export any figure as PNG or SVG (⤓).
+colours, and (for the Methods Venn) transparency — globally or per-figure — plus a title and
+element order (by significance, name, or gene overlap); the title is included in the exported
+figure. There is also a global colour-blind-safe palette. Export any figure as PNG or SVG (⤓).
 
 ### Multi-contrast
 Switch to "Multi-contrast" to compare several target lists against one shared ontology +
