@@ -1,5 +1,5 @@
 import type { AnalysisResult } from './appTypes.ts';
-import { rowScore } from './lollipop.ts';
+import { rowScore, reorderBySort, type SortOrder } from './lollipop.ts';
 
 export interface HeatRow { id: string; label: string; y: number; score: number }
 export interface HeatCol { gene: string; x: number }
@@ -8,15 +8,16 @@ export interface HeatmapLayout {
   width: number; height: number; labelW: number; cellW: number; cellH: number;
   rows: HeatRow[]; cols: HeatCol[]; cells: HeatCell[];
 }
-export interface HeatmapOptions { topN: number; cellW: number; cellH: number; threshold: number }
+export interface HeatmapOptions { topN: number; cellW: number; cellH: number; threshold: number; sortOrder?: SortOrder }
 
 /** Grid heatmap: significant terms (rows) × the union of their hit genes (columns). */
 export function heatmapLayout(result: AnalysisResult, opts: HeatmapOptions): HeatmapLayout {
   const labelW = 110, padTop = 16;
-  const sig = result.rows
+  const selected = result.rows
     .filter((r) => rowScore(r) < opts.threshold)
     .sort((a, b) => rowScore(a) - rowScore(b))
     .slice(0, opts.topN);
+  const sig = reorderBySort(selected, opts.sortOrder ?? 'score');
 
   const colOrder: string[] = [];
   const seen = new Set<string>();
