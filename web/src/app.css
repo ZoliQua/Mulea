@@ -171,3 +171,5 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .net-node { cursor: grab; }
 .net-node:active { cursor: grabbing; }
 .network { touch-action: none; }
+
+.venn-hit { cursor: pointer; }

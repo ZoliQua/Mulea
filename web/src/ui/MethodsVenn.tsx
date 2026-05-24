@@ -35,6 +35,11 @@ export function MethodsVenn(props: { inputs: VennInputs | null; settings?: Figur
           <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: s.vennTransparency }} />
         ))}
         {(Object.keys(CENTROIDS) as RegionKey[]).map((k) => (
+          <circle key={`hit-${k}`} className="venn-hit" cx={CENTROIDS[k].x} cy={CENTROIDS[k].y} r={20}
+            fill="transparent" stroke={region === k ? 'var(--accent)' : 'none'} strokeWidth={2}
+            onClick={() => setRegion(k)} />
+        ))}
+        {(Object.keys(CENTROIDS) as RegionKey[]).map((k) => (
           <text key={k} x={CENTROIDS[k].x} y={CENTROIDS[k].y} textAnchor="middle"
             style={{ cursor: 'pointer', fontWeight: region === k ? 700 : 400 }} onClick={() => setRegion(k)}>
             {regions[k].count}
@@ -48,7 +53,7 @@ export function MethodsVenn(props: { inputs: VennInputs | null; settings?: Figur
       </ul>
       {region && (
         <div className="venn-region">
-          <strong>{region}</strong> ({regions[region].count}): {regions[region].ids.join(', ') || '—'}
+          <strong>{region}</strong> ({regions[region].count}): {regions[region].ids.map((id) => comparison.names[id] ?? id).join(', ') || '—'}
         </div>
       )}
     </div>
