@@ -42,6 +42,8 @@ Switch views with the tabs:
   (the paper's comparison, computed on your data).
 - **Term drill-down** — click a term/dot to see its hit genes and overlap counts.
 
+Interactive results: search the table by term name, drag network nodes to rearrange the graph, and click any Methods-Venn region to list the terms it contains.
+
 Each figure has a settings panel (the ⚙ button): adjust font, label size, scale, accent/outline
 colours, and (for the Methods Venn) transparency — globally or per-figure — plus a title and
 element order (by significance, name, or gene overlap); the title is included in the exported
