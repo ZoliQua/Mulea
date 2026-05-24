@@ -16,6 +16,13 @@ export function filterSignificant(rows: ResultRow[], threshold = 0.05): ResultRo
   return rows.filter((r) => isSignificant(r, threshold));
 }
 
+/** Filter rows whose ontology name or id contains the query (case-insensitive). Empty query → all. Pure. */
+export function filterByQuery(rows: ResultRow[], query: string): ResultRow[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return rows;
+  return rows.filter((r) => r.ontology_name.toLowerCase().includes(q) || r.ontology_id.toLowerCase().includes(q));
+}
+
 /** Stable sort by a row key. Strings compared lexicographically, everything else numerically. */
 export function sortRows(rows: ResultRow[], key: string, dir: 'asc' | 'desc'): ResultRow[] {
   const sign = dir === 'asc' ? 1 : -1;
