@@ -46,7 +46,7 @@ export function NetworkPlot(props: { result: AnalysisResult; onSelect?: (id: str
   return (
     <svg ref={svgRef} className="network" style={figureVars(s)} width={size} height={size + titleH}
       role="img" aria-label="Network of significant terms"
-      onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp}>
+      onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp} onPointerCancel={onUp}>
       {s.titleText && <text className="fig-title" x={8} y={s.titleFontSize} fontSize={s.titleFontSize}>{s.titleText}</text>}
       <g transform={`translate(0, ${titleH})`}>
         {layout.edges.map((e) => {

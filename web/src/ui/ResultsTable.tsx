@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { AnalysisResult } from '../appTypes.ts';
 import { columnsFor, filterByQuery, filterSignificant, isSignificant, sortRows } from '../tableView.ts';
 import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
@@ -9,6 +9,7 @@ export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; 
   const [sortKey, setSortKey] = useState(defaultKey);
   const [dir, setDir] = useState<'asc' | 'desc'>('asc');
   const [query, setQuery] = useState('');
+  useEffect(() => { setQuery(''); }, [props.result]); // clear a stale search when a new analysis arrives
 
   const rows = useMemo(() => {
     const base = props.sigOnly ? filterSignificant(props.result.rows) : props.result.rows;
