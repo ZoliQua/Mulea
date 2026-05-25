@@ -8,6 +8,7 @@ export function NetworkPlot(props: { result: AnalysisResult; onSelect?: (id: str
   const s = props.settings ?? DEFAULT_SETTINGS;
   const size = (props.size ?? 460) * s.scale;
   const titleH = s.titleText ? s.titleFontSize + 8 : 0;
+  const PAD = 10;
   const layout = networkLayout(props.result, { topN: 40, width: size, height: size, threshold: 0.05 });
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -35,7 +36,9 @@ export function NetworkPlot(props: { result: AnalysisResult; onSelect?: (id: str
     const p = svgPoint(e);
     if (!d.moved && Math.hypot(p.x - d.x0, p.y - d.y0) < 4) return; // ignore click jitter
     d.moved = true;
-    setOverrides((o) => ({ ...o, [d.id]: p }));
+    const cx = Math.max(PAD, Math.min(size - PAD, p.x));
+    const cy = Math.max(PAD, Math.min(size - PAD, p.y));
+    setOverrides((o) => ({ ...o, [d.id]: { x: cx, y: cy } }));
   };
   const onUp = () => {
     const d = drag.current;
@@ -49,6 +52,7 @@ export function NetworkPlot(props: { result: AnalysisResult; onSelect?: (id: str
       onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp} onPointerCancel={onUp}>
       {s.titleText && <text className="fig-title" x={8} y={s.titleFontSize} fontSize={s.titleFontSize}>{s.titleText}</text>}
       <g transform={`translate(0, ${titleH})`}>
+        <rect className="net-frame" x={0.5} y={0.5} width={size - 1} height={size - 1} />
         {layout.edges.map((e) => {
           const a = posMap.get(e.a)!, b = posMap.get(e.b)!;
           return <line key={`${e.a}-${e.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} strokeWidth={Math.min(4, e.weight)} />;
