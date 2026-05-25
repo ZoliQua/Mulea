@@ -1,7 +1,7 @@
 import type { AnalysisResult } from './appTypes.ts';
 import { rowScore, reorderBySort, type SortOrder } from './lollipop.ts';
 
-export interface BarplotItem { id: string; label: string; value: number; barWidth: number; y: number }
+export interface BarplotItem { id: string; label: string; score: number; value: number; barWidth: number; y: number }
 export interface BarplotLayout {
   width: number; height: number;
   plot: { x: number; y: number; width: number; height: number };
@@ -26,7 +26,7 @@ export function barplotLayout(result: AnalysisResult, opts: BarplotOptions): Bar
 
   const axisMax = Math.max(1e-9, ...sig.map((s) => s.value));
   const items: BarplotItem[] = sig.map((s, i) => ({
-    id: s.id, label: s.label, value: s.value,
+    id: s.id, label: s.label, score: s.score, value: s.value,
     barWidth: (s.value / axisMax) * plot.width,
     y: padTop + i * opts.rowHeight,
   }));

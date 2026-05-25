@@ -11,6 +11,11 @@ export interface LollipopLayout {
 export type SortOrder = 'score' | 'name' | 'hits';
 export interface LollipopOptions { topN: number; width: number; rowHeight: number; threshold: number; sortOrder?: SortOrder }
 
+/** Compact score label (e.g. 8.0e-4 / 0.020). */
+export function fmtScore(v: number): string {
+  return v < 0.001 ? v.toExponential(1) : v.toPrecision(2);
+}
+
 /** Score used for the lollipop: eFDR if present, else adjusted p-value, else raw p-value. */
 export function rowScore(row: ResultRow): number {
   return row.eFDR ?? row.adjusted_p_value ?? row.p_value;

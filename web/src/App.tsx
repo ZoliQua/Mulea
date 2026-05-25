@@ -176,7 +176,7 @@ export default function App() {
                             return row ? <DrilldownPanel row={row} meta={state.result.meta} onClose={() => setSelectedId(null)} /> : null;
                           })()}
                           <FigureCard title="Results table" onSettings={() => openSettings('table')}><ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} settings={settingsOf('table')} /></FigureCard>
-                          <FigureCard title="Lollipop" svgExport onSettings={() => openSettings('lollipop')}><LollipopChart result={state.result} settings={settingsOf('lollipop')} /></FigureCard>
+                          <FigureCard title="Lollipop" svgExport onSettings={() => openSettings('lollipop')}><LollipopChart result={state.result} onSelect={setSelectedId} settings={settingsOf('lollipop')} /></FigureCard>
                           <FigureCard title="Bar plot" svgExport onSettings={() => openSettings('barplot')}><Barplot result={state.result} onSelect={setSelectedId} settings={settingsOf('barplot')} /></FigureCard>
                           <FigureCard title="Term–gene network" svgExport onSettings={() => openSettings('network')}><NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} /></FigureCard>
                           <FigureCard title="Heatmap" svgExport onSettings={() => openSettings('heatmap')}><Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} /></FigureCard>
@@ -189,7 +189,7 @@ export default function App() {
                             <div className="view-main">
                               <FigureCard title={titleForView(viewId)} svgExport={viewId !== 'table'} onSettings={() => openSettings(viewId)}>
                                 {viewId === 'table' && <ResultsTable key={state.result.method} result={state.result} sigOnly={sigOnly} onSelect={setSelectedId} settings={settingsOf('table')} />}
-                                {viewId === 'lollipop' && <LollipopChart result={state.result} settings={settingsOf('lollipop')} />}
+                                {viewId === 'lollipop' && <LollipopChart result={state.result} onSelect={setSelectedId} settings={settingsOf('lollipop')} />}
                                 {viewId === 'barplot' && <Barplot result={state.result} onSelect={setSelectedId} settings={settingsOf('barplot')} />}
                                 {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} />}
                                 {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} />}
