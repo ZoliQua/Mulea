@@ -184,7 +184,7 @@ export default function App() {
                         </div>
                       ) : (
                         <>
-                          <ViewTabs active={viewId} onChange={setViewId} />
+                          <ViewTabs active={viewId} onChange={(v) => { setViewId(v); setSelectedId(null); }} />
                           <div className="view-row">
                             <div className="view-main">
                               <FigureCard title={titleForView(viewId)} svgExport={viewId !== 'table'} onSettings={() => openSettings(viewId)}>

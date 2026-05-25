@@ -27,7 +27,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .topbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); padding: var(--sp-3) var(--sp-4); background: var(--surface); border-bottom: 1px solid var(--border); }
 .topbar .spacer { margin-left: auto; }
 
-.two-panel { display: grid; grid-template-columns: 320px 1fr; gap: var(--sp-4); padding: var(--sp-4); align-items: start; }
+.two-panel { display: grid; grid-template-columns: 320px 1fr; gap: var(--sp-4); padding: var(--sp-4); align-items: start; max-width: 1280px; margin-inline: auto; }
 
 .input-disclosure > summary { cursor: pointer; font-weight: 600; font-size: 15px; margin-bottom: var(--sp-2); }
 .left section { display: flex; flex-direction: column; gap: var(--sp-1); margin-bottom: var(--sp-3); }
@@ -59,6 +59,11 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .tab { border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 4px 10px; cursor: pointer; border-radius: var(--r-1); }
 .tab:hover { background: var(--surface-2); }
 .tab.active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+
+.input-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--sp-3); margin-bottom: var(--sp-2); }
+.input-card > label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.fig-value { fill: var(--muted); font-size: 10px; }
+.net-frame { fill: none; stroke: var(--border); }
 
 .view-row { display: flex; gap: var(--sp-4); align-items: flex-start; }
 .view-main { flex: 1; overflow: auto; }

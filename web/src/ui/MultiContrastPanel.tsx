@@ -24,17 +24,17 @@ export function MultiContrastPanel(props: {
 
   return (
     <div className="input-panel">
-      <section>
+      <section className="input-card">
         <label>Ontology (GMT)</label>
         <input type="file" accept=".gmt,.txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setGmtText)} />
         <textarea value={gmtText} onChange={(e) => setGmtText(e.target.value)} placeholder="paste GMT…" rows={4} />
       </section>
-      <section>
+      <section className="input-card">
         <label>Background genes (one per line)</label>
         <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setBackgroundText)} />
         <textarea value={backgroundText} onChange={(e) => setBackgroundText(e.target.value)} rows={4} />
       </section>
-      <section>
+      <section className="input-card">
         <label>Contrasts (&gt;label then genes; or upload files)</label>
         <input type="file" accept=".txt" multiple onChange={(e) => e.target.files && addFiles(e.target.files)} />
         {fileContrasts.length > 0 && (
