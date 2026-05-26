@@ -67,6 +67,11 @@ export function SettingsDrawer(props: {
         <input type="range" min={0} max={0.6} step={0.02} value={v.vennTransparency} onChange={(e) => props.onChange({ vennTransparency: +e.target.value })} />
       </label>
 
+      <h3>Method colours (Venn / UpSet)</h3>
+      <label className="ctl">eFDR <input type="color" value={v.efdrColor} onChange={(e) => props.onChange({ efdrColor: e.target.value })} /></label>
+      <label className="ctl">BH <input type="color" value={v.bhColor} onChange={(e) => props.onChange({ bhColor: e.target.value })} /></label>
+      <label className="ctl">Bonferroni <input type="color" value={v.bonfColor} onChange={(e) => props.onChange({ bonfColor: e.target.value })} /></label>
+
       <h3>Palette (global)</h3>
       <label className="ctl-check">
         <input type="checkbox" checked={props.palette === 'colorblind'} onChange={(e) => props.onPalette(e.target.checked ? 'colorblind' : 'default')} />

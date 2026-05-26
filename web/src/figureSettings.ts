@@ -16,6 +16,9 @@ export interface FigureSettings {
   titleText: string;
   titleFontSize: number;
   sortOrder: SortOrder;
+  efdrColor: string;
+  bhColor: string;
+  bonfColor: string;
 }
 
 export const DEFAULT_SETTINGS: FigureSettings = {
@@ -29,6 +32,9 @@ export const DEFAULT_SETTINGS: FigureSettings = {
   titleText: '',
   titleFontSize: 14,
   sortOrder: 'score',
+  efdrColor: '#c0392b',
+  bhColor: '#2e3192',
+  bonfColor: '#2f7d5d',
 };
 
 /** Merge a global partial then a per-figure partial over the defaults (per-figure wins). Pure. */
@@ -54,4 +60,13 @@ export function figureVars(s: FigureSettings): CSSProperties {
   // CSS default size (table 13 / charts 10–11 / venn 13) until explicitly customised.
   if (s.labelFontSize !== DEFAULT_SETTINGS.labelFontSize) vars['--fig-label'] = `${s.labelFontSize}px`;
   return vars as CSSProperties;
+}
+
+/** CSS overrides for the three method colours — only when changed from the default, so theme tokens stay otherwise. */
+export function methodVars(s: FigureSettings): CSSProperties {
+  const v: Record<string, string> = {};
+  if (s.efdrColor !== DEFAULT_SETTINGS.efdrColor) v['--method-efdr'] = s.efdrColor;
+  if (s.bhColor !== DEFAULT_SETTINGS.bhColor) v['--method-bh'] = s.bhColor;
+  if (s.bonfColor !== DEFAULT_SETTINGS.bonfColor) v['--method-bonf'] = s.bonfColor;
+  return v as CSSProperties;
 }

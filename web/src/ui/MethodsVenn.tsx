@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { runComparison } from '../comparison.ts';
 import { venn3Regions, type RegionKey } from '../venn3.ts';
-import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
+import { DEFAULT_SETTINGS, figureVars, methodVars, type FigureSettings } from '../figureSettings.ts';
 
 interface VennInputs { gmtText: string; target: string[]; background: string[] }
 
@@ -28,9 +28,9 @@ export function MethodsVenn(props: { inputs: VennInputs | null; settings?: Figur
   const regions = venn3Regions(comparison.efdr, comparison.bh, comparison.bonferroni);
 
   return (
-    <div className="methods-venn">
+    <div className="methods-venn" style={methodVars(s)}>
       {s.titleText && <h4 className="fig-title-html" style={{ fontSize: s.titleFontSize }}>{s.titleText}</h4>}
-      <svg style={figureVars(s)} width={340 * s.scale} height={280 * s.scale} viewBox="0 0 340 280" role="img" aria-label="Significant terms by correction method">
+      <svg style={figureVars(s)} width={340 * s.scale} height={280 * s.scale} viewBox="0 0 340 280" role="img" aria-label="Venn diagram of significant terms by correction method">
         {CIRCLES.map((c) => (
           <circle key={c.key} cx={c.cx} cy={c.cy} r={R} style={{ fill: c.fill, stroke: c.fill, fillOpacity: s.vennTransparency }} />
         ))}
