@@ -38,11 +38,11 @@ Switch views with the tabs:
 - **Lollipop**, **bar** — ranked effect-size / score plots.
 - **Network** — term–gene graph (deterministic force layout).
 - **Heatmap** — terms × genes overlap.
-- **Methods Venn** — which terms are called significant under eFDR vs BH vs Bonferroni
+- **Venn Diagram** / **UpSet** — which terms are called significant under eFDR vs BH vs Bonferroni
   (the paper's comparison, computed on your data).
 - **Term drill-down** — click a term/dot to see its hit genes and overlap counts.
 
-Interactive results: search the table by term name, drag network nodes to rearrange the graph, and click any Methods-Venn region to list the terms it contains. Every figure shows its score and is clickable for drill-down; network nodes can be dragged within a visible frame; the heatmap labels its gene columns.
+Interactive results: search the table by term name, drag network nodes to rearrange the graph, and click any Methods-Venn region to list the terms it contains. Compare the corrections as a Venn diagram or an UpSet plot (set colours adjustable); click any region/intersection to list its terms. Every figure shows its score and is clickable for drill-down; network nodes can be dragged within a visible frame; the heatmap labels its gene columns.
 
 Each figure has a settings panel (the ⚙ button): adjust font, label size, scale, accent/outline
 colours, and (for the Methods Venn) transparency — globally or per-figure — plus a title and
