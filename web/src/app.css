@@ -178,3 +178,6 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .network { touch-action: none; }
 
 .venn-hit { cursor: pointer; }
+
+.upset { display: flex; flex-direction: column; gap: var(--sp-2); }
+.upset svg text { fill: var(--text); }
