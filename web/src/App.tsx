@@ -13,6 +13,7 @@ import { NetworkPlot } from './ui/NetworkPlot.tsx';
 import { Heatmap } from './ui/Heatmap.tsx';
 import { DrilldownPanel } from './ui/DrilldownPanel.tsx';
 import { MethodsVenn } from './ui/MethodsVenn.tsx';
+import { UpSetPlot } from './ui/UpSetPlot.tsx';
 import { CapsuleBar } from './ui/CapsuleBar.tsx';
 import { fingerprintResult, encodeCapsule, decodeCapsule, capsuleFitsUrl, type Capsule } from './capsule.ts';
 import { ReportView } from './ui/ReportView.tsx';
@@ -31,7 +32,7 @@ const RUN_DEFAULTS = { minNrOfElements: 3, maxNrOfElements: 400 } as const;
 
 const VIEW_TITLES: Record<ViewId, string> = {
   table: 'Results table', lollipop: 'Lollipop', barplot: 'Bar plot',
-  network: 'Term–gene network', heatmap: 'Heatmap', venn: 'Venn Diagram',
+  network: 'Term–gene network', heatmap: 'Heatmap', venn: 'Venn Diagram', upset: 'UpSet plot',
 };
 const titleForView = (v: ViewId): string => VIEW_TITLES[v];
 
@@ -181,6 +182,7 @@ export default function App() {
                           <FigureCard title="Term–gene network" svgExport onSettings={() => openSettings('network')}><NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} /></FigureCard>
                           <FigureCard title="Heatmap" svgExport onSettings={() => openSettings('heatmap')}><Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} /></FigureCard>
                           <FigureCard title="Venn Diagram" svgExport onSettings={() => openSettings('venn')}><MethodsVenn inputs={lastInputs} settings={settingsOf('venn')} /></FigureCard>
+                          <FigureCard title="UpSet plot" svgExport onSettings={() => openSettings('upset')}><UpSetPlot inputs={lastInputs} settings={settingsOf('upset')} /></FigureCard>
                         </div>
                       ) : (
                         <>
@@ -194,6 +196,7 @@ export default function App() {
                                 {viewId === 'network' && <NetworkPlot result={state.result} onSelect={setSelectedId} settings={settingsOf('network')} />}
                                 {viewId === 'heatmap' && <Heatmap result={state.result} onSelect={setSelectedId} settings={settingsOf('heatmap')} />}
                                 {viewId === 'venn' && <MethodsVenn inputs={lastInputs} settings={settingsOf('venn')} />}
+                                {viewId === 'upset' && <UpSetPlot inputs={lastInputs} settings={settingsOf('upset')} />}
                               </FigureCard>
                             </div>
                             {selectedId && (() => {
