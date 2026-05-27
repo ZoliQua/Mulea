@@ -112,6 +112,7 @@ export default function App() {
   return (
     <div className="layout" data-palette={palette}>
       <header className="topbar">
+        <img className="topbar-icon" src="icon.svg" alt="" width={22} height={22} />
         <strong>muleaLab</strong>
         <span className="muted">· client-side enrichment + eFDR</span>
         <span className="mode-toggle">
@@ -147,6 +148,7 @@ export default function App() {
               {state.status === 'done' && (
                 <>
                   {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
+                  <span className="summary-pill">{state.result.rows.filter((r) => (r.eFDR ?? r.adjusted_p_value ?? r.p_value) < 0.05).length} significant terms · {method} &lt; 0.05</span>
                   <button type="button" onClick={() => downloadTsv(state.result)}>⤓ TSV</button>
                   <button type="button" onClick={() => setReport(true)}>⎙ Report</button>
                   <CapsuleBar

@@ -13,6 +13,6 @@ export function OfflineBadge() {
     };
   }, []);
   return online
-    ? <span className="netbadge online" title="Online">● online</span>
-    : <span className="netbadge offline" title="Running locally — no network">● offline — running locally</span>;
+    ? <span className="netbadge online" title="Online">● online · private</span>
+    : <span className="netbadge offline" title="Running locally — no network">● offline · private</span>;
 }
