@@ -32,6 +32,10 @@ test**. You then pick a multiple-testing correction:
 A term is reported **significant when its score (eFDR or adjusted p-value) is below 0.05**.
 
 ### Visualizations
+Refined Slate & Pine look: data marks are coloured by a green significance ramp; the top bar and
+method/contrast controls use segmented pills; results use underline tabs, a summary pill, and a
+significance-dot table.
+
 Switch views with the tabs:
 
 - **Table** — sortable significant-terms table.
