@@ -7,12 +7,13 @@ export function DrilldownPanel(props: { row: ResultRow; meta: AnalysisResult['me
     <aside className="drilldown">
       <button type="button" className="close" onClick={props.onClose} aria-label="Close details">×</button>
       <h3>{d.ontology_name}</h3>
-      <p>score (eFDR/adj): <strong>{d.score.toPrecision(3)}</strong> · p-value: {d.p_value.toExponential(2)}</p>
-      <p>
-        target overlap: {d.nrCommonWithTested}
-        {d.nrCommonWithBackground !== undefined ? ` · background overlap: ${d.nrCommonWithBackground}` : ''}
-        {' '}· pool size: {d.poolSize}
-      </p>
+      <div className="dd-grid">
+        <span className="dd-key">score (eFDR/adj)</span><span className="dd-val"><strong>{d.score.toPrecision(3)}</strong></span>
+        <span className="dd-key">p-value</span><span className="dd-val">{d.p_value.toExponential(2)}</span>
+        <span className="dd-key">target overlap</span><span className="dd-val">{d.nrCommonWithTested}</span>
+        {d.nrCommonWithBackground !== undefined && <><span className="dd-key">background overlap</span><span className="dd-val">{d.nrCommonWithBackground}</span></>}
+        <span className="dd-key">pool size</span><span className="dd-val">{d.poolSize}</span>
+      </div>
       <p>hit genes ({d.hits.length}):</p>
       <div className="hits">{d.hits.length ? d.hits.map((g) => <span key={g} className="gene-pill">{g}</span>) : '—'}</div>
     </aside>
