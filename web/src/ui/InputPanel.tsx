@@ -25,12 +25,12 @@ export function InputPanel(props: {
       <section className="input-card">
         <label>Target genes (one per line)</label>
         <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setTargetText)} />
-        <textarea value={targetText} onChange={(e) => setTargetText(e.target.value)} rows={4} />
+        <textarea value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder="Paste, or load the example…" rows={4} />
       </section>
       <section className="input-card">
         <label>Background genes (one per line)</label>
         <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setBackgroundText)} />
-        <textarea value={backgroundText} onChange={(e) => setBackgroundText(e.target.value)} rows={4} />
+        <textarea value={backgroundText} onChange={(e) => setBackgroundText(e.target.value)} placeholder="Paste, or load the example…" rows={4} />
       </section>
       <div className="actions">
         <button

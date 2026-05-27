@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { AnalysisResult } from '../appTypes.ts';
 import { columnsFor, filterByQuery, filterSignificant, isSignificant, sortRows } from '../tableView.ts';
 import { DEFAULT_SETTINGS, figureVars, type FigureSettings } from '../figureSettings.ts';
+import { scoreToColor } from './colorScale.ts';
+import { rowScore } from '../lollipop.ts';
 
 export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; onSelect?: (id: string) => void; settings?: FigureSettings }) {
   const cols = columnsFor(props.result.method);
@@ -30,11 +32,12 @@ export function ResultsTable(props: { result: AnalysisResult; sigOnly: boolean; 
       <table className="results" style={figureVars(s)}>
         {s.titleText && <caption className="fig-title-html" style={{ captionSide: 'top', textAlign: 'left', fontSize: s.titleFontSize }}>{s.titleText}</caption>}
         <thead>
-          <tr>{cols.map((c) => <th key={c} onClick={() => onHeader(c)}>{c}{sortKey === c ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</th>)}</tr>
+          <tr><th aria-hidden="true" />{cols.map((c) => <th key={c} onClick={() => onHeader(c)}>{c}{sortKey === c ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</th>)}</tr>
         </thead>
         <tbody>
           {rows.map((row) => (
             <tr key={row.ontology_id} className={isSignificant(row) ? 'sig' : ''} onClick={() => props.onSelect?.(row.ontology_id)} style={{ cursor: 'pointer' }}>
+              <td><span className="sig-dot" style={{ background: isSignificant(row) ? scoreToColor(rowScore(row)) : 'var(--border)' }} /></td>
               {cols.map((c) => <td key={c}>{fmt(c, (row as unknown as Record<string, unknown>)[c])}</td>)}
             </tr>
           ))}

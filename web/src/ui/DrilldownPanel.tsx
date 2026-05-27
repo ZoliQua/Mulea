@@ -14,7 +14,7 @@ export function DrilldownPanel(props: { row: ResultRow; meta: AnalysisResult['me
         {' '}· pool size: {d.poolSize}
       </p>
       <p>hit genes ({d.hits.length}):</p>
-      <div className="hits">{d.hits.join(', ') || '—'}</div>
+      <div className="hits">{d.hits.length ? d.hits.map((g) => <span key={g} className="gene-pill">{g}</span>) : '—'}</div>
     </aside>
   );
 }
