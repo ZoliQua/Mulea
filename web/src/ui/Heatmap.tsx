@@ -15,8 +15,8 @@ export function Heatmap(props: { result: AnalysisResult; onSelect?: (id: string)
       {s.titleText && <text className="fig-title" x={8} y={s.titleFontSize} fontSize={s.titleFontSize}>{s.titleText}</text>}
       <g transform={`translate(0, ${titleH})`}>
         {layout.cols.map((col) => (
-          <text key={col.gene} className="fig-value" x={col.x + layout.cellW / 2} y={layout.colLabelH - 4}
-            transform={`rotate(-45 ${col.x + layout.cellW / 2} ${layout.colLabelH - 4})`} textAnchor="start">{col.gene}</text>
+          <text key={col.gene} className="fig-value" x={col.x + layout.cellW / 2} y={layout.colLabelH - 4} fontSize={8.5}
+            transform={`rotate(-60 ${col.x + layout.cellW / 2} ${layout.colLabelH - 4})`} textAnchor="start">{col.gene}</text>
         ))}
         {layout.rows.map((r) => (
           <g key={r.id} style={{ cursor: 'pointer' }} onClick={() => select(r.id)}>
@@ -24,10 +24,15 @@ export function Heatmap(props: { result: AnalysisResult; onSelect?: (id: string)
             <text x={layout.labelW - 4} y={r.y + layout.cellH * 0.7} textAnchor="end">{r.label}</text>
           </g>
         ))}
-        {layout.cells.filter((c) => c.on).map((c) => (
-          <rect key={`${c.r}-${c.c}`} x={layout.cols[c.c]!.x} y={layout.rows[c.r]!.y}
-            width={layout.cellW - 1} height={layout.cellH - 1} style={{ fill: scoreToColor(c.score), cursor: 'pointer' }}
-            onClick={() => select(layout.rows[c.r]!.id)} />
+        {layout.cells.map((c) => (
+          c.on ? (
+            <rect key={`${c.r}-${c.c}`} x={layout.cols[c.c]!.x} y={layout.rows[c.r]!.y} rx={2}
+              width={layout.cellW - 1} height={layout.cellH - 1} style={{ fill: scoreToColor(c.score), cursor: 'pointer' }}
+              onClick={() => select(layout.rows[c.r]!.id)} />
+          ) : (
+            <rect key={`${c.r}-${c.c}`} x={layout.cols[c.c]!.x} y={layout.rows[c.r]!.y} rx={2}
+              width={layout.cellW - 1} height={layout.cellH - 1} style={{ fill: 'var(--surface-2)' }} />
+          )
         ))}
       </g>
     </svg>
