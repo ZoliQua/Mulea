@@ -142,8 +142,8 @@ export default function App() {
           {mode === 'single' ? (
             <>
               {replay === 'invalid' && <p className="error">This shared link is invalid.</p>}
-              {state.status === 'idle' && replay !== 'invalid' && <p className="muted">Load inputs (or the example) and press Run.</p>}
-              {state.status === 'running' && <p className="muted">Computing…</p>}
+              {state.status === 'idle' && replay !== 'invalid' && <div className="state-card">Load inputs (or the example) and press Run.</div>}
+              {state.status === 'running' && <div className="state-card">Computing… resampling background for eFDR</div>}
               {state.status === 'error' && <p className="error">Error: {state.error}</p>}
               {state.status === 'done' && (
                 <>
@@ -215,8 +215,8 @@ export default function App() {
             </>
           ) : (
             <>
-              {mc.state.status === 'idle' && <p className="muted">Add a shared ontology + background and ≥2 contrasts, then Compare.</p>}
-              {mc.state.status === 'running' && <p className="muted">Computing…</p>}
+              {mc.state.status === 'idle' && <div className="state-card">Add a shared ontology + background and ≥2 contrasts, then Compare.</div>}
+              {mc.state.status === 'running' && <div className="state-card">Computing…</div>}
               {mc.state.status === 'error' && <p className="error">Error: {mc.state.error}</p>}
               {mc.state.status === 'done' && mcMatrix && (
                 <div className="view-row">
