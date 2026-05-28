@@ -1,8 +1,15 @@
 // Dependency-free native test driver for the pure-C++ eFDR core.
 // Build/run via ./build-native.sh. Exits nonzero if any check fails.
+#include <clocale>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
+#include <fstream>
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "efdr_convert.h"
@@ -148,12 +155,179 @@ static void test_efdr_convert_edge() {
   CHECK_NEAR(empty[0], 0.0, 1e-12);
 }
 
-int main(int /*argc*/, char** /*argv*/) {
-  // argv[1] = repo root path; used in later tasks (efdr_core parity test).
+struct GmtTerm {
+  std::string id;
+  std::vector<std::string> genes;  // raw gene fields (no dedupe), as mulea reads them
+};
+
+// Parse a GMT: lines of "id<TAB>name<TAB>gene1<TAB>gene2...". Genes are fields[2:].
+static std::vector<GmtTerm> parse_gmt(const std::string& path) {
+  std::vector<GmtTerm> terms;
+  std::ifstream in(path);
+  std::string line;
+  while (std::getline(in, line)) {
+    if (line.empty()) continue;
+    std::vector<std::string> fields;
+    std::string f;
+    std::stringstream ss(line);
+    while (std::getline(ss, f, '\t')) fields.push_back(f);
+    if (fields.size() < 3) continue;  // need id, name, >=1 gene
+    GmtTerm t;
+    t.id = fields[0];
+    for (size_t i = 2; i < fields.size(); ++i) {
+      if (!fields[i].empty()) t.genes.push_back(fields[i]);
+    }
+    terms.push_back(std::move(t));
+  }
+  return terms;
+}
+
+// Read a newline-delimited gene list (target/background), trimming trailing CR/whitespace.
+static std::vector<std::string> read_lines(const std::string& path) {
+  std::vector<std::string> out;
+  std::ifstream in(path);
+  std::string line;
+  while (std::getline(in, line)) {
+    while (!line.empty() && (line.back() == '\r' || line.back() == ' ' || line.back() == '\t'))
+      line.pop_back();
+    if (!line.empty()) out.push_back(line);
+  }
+  return out;
+}
+
+// Split a CSV line honoring simple double-quoted fields (no embedded commas expected here).
+static std::vector<std::string> split_csv(const std::string& line) {
+  std::vector<std::string> out;
+  std::string cur;
+  bool inq = false;
+  for (char c : line) {
+    if (c == '"') inq = !inq;
+    else if (c == ',' && !inq) { out.push_back(cur); cur.clear(); }
+    else cur.push_back(c);
+  }
+  out.push_back(cur);
+  return out;
+}
+
+static void test_ecoli_parity(const std::string& root) {
+  std::setlocale(LC_NUMERIC, "C");  // fixture floats use '.' decimals; stod must not honour a comma locale
+  const std::string ext = root + "/inst/extdata/";
+  auto terms = parse_gmt(ext + "Transcription_factor_RegulonDB_Escherichia_coli_GeneSymbol.gmt");
+  auto target = read_lines(ext + "target_set.txt");
+  auto background = read_lines(ext + "background_set.txt");
+
+  if (terms.empty() || background.empty()) {
+    std::fprintf(stderr, "SKIP parity: example data not found under %s\n", ext.c_str());
+    ++g_failures;  // treat missing data as a failure so it is never silently skipped
+    return;
+  }
+
+  // filter_ontology(min=3, max=400): STRICT inequalities -> keep raw gene count in (3, 400).
+  std::vector<GmtTerm> filtered;
+  for (auto& t : terms) {
+    int n = (int)t.genes.size();
+    if (n > 3 && n < 400) filtered.push_back(t);
+  }
+
+  // pool = background; select = intersect(target, pool); ids over union(term genes, pool).
+  std::set<std::string> poolSet(background.begin(), background.end());
+  std::set<std::string> targetSet(target.begin(), target.end());
+  std::set<std::string> selectSet;
+  for (const auto& g : targetSet) if (poolSet.count(g)) selectSet.insert(g);
+
+  std::unordered_map<std::string, int> geneId;
+  auto idOf = [&](const std::string& g) -> int {
+    auto it = geneId.find(g);
+    if (it != geneId.end()) return it->second;
+    int id = (int)geneId.size();
+    geneId.emplace(g, id);
+    return id;
+  };
+  // assign ids: pool first, then any term-only genes
+  for (const auto& g : background) idOf(g);
+  for (const auto& t : filtered) for (const auto& g : t.genes) idOf(g);
+  const int nGenes = (int)geneId.size();
+
+  // CSR category arrays (raw term genes); assert no intra-term duplicate genes.
+  std::vector<int> categoryGenes, categoryOffsets = {0};
+  for (const auto& t : filtered) {
+    std::set<std::string> uniq(t.genes.begin(), t.genes.end());
+    CHECK(uniq.size() == t.genes.size());  // dataset assumption: no duplicate genes in a term
+    for (const auto& g : t.genes) categoryGenes.push_back(idOf(g));
+    categoryOffsets.push_back((int)categoryGenes.size());
+  }
+  std::vector<int> poolIds;
+  for (const auto& g : background) poolIds.push_back(idOf(g));
+  const int poolSize = (int)poolIds.size();
+  const int selectSize = (int)selectSet.size();
+  const int nCategories = (int)filtered.size();
+
+  // observed overlaps per term (set intersection, like R initialize_result_df)
+  std::vector<int> cs(nCategories), cp(nCategories);
+  for (int i = 0; i < nCategories; ++i) {
+    std::set<std::string> tg(filtered[i].genes.begin(), filtered[i].genes.end());
+    int a = 0, b = 0;
+    for (const auto& g : tg) { if (poolSet.count(g)) ++b; if (selectSet.count(g)) ++a; }
+    cs[i] = a; cp[i] = b;
+  }
+
+  // Load the R fixture: ontology_id -> (nr_tested, nr_background, p_value, eFDR)
+  std::ifstream fx(root + "/python/tests/fixtures/ora_efdr_reference.csv");
+  CHECK(fx.good());
+  if (!fx.good()) { return; }  // single actionable failure instead of 154 cascaded ones
+  struct Ref { int tested, background; double p, efdr; };
+  std::map<std::string, Ref> ref;
+  std::string line;
+  std::getline(fx, line);  // header
+  while (std::getline(fx, line)) {
+    if (line.empty()) continue;
+    auto c = split_csv(line);
+    if (c.size() < 6) continue;
+    ref[c[0]] = Ref{std::stoi(c[2]), std::stoi(c[3]), std::stod(c[4]), std::stod(c[5])};
+  }
+  CHECK(ref.size() == (size_t)nCategories);  // filter must reproduce the fixture's term set
+
+  // (a) DETERMINISTIC check first: counts + observed p-value must match the fixture exactly.
+  for (int i = 0; i < nCategories; ++i) {
+    auto it = ref.find(filtered[i].id);
+    CHECK(it != ref.end());
+    if (it == ref.end()) continue;
+    if (cs[i] != it->second.tested || cp[i] != it->second.background) {
+      ++g_failures;
+      std::fprintf(stderr, "FAIL %s:%d: term %s cs=%d/%d cp=%d/%d (got/expected)\n",
+                   __FILE__, __LINE__, filtered[i].id.c_str(),
+                   cs[i], it->second.tested, cp[i], it->second.background);
+    } else {
+      g_checks += 2;  // count the two equality checks that passed
+    }
+    // p-value: log-space hypergeometric; double round-trip error is well below 1e-9 per term
+    double pObs = efdr::hyperUpperTail(cs[i], cp[i], poolSize, selectSize);
+    CHECK_NEAR(pObs, it->second.p, 1e-9);
+  }
+
+  // (b) MC parity: simulate 100k steps, convert, compare eFDR within tolerance.
+  const long long steps = 100000;
+  auto hist = efdr::simulate(categoryGenes.data(), categoryOffsets.data(), nCategories,
+                             poolIds.data(), poolSize, selectSize, (int)steps, 42u, nGenes);
+  auto efdr = efdr::efdrFromSimulation(cs, cp, hist, poolSize, selectSize, steps);
+
+  double maxDiff = 0.0;
+  for (int i = 0; i < nCategories; ++i) {
+    auto it = ref.find(filtered[i].id);
+    if (it == ref.end()) continue;
+    maxDiff = std::max(maxDiff, std::fabs(efdr[i] - it->second.efdr));
+  }
+  std::fprintf(stderr, "ecoli parity: %d terms, max |eFDR_cpp - eFDR_R| = %.4f\n", nCategories, maxDiff);
+  CHECK(maxDiff <= 0.01);  // MC-to-MC at 100k steps (noise ~0.003); tighten in README if better
+}
+
+int main(int argc, char** argv) {
+  std::string root = argc > 1 ? argv[1] : ".";
   test_hyper();
   test_simulate();
   test_efdr_convert();
   test_efdr_convert_edge();
+  test_ecoli_parity(root);
   std::fprintf(stderr, "%d checks, %d failures\n", g_checks, g_failures);
   return g_failures ? 1 : 0;
 }
