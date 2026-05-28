@@ -18,7 +18,7 @@ this core is the resampling counterpart and the seed for a future shared cross-l
 | `test_efdr.cpp` | Native tests: hyper, core correctness/determinism, conversion sanity, E. coli parity. |
 | `example_data.h` | Synthetic fixtures for the deterministic unit tests. |
 | `build-native.sh` | Build + run the tests with `clang++`. **This is the verified build.** |
-| `binding.cpp`, `build-wasm.sh` | Emscripten binding + `emcc` command. **Not built in this repo — run by the user.** |
+| `binding.cpp`, `build-wasm.sh` | Emscripten binding + `emcc` command. **Not built in this repo — run by the user.** Build script emits artifacts to `web/src/wasm/` with `ENVIRONMENT=web,worker,node`. |
 
 ## Build & test (native — verified)
 
@@ -36,15 +36,21 @@ fixture exactly (deterministic); the MC eFDR agrees within the tolerance asserte
 (`max |eFDR_cpp − eFDR_R| ≤ 0.01`). Measured on the committed data: **154 terms, max
 |eFDR_cpp − eFDR_R| = 0.0012**.
 
+Web wiring + browser/worker proof: Phase B1 (web/src/wasm/, web/tests/, web/e2e/).
+
 ## Build to WebAssembly (NOT built in this repo)
 
 Emscripten is **not** installed in this repo and the `.wasm` is **not** produced or verified here.
+The currently committed artifacts were built with `ENVIRONMENT=web,worker`; they are verified
+node-loadable when the caller passes `wasmBinary` (a future rebuild adds the `node` env flag
+with no behavior change).
+
 To build it yourself:
 
 ```bash
 git clone https://github.com/emscripten-core/emsdk && cd emsdk
 ./emsdk install latest && ./emsdk activate latest && source ./emsdk_env.sh
-cd /path/to/mulea && ./wasm/build-wasm.sh   # → wasm/efdr_core.js + wasm/efdr_core.wasm
+cd /path/to/mulea && ./wasm/build-wasm.sh   # → web/src/wasm/efdr_core.js + web/src/wasm/efdr_core.wasm
 ```
 
 ### WASM ABI
