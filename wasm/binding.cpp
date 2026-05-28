@@ -24,7 +24,9 @@ int* efdr_simulate(const int* categoryGenes, const int* categoryOffsets, int nCa
   std::vector<efdr::SimBin> hist = efdr::simulate(categoryGenes, categoryOffsets, nCategories,
                                                   poolIds, poolSize, selectSize, steps, seed, nGenes);
   *outBins = (int)hist.size();
+  if (hist.empty()) return nullptr;  // JS side must check: 0 bins -> null, nothing to read/free
   int* buf = (int*)std::malloc(sizeof(int) * 3 * hist.size());
+  if (buf == nullptr) { *outBins = 0; return nullptr; }
   for (size_t i = 0; i < hist.size(); ++i) {
     buf[3 * i + 0] = hist[i].poolIntersect;
     buf[3 * i + 1] = hist[i].selectIntersect;

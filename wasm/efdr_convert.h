@@ -19,6 +19,8 @@ std::vector<int> rObsRanks(const std::vector<double>& pValues);
 //   null p   = hyperUpperTail(selectIntersect, poolIntersect, poolSize, selectSize) per bin
 //   R_exp_j  = sum of bin counts with round15(null-p) <= round15(pObs_j)  (sort + cumsum)
 //   eFDR_j   = min((R_exp_j / steps) / R_obs_j, 1)
+// The min(.,1) clamp follows the web port (web/src/efdr.ts); base R set.based.enrichment.test
+// does not clamp FDR. (For the E. coli fixture all eFDR <= 1, so the two agree there.)
 // commonInSelect[j] / commonInPool[j] are the OBSERVED overlaps of term j.
 std::vector<double> efdrFromSimulation(
     const std::vector<int>& commonInSelect, const std::vector<int>& commonInPool,

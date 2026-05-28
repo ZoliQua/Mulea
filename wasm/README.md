@@ -51,6 +51,9 @@ cd /path/to/mulea && ./wasm/build-wasm.sh   # → wasm/efdr_core.js + wasm/efdr_
 
 `int* efdr_simulate(categoryGenes, categoryOffsets, nCategories, poolIds, poolSize, selectSize,
 steps, seed, nGenes, int* outBins)` returns a malloc'd `int32` buffer of `*outBins` triples
-`[poolIntersect, selectIntersect, count, ...]`; free it with `efdr_free(ptr)`. The JS/TS consumer
-maps gene names → ids, calls `efdr_simulate`, reads the histogram from `HEAP32`, then applies the
-`efdr_convert` logic (ported to TS) to obtain per-term eFDR. Browser/worker wiring is **Phase B**.
+`[poolIntersect, selectIntersect, count, ...]`; free it with `efdr_free(ptr)`. Returns `null` when
+the histogram is empty (`*outBins == 0`, nothing to read or free) or on `malloc` failure
+(`*outBins` is reset to 0 in that case) — the JS side must check for a null pointer before reading
+from `HEAP32`. The JS/TS consumer maps gene names → ids, calls `efdr_simulate`, reads the histogram
+from `HEAP32`, then applies the `efdr_convert` logic (ported to TS) to obtain per-term eFDR.
+Browser/worker wiring is **Phase B**.
