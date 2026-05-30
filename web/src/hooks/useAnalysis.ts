@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import type { AnalysisInput, AnalysisResult } from '../appTypes.ts';
+import { usesMcWorker } from '../analysis.ts';
 
 type State =
   | { status: 'idle' }
@@ -13,7 +14,10 @@ export function useAnalysis() {
 
   const run = useCallback((input: AnalysisInput) => {
     workerRef.current?.terminate();
-    const worker = new Worker(new URL('../worker/analysis.worker.ts', import.meta.url), { type: 'module' });
+    const url = usesMcWorker(input)
+      ? new URL('../worker/mcEfdr.worker.ts', import.meta.url)
+      : new URL('../worker/analysis.worker.ts', import.meta.url);
+    const worker = new Worker(url, { type: 'module' });
     workerRef.current = worker;
     setState({ status: 'running' });
     worker.onmessage = (e: MessageEvent<{ ok: boolean; result?: AnalysisResult; error?: string }>) => {
