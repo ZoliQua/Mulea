@@ -1,5 +1,7 @@
 export type Method = 'eFDR' | 'BH' | 'bonferroni';
 
+export type EfdrMode = 'exact' | 'resampling';
+
 export interface AnalysisInput {
   gmtText: string;
   target: string[];
@@ -7,6 +9,9 @@ export interface AnalysisInput {
   method: Method;
   minNrOfElements: number;
   maxNrOfElements: number;
+  efdrMode?: EfdrMode;
+  steps?: number;
+  seed?: number;
 }
 
 export interface ResultRow {
@@ -20,9 +25,21 @@ export interface ResultRow {
   hits?: string[];
 }
 
+export interface EfdrDiagnostics {
+  steps: number;
+  seed: number;
+  runtimeMs: number;
+  maxAbsDeltaVsExact: number;
+  termsCompared: number;
+  withinNoise: boolean;
+  clampedToOne: boolean;
+}
+
 export interface AnalysisResult {
   rows: ResultRow[];
   method: Method;
   meta: { nTerms: number; nTargetDropped: number; poolSize: number };
   warnings: string[];
+  efdrMode?: EfdrMode;
+  diagnostics?: EfdrDiagnostics;
 }
