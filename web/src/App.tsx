@@ -18,6 +18,7 @@ import { CapsuleBar } from './ui/CapsuleBar.tsx';
 import { fingerprintResult, encodeCapsule, decodeCapsule, capsuleFitsUrl, type Capsule } from './capsule.ts';
 import { ReportView } from './ui/ReportView.tsx';
 import { OfflineBadge } from './ui/OfflineBadge.tsx';
+import { DiagnosticsPanel } from './ui/DiagnosticsPanel.tsx';
 import { MultiContrastPanel } from './ui/MultiContrastPanel.tsx';
 import { DotPlot } from './ui/DotPlot.tsx';
 import { useMultiContrast } from './hooks/useMultiContrast.ts';
@@ -154,6 +155,7 @@ export default function App() {
                 <>
                   {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
                   <span className="summary-pill">{state.result.rows.filter((r) => (r.eFDR ?? r.adjusted_p_value ?? r.p_value) < 0.05).length} significant terms · {method} &lt; 0.05</span>
+                  {state.result.diagnostics && <DiagnosticsPanel d={state.result.diagnostics} />}
                   <button type="button" onClick={() => downloadTsv(state.result)}>⤓ TSV</button>
                   <button type="button" onClick={() => setReport(true)}>⎙ Report</button>
                   <CapsuleBar
