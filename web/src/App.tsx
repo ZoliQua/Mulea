@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { AnalysisInput, Method } from './appTypes.ts';
+import type { AnalysisInput, Method, EfdrMode } from './appTypes.ts';
 import { useAnalysis } from './hooks/useAnalysis.ts';
 import { InputPanel } from './ui/InputPanel.tsx';
 import { Controls } from './ui/Controls.tsx';
@@ -51,6 +51,10 @@ export default function App() {
   const [mcSelected, setMcSelected] = useState<{ contrast: string; term: string } | null>(null);
   const [loaded] = useState(() => readCapsuleFromHash());
   const [method, setMethod] = useState<Method>(loaded?.cap?.inputs.method ?? 'eFDR');
+  const capEfdr = loaded?.cap?.inputs as { efdrMode?: EfdrMode; steps?: number; seed?: number } | undefined;
+  const [efdrMode, setEfdrMode] = useState<EfdrMode>(capEfdr?.efdrMode ?? 'exact');
+  const [steps, setSteps] = useState<number>(capEfdr?.steps ?? 100000);
+  const [seed, setSeed] = useState<number>(capEfdr?.seed ?? 42);
   const [sigOnly, setSigOnly] = useState(false);
   const [lastInputs, setLastInputs] = useState<Omit<AnalysisInput, 'method' | 'minNrOfElements' | 'maxNrOfElements'> | null>(
     loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : null,
@@ -68,15 +72,15 @@ export default function App() {
   const [settingsTab, setSettingsTab] = useState<'global' | 'figure'>('figure');
 
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
-    setShareUrl(null); // a freshly-shared URL must reflect the new run, not a stale one
+    setShareUrl(null);
     setLastInputs(i);
-    run({ ...i, method, ...RUN_DEFAULTS });
+    run({ ...i, method, efdrMode, steps, seed, ...RUN_DEFAULTS });
   };
   useEffect(() => {
     setShareUrl(null);
-    if (lastInputs && mode === 'single') run({ ...lastInputs, method, ...RUN_DEFAULTS });
+    if (lastInputs && mode === 'single') run({ ...lastInputs, method, efdrMode, steps, seed, ...RUN_DEFAULTS });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [method]);
+  }, [method, efdrMode]);
 
   const doneResult = state.status === 'done' ? state.result : null;
   const currentFp = useMemo(() => (doneResult ? fingerprintResult(doneResult) : null), [doneResult]);
@@ -138,7 +142,8 @@ export default function App() {
           <PrivacyNote />
         </aside>
         <main className="right">
-          <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly} />
+          <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}
+            efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} />
           {mode === 'single' ? (
             <>
               {replay === 'invalid' && <p className="error">This shared link is invalid.</p>}
