@@ -72,6 +72,32 @@ the top bar and persists across sessions.
 > Method reference: Turek et al., *mulea: an R package for enrichment analysis using multiple
 > ontologies and empirical false discovery rate*, **BMC Bioinformatics** 2024, **25**:334.
 
+## Testing
+
+Three tiers, all client-side:
+
+- **Node unit/parity** — `npm test` (Vitest `node` project). Pure-logic tests plus the WASM
+  Monte-Carlo eFDR parity (`tests/efdrMc.test.ts`): the WASM engine's eFDR matches the deterministic
+  analytic path and the R-generated fixture (`python/tests/fixtures/ora_efdr_reference.csv`) within
+  Monte-Carlo tolerance (≤ 0.01). The node tests load the WASM via `wasmBinary`.
+- **Browser engine** — `npm run test:browser` (Vitest `browser` project, real headless Chromium via
+  the Playwright provider). Runs the WASM engine and the `mcEfdr` Web Worker in a real browser,
+  fetching `efdr_core.wasm` via `import.meta.url` (`tests/browser/**`). Requires
+  `npx playwright install chromium` once.
+- **App e2e** — `npm run test:e2e` (`@playwright/test`, built preview on :4173). Drives the app:
+  load example → run → results table; correction-method toggle; every result view's SVG; dashboard +
+  drilldown; TSV export; Report; capsule share → replay; multi-contrast; theme/help/settings drawers.
+
+Run everything: `npm run test:all` (node + browser, then e2e) — or the three commands above.
+
+### WASM artifacts
+
+The compiled eFDR core lives at `web/src/wasm/efdr_core.{js,wasm}`, committed prebuilt (built from
+`src/set-based-enrichment-test.cpp` via `wasm/build-wasm.sh`; Emscripten not required to develop or
+build the web app). Note: the production `vite build` does not yet bundle `efdr_core.wasm` because no
+shipped UI path imports the Monte-Carlo worker (the UI uses the analytic eFDR); the WASM is exercised
+in-browser by the Tier-2 tests. Wiring the MC worker into the UI is a later phase.
+
 ## Develop
 - `npm install`
 - `npm run dev` — local dev server
