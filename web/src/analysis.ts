@@ -2,11 +2,13 @@ import { parseGmt } from './io.ts';
 import { filterOntology } from './ontology.ts';
 import { ora } from './ora.ts';
 import { setBasedEnrichmentTest } from './efdr.ts';
-import type { AnalysisInput, AnalysisResult, ResultRow, EfdrMode } from './appTypes.ts';
+import { setBasedEnrichmentTestMc } from './efdrMc.ts';
+import type { AnalysisInput, AnalysisResult, ResultRow, EfdrMode, EfdrDiagnostics } from './appTypes.ts';
+import type { GmtTerm } from './types.ts';
+
+const NOISE_FACTOR = 3;
 
 export interface ResolvedEfdr { mode: EfdrMode; steps: number; seed: number }
-
-/** Resolve eFDR sub-mode + params with B2 defaults (exact / 100000 / 42). */
 export function resolveEfdr(input: AnalysisInput): ResolvedEfdr {
   const mode: EfdrMode = input.efdrMode === 'resampling' ? 'resampling' : 'exact';
   const steps = typeof input.steps === 'number' && Number.isFinite(input.steps) && input.steps >= 1
@@ -15,35 +17,76 @@ export function resolveEfdr(input: AnalysisInput): ResolvedEfdr {
   return { mode, steps, seed };
 }
 
-/** Pure orchestration: parse → filter → ora/eFDR → unified AnalysisResult. */
-export function runAnalysis(input: AnalysisInput): AnalysisResult {
+/** True iff this input must run through the async WASM Monte-Carlo worker. */
+export function usesMcWorker(input: AnalysisInput): boolean {
+  return input.method === 'eFDR' && input.efdrMode === 'resampling';
+}
+
+interface Prepared { gmt: GmtTerm[]; select: Set<string>; nTargetDropped: number; poolSize: number }
+function prepare(input: AnalysisInput): Prepared {
   const gmt = filterOntology(parseGmt(input.gmtText), input.minNrOfElements, input.maxNrOfElements);
   const pool = new Set(input.background);
-  const nTargetDropped = input.target.filter((g) => !pool.has(g)).length;
-
-  let rows: ResultRow[];
-  if (input.method === 'eFDR') {
-    rows = setBasedEnrichmentTest(gmt, input.target, input.background);
-  } else {
-    rows = ora(gmt, input.target, input.background, input.method);
-  }
-
   const select = new Set(input.target.filter((g) => pool.has(g)));
+  const nTargetDropped = input.target.filter((g) => !pool.has(g)).length;
+  return { gmt, select, nTargetDropped, poolSize: pool.size };
+}
+
+function finalize(
+  prep: Prepared,
+  input: AnalysisInput,
+  rows: ResultRow[],
+  extra?: { efdrMode?: EfdrMode; diagnostics?: EfdrDiagnostics },
+): AnalysisResult {
   const rowsWithHits: ResultRow[] = rows.map((row, i) => ({
     ...row,
-    hits: (gmt[i]?.list_of_values ?? []).filter((g) => select.has(g)),
+    hits: (prep.gmt[i]?.list_of_values ?? []).filter((g) => prep.select.has(g)),
   }));
-
   const warnings: string[] = [];
-  if (nTargetDropped > 0) {
-    warnings.push(`${nTargetDropped} target gene(s) are not in the background and were dropped.`);
-  }
-  if (gmt.length === 0) warnings.push('No ontology terms passed the size filter.');
-
+  if (prep.nTargetDropped > 0) warnings.push(`${prep.nTargetDropped} target gene(s) are not in the background and were dropped.`);
+  if (prep.gmt.length === 0) warnings.push('No ontology terms passed the size filter.');
   return {
     rows: rowsWithHits,
     method: input.method,
-    meta: { nTerms: gmt.length, nTargetDropped, poolSize: pool.size },
+    meta: { nTerms: prep.gmt.length, nTargetDropped: prep.nTargetDropped, poolSize: prep.poolSize },
     warnings,
+    ...(extra?.efdrMode ? { efdrMode: extra.efdrMode } : {}),
+    ...(extra?.diagnostics ? { diagnostics: extra.diagnostics } : {}),
   };
+}
+
+/** Synchronous path: exact eFDR / BH / Bonferroni. */
+export function runAnalysis(input: AnalysisInput): AnalysisResult {
+  const prep = prepare(input);
+  const rows: ResultRow[] = input.method === 'eFDR'
+    ? setBasedEnrichmentTest(prep.gmt, input.target, input.background)
+    : ora(prep.gmt, input.target, input.background, input.method);
+  return finalize(prep, input, rows, input.method === 'eFDR' ? { efdrMode: 'exact' } : undefined);
+}
+
+/** Async resampling path: WASM Monte-Carlo eFDR + exact-analytic convergence diagnostics. */
+export async function runAnalysisMc(input: AnalysisInput): Promise<AnalysisResult> {
+  const { steps, seed } = resolveEfdr(input);
+  const prep = prepare(input);
+  const t0 = performance.now();
+  const mcRows = await setBasedEnrichmentTestMc(prep.gmt, input.target, input.background, steps, seed);
+  const runtimeMs = performance.now() - t0;
+  const exactRows = setBasedEnrichmentTest(prep.gmt, input.target, input.background);
+  let maxAbsDeltaVsExact = 0;
+  let termsCompared = 0;
+  let clampedToOne = false;
+  for (let i = 0; i < mcRows.length; i++) {
+    const m = mcRows[i]!.eFDR;
+    const e = exactRows[i]!.eFDR;
+    if (Number.isFinite(m) && Number.isFinite(e)) {
+      maxAbsDeltaVsExact = Math.max(maxAbsDeltaVsExact, Math.abs(m - e));
+      termsCompared++;
+    }
+    if (m === 1) clampedToOne = true;
+  }
+  const diagnostics: EfdrDiagnostics = {
+    steps, seed, runtimeMs, maxAbsDeltaVsExact, termsCompared,
+    withinNoise: maxAbsDeltaVsExact <= NOISE_FACTOR / Math.sqrt(steps),
+    clampedToOne,
+  };
+  return finalize(prep, input, mcRows as ResultRow[], { efdrMode: 'resampling', diagnostics });
 }
