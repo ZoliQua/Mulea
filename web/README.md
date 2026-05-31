@@ -90,6 +90,17 @@ Three tiers, all client-side:
 
 Run everything: `npm run test:all` (node + browser, then e2e) — or the three commands above.
 
+### eFDR modes
+
+The web app offers two eFDR computations under the **eFDR** correction:
+- **Exact (analytic)** — deterministic, instant; the n→∞ limit of mulea's resampling (default).
+- **Resampling (Monte-Carlo)** — the WASM core running N permutations (default 100000, seed 42, both
+  editable). Deterministic given the seed, so results are reproducible and shareable. A diagnostics
+  panel reports runtime and the max |ΔeFDR| vs the exact analytic value as a convergence check. The
+  chosen mode + steps + seed are recorded in the share capsule, the Report, and the TSV export.
+
+`runAnalysisMc` (the Monte-Carlo path) is covered by node parity tests and by the browser/e2e tier.
+
 ### WASM artifacts
 
 The compiled eFDR core lives at `web/src/wasm/efdr_core.{js,wasm}`, committed prebuilt (built from
