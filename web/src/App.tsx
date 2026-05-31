@@ -99,7 +99,7 @@ export default function App() {
   const mcDoneResult = mc.state.status === 'done' ? mc.state.result : null;
   const mcMatrix = useMemo(() => (mcDoneResult ? dotMatrix(mcDoneResult) : null), [mcDoneResult]);
   const runMulti = (i: { gmtText: string; background: string[]; contrasts: Contrast[] }) =>
-    mc.run({ ...i, method, ...RUN_DEFAULTS });
+    mc.run({ ...i, method, efdrMode, steps, seed, ...RUN_DEFAULTS });
   const switchMode = (m: 'single' | 'multi') => { setMode(m); setReport(false); setSelectedId(null); setMcSelected(null); };
 
   const settingsOf = (id: ViewId): FigureSettings => effectiveSettings(globalSettings, perFigure[id] ?? {});

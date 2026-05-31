@@ -1,5 +1,5 @@
-import type { AnalysisResult, Method } from './appTypes.ts';
-import { runAnalysis } from './analysis.ts';
+import { runAnalysis, runAnalysisMc } from './analysis.ts';
+import type { AnalysisResult, Method, EfdrMode } from './appTypes.ts';
 import { rowScore } from './lollipop.ts';
 
 export interface Contrast { label: string; target: string[] }
@@ -11,6 +11,9 @@ export interface MultiContrastInput {
   method: Method;
   minNrOfElements: number;
   maxNrOfElements: number;
+  efdrMode?: EfdrMode;
+  steps?: number;
+  seed?: number;
 }
 
 export interface MultiContrastResult {
@@ -54,6 +57,20 @@ export function runMultiContrast(input: MultiContrastInput): MultiContrastResult
       }),
     })),
   };
+}
+
+/** Resampling variant: run the async MC engine once per contrast (shared steps/seed). */
+export async function runMultiContrastMc(input: MultiContrastInput): Promise<MultiContrastResult> {
+  const contrasts: { label: string; result: AnalysisResult }[] = [];
+  for (const c of input.contrasts) {
+    const result = await runAnalysisMc({
+      gmtText: input.gmtText, target: c.target, background: input.background, method: input.method,
+      minNrOfElements: input.minNrOfElements, maxNrOfElements: input.maxNrOfElements,
+      efdrMode: input.efdrMode, steps: input.steps, seed: input.seed,
+    });
+    contrasts.push({ label: c.label, result });
+  }
+  return { contrasts };
 }
 
 /** Build the dot-plot matrix: rows = terms significant (score<0.05) in >=1 contrast; cells = present (term, contrast). */
