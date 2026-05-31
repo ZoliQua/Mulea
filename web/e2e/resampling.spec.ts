@@ -57,3 +57,21 @@ test('Report and TSV record the resampling provenance', async ({ page }) => {
   const text = Buffer.concat(chunks).toString('utf8');
   expect(text).toContain('# efdrMode=resampling');
 });
+
+test('editing steps without re-running still shares the displayed result exactly', async ({ page, context }) => {
+  await fillMini(page);
+  await page.getByRole('button', { name: 'Run ▶' }).click();
+  await expect(page.locator('table')).toBeVisible({ timeout: 30000 });
+  await page.getByRole('button', { name: 'Resampling', exact: true }).click();
+  await expect(page.getByRole('note', { name: 'Resampling eFDR diagnostics' })).toBeVisible({ timeout: 60000 });
+  // Change steps WITHOUT pressing Run again — the displayed result is still the 100000-step run.
+  const stepsInput = page.getByRole('spinbutton').first();
+  await stepsInput.fill('5000');
+  // Share now: the capsule must encode the DISPLAYED run's steps (100000), not 5000.
+  await page.getByRole('button', { name: '🔗 Share link' }).click();
+  const url = await page.locator('.share-url').inputValue();
+  expect(url).toContain('#c=');
+  const replay = await context.newPage();
+  await replay.goto(url);
+  await expect(replay.getByText('✓ Reproduced exactly (matches the shared fingerprint)')).toBeVisible({ timeout: 60000 });
+});

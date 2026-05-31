@@ -84,6 +84,8 @@ export default function App() {
 
   const doneResult = state.status === 'done' ? state.result : null;
   const currentFp = useMemo(() => (doneResult ? fingerprintResult(doneResult) : null), [doneResult]);
+  const shareSteps = doneResult?.diagnostics?.steps ?? steps;
+  const shareSeed = doneResult?.diagnostics?.seed ?? seed;
   const capsuleFp = loaded?.cap?.fp ?? null;
   const replay: 'none' | 'ok' | 'differs' | 'invalid' =
     loaded?.invalid ? 'invalid'
@@ -93,8 +95,8 @@ export default function App() {
   // so the guard below reduces to the URL-size check (the only reason the share button is disabled there).
   const shareDisabled = useMemo(() => {
     if (!lastInputs || !currentFp) return true;
-    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, efdrMode, steps, seed, ...RUN_DEFAULTS }, fp: currentFp }));
-  }, [lastInputs, currentFp, method, efdrMode, steps, seed]);
+    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, ...RUN_DEFAULTS }, fp: currentFp }));
+  }, [lastInputs, currentFp, method, efdrMode, shareSteps, shareSeed]);
 
   const mcDoneResult = mc.state.status === 'done' ? mc.state.result : null;
   const mcMatrix = useMemo(() => (mcDoneResult ? dotMatrix(mcDoneResult) : null), [mcDoneResult]);
@@ -160,7 +162,7 @@ export default function App() {
                   <CapsuleBar
                     onShare={() => {
                       if (!lastInputs || !currentFp) return;
-                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, efdrMode, steps, seed, ...RUN_DEFAULTS }, fp: currentFp };
+                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, ...RUN_DEFAULTS }, fp: currentFp };
                       const enc = encodeCapsule(capsule);
                       const url = `${window.location.origin}${window.location.pathname}#c=${enc}`;
                       setShareUrl(url);
