@@ -27,6 +27,13 @@ export function ReportView(props: {
         <header className="report-header">
           <h1>muleaLab — enrichment report</h1>
           <p className="report-method">Multiple-testing correction: <strong>{s.method}</strong></p>
+          {props.result.method === 'eFDR' && (
+            <p className="report-method">eFDR: <strong>{
+              props.result.efdrMode === 'resampling' && props.result.diagnostics
+                ? `resampling (steps = ${props.result.diagnostics.steps}, seed = ${props.result.diagnostics.seed})`
+                : 'exact (analytic)'
+            }</strong></p>
+          )}
           <dl className="report-prov">
             <div><dt>Target genes</dt><dd>{s.nTargetGenes}{s.nTargetDropped ? ` (${s.nTargetDropped} not in background, dropped)` : ''}</dd></div>
             <div><dt>Background genes</dt><dd>{s.nBackgroundGenes}</dd></div>

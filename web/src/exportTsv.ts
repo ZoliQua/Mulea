@@ -6,11 +6,19 @@ const STAT_COLS = ['ontology_id', 'ontology_name', 'p_value', 'adjusted_p_value'
 /** Serialize an AnalysisResult to a TSV string (header + one row per term). */
 export function resultToTsv(result: AnalysisResult): string {
   const cols = result.method === 'eFDR' ? EFDR_COLS : STAT_COLS;
+  const prov: string[] = [`# muleaLab — method=${result.method}`];
+  if (result.method === 'eFDR') {
+    if (result.efdrMode === 'resampling' && result.diagnostics) {
+      prov.push(`# efdrMode=resampling; steps=${result.diagnostics.steps}; seed=${result.diagnostics.seed}`);
+    } else {
+      prov.push('# efdrMode=exact (analytic)');
+    }
+  }
   const header = cols.join('\t');
   const body = result.rows
     .map((row) => cols.map((c) => formatCell((row as unknown as Record<string, unknown>)[c])).join('\t'))
     .join('\n');
-  return `${header}\n${body}\n`;
+  return `${prov.join('\n')}\n${header}\n${body}\n`;
 }
 
 function formatCell(v: unknown): string {
