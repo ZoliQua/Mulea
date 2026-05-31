@@ -1,4 +1,4 @@
-import type { AnalysisResult, Method } from './appTypes.ts';
+import type { AnalysisResult, Method, EfdrMode } from './appTypes.ts';
 import { rowScore } from './lollipop.ts';
 
 export interface Capsule {
@@ -6,6 +6,7 @@ export interface Capsule {
   inputs: {
     gmtText: string; target: string[]; background: string[];
     method: Method; minNrOfElements: number; maxNrOfElements: number;
+    efdrMode?: EfdrMode; steps?: number; seed?: number;
   };
   fp: string;
 }
@@ -64,10 +65,12 @@ function isCapsule(o: unknown): o is Capsule {
   if (c.v !== 1 || typeof c.fp !== 'string') return false;
   const i = c.inputs as Record<string, unknown> | undefined;
   if (!i) return false;
-  return (
-    typeof i.gmtText === 'string' && Array.isArray(i.target) && Array.isArray(i.background) &&
-    typeof i.method === 'string' && typeof i.minNrOfElements === 'number' && typeof i.maxNrOfElements === 'number'
-  );
+  if (!(typeof i.gmtText === 'string' && Array.isArray(i.target) && Array.isArray(i.background) &&
+        typeof i.method === 'string' && typeof i.minNrOfElements === 'number' && typeof i.maxNrOfElements === 'number')) return false;
+  if (i.efdrMode !== undefined && i.efdrMode !== 'exact' && i.efdrMode !== 'resampling') return false;
+  if (i.steps !== undefined && typeof i.steps !== 'number') return false;
+  if (i.seed !== undefined && typeof i.seed !== 'number') return false;
+  return true;
 }
 
 export function capsuleFitsUrl(encoded: string): boolean {

@@ -52,10 +52,9 @@ export default function App() {
   const [mcSelected, setMcSelected] = useState<{ contrast: string; term: string } | null>(null);
   const [loaded] = useState(() => readCapsuleFromHash());
   const [method, setMethod] = useState<Method>(loaded?.cap?.inputs.method ?? 'eFDR');
-  const capEfdr = loaded?.cap?.inputs as { efdrMode?: EfdrMode; steps?: number; seed?: number } | undefined;
-  const [efdrMode, setEfdrMode] = useState<EfdrMode>(capEfdr?.efdrMode ?? 'exact');
-  const [steps, setSteps] = useState<number>(capEfdr?.steps ?? 100000);
-  const [seed, setSeed] = useState<number>(capEfdr?.seed ?? 42);
+  const [efdrMode, setEfdrMode] = useState<EfdrMode>(loaded?.cap?.inputs.efdrMode ?? 'exact');
+  const [steps, setSteps] = useState<number>(loaded?.cap?.inputs.steps ?? 100000);
+  const [seed, setSeed] = useState<number>(loaded?.cap?.inputs.seed ?? 42);
   const [sigOnly, setSigOnly] = useState(false);
   const [lastInputs, setLastInputs] = useState<Omit<AnalysisInput, 'method' | 'minNrOfElements' | 'maxNrOfElements'> | null>(
     loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : null,
@@ -94,8 +93,8 @@ export default function App() {
   // so the guard below reduces to the URL-size check (the only reason the share button is disabled there).
   const shareDisabled = useMemo(() => {
     if (!lastInputs || !currentFp) return true;
-    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, ...RUN_DEFAULTS }, fp: currentFp }));
-  }, [lastInputs, currentFp, method]);
+    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, efdrMode, steps, seed, ...RUN_DEFAULTS }, fp: currentFp }));
+  }, [lastInputs, currentFp, method, efdrMode, steps, seed]);
 
   const mcDoneResult = mc.state.status === 'done' ? mc.state.result : null;
   const mcMatrix = useMemo(() => (mcDoneResult ? dotMatrix(mcDoneResult) : null), [mcDoneResult]);
@@ -161,7 +160,7 @@ export default function App() {
                   <CapsuleBar
                     onShare={() => {
                       if (!lastInputs || !currentFp) return;
-                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, ...RUN_DEFAULTS }, fp: currentFp };
+                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, efdrMode, steps, seed, ...RUN_DEFAULTS }, fp: currentFp };
                       const enc = encodeCapsule(capsule);
                       const url = `${window.location.origin}${window.location.pathname}#c=${enc}`;
                       setShareUrl(url);
