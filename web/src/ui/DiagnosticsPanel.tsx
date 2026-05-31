@@ -1,6 +1,6 @@
 import type { EfdrDiagnostics } from '../appTypes.ts';
 
-export function DiagnosticsPanel({ d }: { d: EfdrDiagnostics }) {
+export function DiagnosticsPanel({ d, onDownloadQc }: { d: EfdrDiagnostics; onDownloadQc?: () => void }) {
   return (
     <div className="diagnostics" role="note" aria-label="Resampling eFDR diagnostics">
       <strong>Resampling eFDR diagnostics</strong>
@@ -13,6 +13,9 @@ export function DiagnosticsPanel({ d }: { d: EfdrDiagnostics }) {
       </div>
       {d.clampedToOne && (
         <div className="muted">note: ≥1 term at the eFDR=1 ceiling (web clamps to ≤1; base R does not clamp)</div>
+      )}
+      {onDownloadQc && (
+        <button type="button" className="qc-download" onClick={onDownloadQc}>↓ per-term QC</button>
       )}
     </div>
   );

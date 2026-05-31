@@ -7,6 +7,8 @@ import { ResultsTable } from './ui/ResultsTable.tsx';
 import { LollipopChart } from './ui/LollipopChart.tsx';
 import { PrivacyNote } from './ui/PrivacyNote.tsx';
 import { downloadTsv } from './exportTsv.ts';
+import { runAnalysis } from './analysis.ts';
+import { downloadQcCsv } from './efdrQc.ts';
 import { ViewTabs, type ViewId } from './ui/ViewTabs.tsx';
 import { Barplot } from './ui/Barplot.tsx';
 import { NetworkPlot } from './ui/NetworkPlot.tsx';
@@ -156,7 +158,16 @@ export default function App() {
                 <>
                   {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
                   <span className="summary-pill">{state.result.rows.filter((r) => (r.eFDR ?? r.adjusted_p_value ?? r.p_value) < 0.05).length} significant terms · {method} &lt; 0.05</span>
-                  {state.result.diagnostics && <DiagnosticsPanel d={state.result.diagnostics} />}
+                  {state.result.diagnostics && (
+                    <DiagnosticsPanel
+                      d={state.result.diagnostics}
+                      onDownloadQc={() => {
+                        if (!lastInputs || !doneResult) return;
+                        const exact = runAnalysis({ ...lastInputs, method: 'eFDR', efdrMode: 'exact', ...RUN_DEFAULTS });
+                        downloadQcCsv(doneResult, exact);
+                      }}
+                    />
+                  )}
                   <button type="button" onClick={() => downloadTsv(state.result)}>⤓ TSV</button>
                   <button type="button" onClick={() => setReport(true)}>⎙ Report</button>
                   <CapsuleBar
