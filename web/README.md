@@ -101,6 +101,10 @@ The web app offers two eFDR computations under the **eFDR** correction:
 
 `runAnalysisMc` (the Monte-Carlo path) is covered by node parity tests and by the browser/e2e tier.
 
+Resampling extras: a 🎲 button fills a fresh random seed; a per-term QC table (MC vs exact analytic
+eFDR) is downloadable from the diagnostics panel; multi-contrast runs show per-contrast convergence;
+a soft hint appears when steps exceed 1,000,000.
+
 ### WASM artifacts
 
 The compiled eFDR core lives at `web/src/wasm/efdr_core.{js,wasm}`, committed prebuilt (built from
