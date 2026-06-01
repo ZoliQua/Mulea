@@ -74,6 +74,8 @@ export default function App() {
   const [settingsFor, setSettingsFor] = useState<ViewId | null>(null);
   const [settingsTab, setSettingsTab] = useState<'global' | 'figure'>('figure');
 
+  const randomizeSeed = () => setSeed(Math.floor(Math.random() * 2 ** 31));
+
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null);
     setLastInputs(i);
@@ -148,7 +150,7 @@ export default function App() {
         </aside>
         <main className="right">
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}
-            efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} />
+            efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} onRandomizeSeed={randomizeSeed} />
           {mode === 'single' ? (
             <>
               {replay === 'invalid' && <p className="error">This shared link is invalid.</p>}
