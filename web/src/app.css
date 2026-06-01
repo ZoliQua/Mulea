@@ -10,16 +10,22 @@
   --r-1: 4px; --r-2: 6px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --border-soft: #eef1f1; --sig-row: #f4faf7; --ramp-lo: #bcddcb; --ramp-hi: #1d5c41;
+  --border-soft: #eef1f1; --sig-row: #f4faf7; --ramp-lo: #3f74d6; --ramp-mid: #9b5fc4; --ramp-hi: #e2574f;
 }
 [data-theme="dark"] {
-  --bg: #0f1518; --surface: #182025; --surface-2: #1f2a30; --border: #2b373d;
-  --text: #e6ebed; --muted: #93a1a9;
-  --accent: #4cae86; --accent-contrast: #0f1518; --accent-weak: #18302a;
-  --score-strong: #b06ad6; --score-mid: #e2685c; --score-weak: #eb9a4f;
-  --method-efdr: #e2685c; --method-bh: #6f7be6; --method-bonf: #4cae86;
-  --danger: #e2685c; --warn: #d8a13a; --ok: #4cae86;
-  --border-soft: #243036; --sig-row: #16241e; --ramp-lo: #2e5a45; --ramp-hi: #6fcea3;
+  /* Deep Lab (docs/design_handoff_deep_lab/mulea-theme.js) */
+  --bg: #050d15;
+  --bg-glow: radial-gradient(1100px 720px at 72% 30%, #103244 0%, #0a1c2a 38%, #060f18 72%);
+  --surface: rgba(14,30,42,0.88); --surface-solid: #0d1e2b; --surface-2: rgba(255,255,255,0.045);
+  --border: rgba(86,178,178,0.20); --border-soft: rgba(140,185,200,0.12);
+  --text: #eaf3f5; --muted: #8ea7b4; --faint: #5d7585;
+  --accent: #2ea58f; --accent-bright: #46c8b2; --accent-contrast: #ffffff; --accent-weak: rgba(46,165,143,0.16);
+  --accent-grad: linear-gradient(135deg, #2fb199 0%, #1f7f8a 100%);
+  --danger: #e2574f; --warn: #d8a13a; --ok: #46c8b2;
+  --sig-row: rgba(46,165,143,0.07);
+  --ramp-lo: #3f74d6; --ramp-mid: #9b5fc4; --ramp-hi: #e2574f;
+  --method-efdr: #e2574f; --method-bh: #9b5fc4; --method-bonf: #46c8b2;
+  --glass-blur: saturate(140%) blur(14px); --glass-shadow: 0 24px 60px -24px rgba(0,0,0,0.7);
 }
 
 * { box-sizing: border-box; }
@@ -201,3 +207,21 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .topbar-icon { width: 22px; height: 22px; border-radius: 6px; flex: 0 0 auto; }
 .topbar strong { font-size: 16px; letter-spacing: -0.01em; }
 .summary-pill { background: var(--accent-weak); color: var(--accent); font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+
+/* ===== Deep Lab dark skin ===== */
+[data-theme="dark"] body { background: var(--bg); background-image: var(--bg-glow); background-attachment: fixed; }
+[data-theme="dark"] .topbar,
+[data-theme="dark"] .input-disclosure,
+[data-theme="dark"] .figure-card,
+[data-theme="dark"] .state-card,
+[data-theme="dark"] .drilldown,
+[data-theme="dark"] .diagnostics,
+[data-theme="dark"] .help-drawer,
+[data-theme="dark"] .settings-drawer {
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+[data-theme="dark"] button.primary { background: var(--accent-grad); border-color: transparent; color: #fff; }
+[data-theme="dark"] .tab.active { color: var(--accent-bright); border-bottom-color: var(--accent-bright); }
+[data-theme="dark"] .summary-pill { color: var(--accent-bright); }
+[data-theme="dark"] .netbadge.online { color: var(--accent-bright); }

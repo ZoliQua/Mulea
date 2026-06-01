@@ -13,7 +13,9 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
-const mockMatch = (dark: boolean) => vi.stubGlobal('matchMedia', (q: string) => ({ matches: dark, media: q }));
+// Simulate an OS colour scheme: matches = true only for the right media query.
+const mockOsDark  = () => vi.stubGlobal('matchMedia', (q: string) => ({ matches: q === '(prefers-color-scheme: dark)',  media: q }));
+const mockOsLight = () => vi.stubGlobal('matchMedia', (q: string) => ({ matches: q === '(prefers-color-scheme: light)', media: q }));
 
 describe('getInitialTheme', () => {
   it('uses a stored light/dark choice', () => {
@@ -21,9 +23,11 @@ describe('getInitialTheme', () => {
     expect(getInitialTheme()).toBe('dark');
   });
   it('falls back to the system preference when nothing stored', () => {
-    mockMatch(true);
+    // OS dark → no explicit light pref → default dark
+    mockOsDark();
     expect(getInitialTheme()).toBe('dark');
-    mockMatch(false);
+    // OS light → explicit light pref wins → light
+    mockOsLight();
     expect(getInitialTheme()).toBe('light');
   });
 });
