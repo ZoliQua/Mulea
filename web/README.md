@@ -4,6 +4,17 @@ Client-side enrichment analysis (ORA + exact eFDR) that runs entirely in the bro
 Companion to the [mulea](https://github.com/ELTEbioinformatics/mulea) R package and the
 `mulealab` Python package; numerically in parity with both.
 
+## Screenshots
+
+The full eFDR feature, captured in a real browser (Chromium) on the bundled *E. coli* example:
+
+| | |
+|---|---|
+| ![Analytic eFDR](screenshots/01-analytic-efdr.png) | ![Resampling diagnostics](screenshots/02-resampling-diagnostics.png) |
+| **Analytic eFDR** (default) — instant, deterministic. | **Resampling (Monte-Carlo) eFDR** with the convergence diagnostics panel (steps/seed, `max \|ΔeFDR\|` vs exact, per-term QC download) and the 🎲 random-seed control. |
+| ![Multi-contrast](screenshots/03-multi-contrast-diagnostics.png) | ![Share replay](screenshots/04-share-replay.png) |
+| **Multi-contrast** dot plot with per-contrast resampling convergence diagnostics. | **Reproducible share link** — a resampling result reopened in a fresh browser, reproduced exactly from the captured seed. |
+
 ## How it works
 
 muleaLab finds gene-set categories (ontology terms) that are over-represented in a list of
