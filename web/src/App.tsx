@@ -23,6 +23,7 @@ import { OfflineBadge } from './ui/OfflineBadge.tsx';
 import { DiagnosticsPanel } from './ui/DiagnosticsPanel.tsx';
 import { MultiContrastPanel } from './ui/MultiContrastPanel.tsx';
 import { DotPlot } from './ui/DotPlot.tsx';
+import { MultiDiagnostics } from './ui/MultiDiagnostics.tsx';
 import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
@@ -240,6 +241,7 @@ export default function App() {
               {mc.state.status === 'done' && mcMatrix && (
                 <div className="view-row">
                   <div className="view-main">
+                    {mcDoneResult && <MultiDiagnostics contrasts={mcDoneResult.contrasts} />}
                     <DotPlot matrix={mcMatrix} onSelect={setMcSelected} />
                   </div>
                   {mcSelected && (() => {
