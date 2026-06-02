@@ -28,6 +28,7 @@ import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
+import { Landing } from './Landing.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
 import { SettingsDrawer } from './ui/SettingsDrawer.tsx';
 import { effectiveSettings, type FigureSettings, type Palette } from './figureSettings.ts';
@@ -54,6 +55,9 @@ export default function App() {
   const [mode, setMode] = useState<'single' | 'multi'>('single');
   const [mcSelected, setMcSelected] = useState<{ contrast: string; term: string } | null>(null);
   const [loaded] = useState(() => readCapsuleFromHash());
+  const [view, setView] = useState<'landing' | 'tool'>(
+    (typeof window !== 'undefined' && window.location.hash.startsWith('#c=')) ? 'tool' : 'landing',
+  );
   const [method, setMethod] = useState<Method>(loaded?.cap?.inputs.method ?? 'eFDR');
   const [efdrMode, setEfdrMode] = useState<EfdrMode>(loaded?.cap?.inputs.efdrMode ?? 'exact');
   const [steps, setSteps] = useState<number>(loaded?.cap?.inputs.steps ?? 100000);
@@ -120,12 +124,23 @@ export default function App() {
     setPerFigure((m) => ({ ...m, [id]: { ...(m[id] ?? {}), ...patch } }));
   };
 
+  if (view === 'landing') {
+    return (
+      <Landing
+        onStart={() => setView('tool')}
+        onDocs={() => window.open('https://github.com/ELTEbioinformatics/mulea', '_blank', 'noopener')}
+      />
+    );
+  }
+
   return (
     <div className="layout" data-palette={palette}>
       <header className="topbar">
-        <img className="topbar-icon" src="icon.svg" alt="" width={22} height={22} />
-        <strong>muleaLab</strong>
-        <span className="muted">· client-side enrichment + eFDR</span>
+        <button type="button" className="home-btn" aria-label="Home" title="Home" onClick={() => setView('landing')}>
+          <img className="topbar-icon" src="icon.svg" alt="" width={22} height={22} />
+          <strong>Mulea</strong>
+        </button>
+        <span className="muted">· enrichment workspace</span>
         <span className="mode-toggle">
           <button type="button" className={mode === 'single' ? 'active' : ''} onClick={() => switchMode('single')}>Single</button>
           <button type="button" className={mode === 'multi' ? 'active' : ''} onClick={() => switchMode('multi')}>Multi-contrast</button>

@@ -225,3 +225,6 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 [data-theme="dark"] .tab.active { color: var(--accent-bright); border-bottom-color: var(--accent-bright); }
 [data-theme="dark"] .summary-pill { color: var(--accent-bright); }
 [data-theme="dark"] .netbadge.online { color: var(--accent-bright); }
+
+.home-btn { display: inline-flex; align-items: center; gap: var(--sp-2); background: none; border: none; padding: 0; cursor: pointer; color: var(--text); }
+.home-btn:hover { background: none; }

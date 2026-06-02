@@ -22,13 +22,13 @@ describe('getInitialTheme', () => {
     store['mulealab-theme'] = 'dark';
     expect(getInitialTheme()).toBe('dark');
   });
-  it('falls back to the system preference when nothing stored', () => {
-    // OS dark → no explicit light pref → default dark
+  it('defaults to dark regardless of OS preference when nothing stored', () => {
+    // OS dark → no explicit pref → default dark
     mockOsDark();
     expect(getInitialTheme()).toBe('dark');
-    // OS light → explicit light pref wins → light
+    // OS light → still dark (dark is the unconditional default)
     mockOsLight();
-    expect(getInitialTheme()).toBe('light');
+    expect(getInitialTheme()).toBe('dark');
   });
 });
 

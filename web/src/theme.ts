@@ -8,7 +8,7 @@ export function getInitialTheme(): Theme {
     const stored = localStorage.getItem(KEY);
     if (stored === 'light' || stored === 'dark') return stored;
   } catch { /* localStorage unavailable */ }
-  return typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  return 'dark';
 }
 
 export function applyTheme(t: Theme): void {

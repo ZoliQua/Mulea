@@ -9,7 +9,7 @@
       (function () {
         try {
           var t = localStorage.getItem('mulealab-theme');
-          if (t !== 'light' && t !== 'dark') t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          if (t !== 'light' && t !== 'dark') t = 'dark';
           document.documentElement.dataset.theme = t;
         } catch (e) {}
       })();
