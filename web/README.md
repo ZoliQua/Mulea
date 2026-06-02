@@ -4,6 +4,10 @@ Client-side enrichment analysis (ORA + exact eFDR) that runs entirely in the bro
 Companion to the [mulea](https://github.com/ELTEbioinformatics/mulea) R package and the
 `mulealab` Python package; numerically in parity with both.
 
+The app opens on a dark **Deep Lab** landing screen; **Start Analysis** enters the workspace
+(dark-teal glass surfaces, a blue→purple→red diverging significance ramp). The ☾/☀ toggle still
+switches to the light theme; **← Home** returns to the landing.
+
 ## Screenshots
 
 The full eFDR feature, captured in a real browser (Chromium) on the bundled *E. coli* example:

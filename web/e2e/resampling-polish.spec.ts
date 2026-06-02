@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
 
-async function runEcoliResampling(page: import('@playwright/test').Page) {
+async function enterWorkspace(page: import('@playwright/test').Page) {
   await page.goto('/');
+  const startBtn = page.getByRole('button', { name: 'Start Analysis' });
+  if (await startBtn.isVisible()) await startBtn.click();
+}
+
+async function runEcoliResampling(page: import('@playwright/test').Page) {
+  await enterWorkspace(page);
   await page.getByRole('button', { name: '★ Load E. coli example' }).click();
   await page.getByRole('button', { name: 'Run ▶' }).click();
   await expect(page.locator('table')).toBeVisible({ timeout: 30000 });
@@ -24,7 +30,7 @@ test('per-term QC download contains the QC header and columns', async ({ page })
 });
 
 test('dice button changes the seed value', async ({ page }) => {
-  await page.goto('/');
+  await enterWorkspace(page);
   await page.getByRole('button', { name: '★ Load E. coli example' }).click();
   await page.getByRole('button', { name: 'Run ▶' }).click();
   await expect(page.locator('table')).toBeVisible({ timeout: 30000 });
@@ -36,7 +42,7 @@ test('dice button changes the seed value', async ({ page }) => {
 });
 
 test('soft warning appears for very large steps and clears when reduced', async ({ page }) => {
-  await page.goto('/');
+  await enterWorkspace(page);
   await page.getByRole('button', { name: '★ Load E. coli example' }).click();
   await page.getByRole('button', { name: 'Run ▶' }).click();
   await expect(page.locator('table')).toBeVisible({ timeout: 30000 });
@@ -49,7 +55,7 @@ test('soft warning appears for very large steps and clears when reduced', async 
 });
 
 test('multi-contrast resampling shows per-contrast diagnostics', async ({ page }) => {
-  await page.goto('/');
+  await enterWorkspace(page);
   await page.getByRole('button', { name: 'Multi-contrast', exact: true }).click();
   await page.getByRole('button', { name: 'Resampling', exact: true }).click();
   await page.getByRole('button', { name: '★ Load example (2 contrasts)' }).click();

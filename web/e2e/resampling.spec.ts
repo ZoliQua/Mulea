@@ -4,8 +4,14 @@ const MINI_GMT = 'T1\tterm one\tg1\tg2\tg3\tg4\nT2\tterm two\tg3\tg4\tg5\tg6\nT3
 const MINI_BG = Array.from({ length: 20 }, (_, i) => `g${i + 1}`).join('\n');
 const MINI_TARGET = ['g1', 'g2', 'g3', 'g4', 'g5'].join('\n');
 
-async function fillMini(page: import('@playwright/test').Page) {
+async function enterWorkspace(page: import('@playwright/test').Page) {
   await page.goto('/');
+  const startBtn = page.getByRole('button', { name: 'Start Analysis' });
+  if (await startBtn.isVisible()) await startBtn.click();
+}
+
+async function fillMini(page: import('@playwright/test').Page) {
+  await enterWorkspace(page);
   const tas = page.locator('textarea');
   await tas.nth(0).fill(MINI_GMT);
   await tas.nth(1).fill(MINI_TARGET);
@@ -13,7 +19,7 @@ async function fillMini(page: import('@playwright/test').Page) {
 }
 
 test('resampling shows steps/seed and a convergence diagnostics panel', async ({ page }) => {
-  await page.goto('/');
+  await enterWorkspace(page);
   await page.getByRole('button', { name: '★ Load E. coli example' }).click();
   await page.getByRole('button', { name: 'Run ▶' }).click();
   await expect(page.locator('table')).toBeVisible({ timeout: 30000 });

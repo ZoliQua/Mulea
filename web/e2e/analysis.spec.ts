@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
+  // Landing screen is the default — click through to the workspace.
+  const startBtn = page.getByRole('button', { name: 'Start Analysis' });
+  if (await startBtn.isVisible()) await startBtn.click();
   await expect(page.getByText('Load inputs (or the example) and press Run.')).toBeVisible();
 });
 
