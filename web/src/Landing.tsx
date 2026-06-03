@@ -1,37 +1,50 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
+import { PackageModal, type Pkg } from './ui/PackageModal.tsx';
 
 const SHADOW = '0 2px 14px rgba(0,0,0,0.55)';
 
 function MuleaLogo({ h = '6.2cqw' }: { h?: string }) {
+  return <img src="/mulea-logo.png" alt="Mulea" style={{ height: h, width: 'auto' }} />;
+}
+
+function RIcon() {
   return (
-    <svg style={{ height: h, width: h }} viewBox="0 0 64 64" fill="none" aria-label="Mulea">
-      <defs>
-        <linearGradient id="hexg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#5fe0c8" /><stop offset="1" stopColor="#1f7f8a" />
-        </linearGradient>
-      </defs>
-      <path d="M32 4 L53 16 L53 40 L32 52 L11 40 L11 16 Z" stroke="url(#hexg)" strokeWidth="2.6" strokeLinejoin="round" fill="rgba(20,52,60,0.35)" />
-      <g stroke="#eef6f6" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <path d="M22 19 C20 13 21 10 23 10 C25 10 27 14 27 20" />
-        <path d="M42 19 C44 13 43 10 41 10 C39 10 37 14 37 20" />
-        <path d="M27 19 C29 17 35 17 37 19 C40 21 41 27 40 33 C39 39 35 43 32 43 C28 43 24 40 23 33 C22 27 24 21 27 19 Z" />
-        <circle cx="29.5" cy="28" r="1.5" fill="#eef6f6" stroke="none" />
-        <path d="M30 38 L34 38" />
-      </g>
+    <svg style={{ width: '1.5cqw', height: '1.5cqw', flex: '0 0 auto' }} viewBox="0 0 24 24" aria-hidden="true">
+      <rect width="24" height="24" rx="6" fill="#276DC3" />
+      <text x="12" y="17" textAnchor="middle" fontSize="14" fontWeight="700" fill="#fff" fontFamily="system-ui, sans-serif">R</text>
+    </svg>
+  );
+}
+
+function PyIcon() {
+  return (
+    <svg style={{ width: '1.5cqw', height: '1.5cqw', flex: '0 0 auto' }} viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="13" height="13" rx="4" fill="#3776AB" />
+      <rect x="8" y="8" width="13" height="13" rx="4" fill="#FFD43B" />
+      <circle cx="6.6" cy="6.6" r="1.2" fill="#fff" />
+      <circle cx="17.4" cy="17.4" r="1.2" fill="#0d1e2b" />
     </svg>
   );
 }
 
 const FEAT_POS = [
-  { left: '11.6%', title: 'Multiple Ontologies', body: 'Analyze across 20+ ontology types and 16 public databases.' },
-  { left: '34.4%', title: 'Empirical FDR', body: 'Robust significance estimation for dependent data.' },
-  { left: '57.9%', title: 'ORA & GSEA', body: 'Support for both over-representation and GSEA.' },
-  { left: '79.9%', title: 'Model Organisms', body: 'Prebuilt ontologies for 27 model organisms.' },
+  { left: '12.0%', title: 'Multiple Ontologies', body: 'Analyze across 20+ ontology types and 16 public databases.' },
+  { left: '35.2%', title: 'Empirical FDR', body: 'Robust significance estimation for dependent data.' },
+  { left: '58.6%', title: 'ORA & GSEA', body: 'Support for both over-representation and GSEA.' },
+  { left: '79.7%', title: 'Model Organisms', body: 'Prebuilt ontologies for 27 model organisms.' },
 ];
 
 export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () => void }) {
   const [hover, setHover] = useState<'start' | 'docs' | null>(null);
+  const [pkg, setPkg] = useState<Pkg | null>(null);
+  const pkgBtn: CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: '0.4cqw', cursor: 'pointer', whiteSpace: 'nowrap',
+    fontFamily: 'inherit', fontSize: '0.95cqw', fontWeight: 500, color: '#eaf3f5',
+    padding: '0.5cqw 1.1cqw', borderRadius: '0.6cqw',
+    border: '1px solid rgba(120,180,195,0.4)', background: 'rgba(255,255,255,0.04)',
+    backdropFilter: 'blur(4px)', textShadow: SHADOW,
+  };
   const btnBase: CSSProperties = {
     display: 'inline-flex', alignItems: 'center', gap: '0.7cqw', cursor: 'pointer',
     fontSize: '1.08cqw', fontWeight: 600, borderRadius: '0.7cqw', padding: '0.95cqw 1.7cqw',
@@ -48,7 +61,7 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
     border: '1px solid rgba(120,180,195,0.35)', backdropFilter: 'blur(4px)',
   };
   return (
-    <div style={{ height: '100vh', width: '100vw', background: '#050d15', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+    <div style={{ height: '100vh', width: '100vw', background: '#05122b', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
       <div style={{
         position: 'relative', aspectRatio: '1536 / 1024',
         width: 'min(100vw, calc(100vh * 1.5))', maxWidth: '100vw', maxHeight: '100vh',
@@ -84,12 +97,19 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
             <div style={{ fontSize: '0.84cqw', lineHeight: 1.5, color: '#9fb6c2', textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{f.body}</div>
           </div>
         ))}
-        <div style={{ position: 'absolute', left: 0, right: 0, top: '92.4%', textAlign: 'center' }}>
-          <span style={{ fontSize: '1.08cqw', color: '#4fc1cf', fontWeight: 500, letterSpacing: '0.01em', textShadow: SHADOW }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: '93.3%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3.6cqw' }}>
+          <button type="button" style={pkgBtn} onClick={() => setPkg('r')} title="mulea — R package">
+            <RIcon /> R package
+          </button>
+          <span style={{ fontSize: '1.4cqw', color: '#4fc1cf', fontWeight: 500, letterSpacing: '0.01em', textShadow: SHADOW }}>
             From gene lists to biological insights.
           </span>
+          <button type="button" style={pkgBtn} onClick={() => setPkg('python')} title="mulealab — Python package">
+            <PyIcon /> Python package
+          </button>
         </div>
       </div>
+      {pkg && <PackageModal pkg={pkg} onClose={() => setPkg(null)} />}
     </div>
   );
 }

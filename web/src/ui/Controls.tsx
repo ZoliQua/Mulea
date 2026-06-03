@@ -38,7 +38,7 @@ export function Controls(props: {
               {props.steps > SOFT_STEP_WARN && <span className="warn" style={{ fontSize: 12 }}>⚠ large — may take a while</span>}
               <label style={{ fontSize: 12 }}>seed <input type="number" value={props.seed}
                 onChange={(e) => props.onSeed(Math.floor(Number(e.target.value) || 42))} style={{ width: 64 }} /></label>
-              <button type="button" aria-label="Randomize seed" title="Random seed" onClick={props.onRandomizeSeed}>🎲</button>
+              <button type="button" className="dice-btn" aria-label="Randomize seed" title="Random seed" onClick={props.onRandomizeSeed}>🎲</button>
             </>
           )}
         </span>

@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { loadExample } from '../samples.ts';
 import { parseContrasts, type Contrast } from '../multiContrast.ts';
+import { InputField } from './InputPanel.tsx';
+import type { InputKind } from './InputHelp.tsx';
 
 export function MultiContrastPanel(props: {
   onRun: (i: { gmtText: string; background: string[]; contrasts: Contrast[] }) => void;
   disabled: boolean;
+  onHelp: (which: InputKind) => void;
 }) {
   const [gmtText, setGmtText] = useState('');
   const [backgroundText, setBackgroundText] = useState('');
   const [contrastsText, setContrastsText] = useState('');
   const [fileContrasts, setFileContrasts] = useState<Contrast[]>([]);
+  const [contrastMode, setContrastMode] = useState<'paste' | 'upload'>('paste');
 
   const lines = (t: string) => t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const contrasts = [...fileContrasts, ...parseContrasts(contrastsText)];
   const ready = gmtText.trim() !== '' && lines(backgroundText).length > 0 && contrasts.length >= 2;
 
-  const readFile = (f: File, set: (s: string) => void) => f.text().then(set);
   const addFiles = (files: FileList) => {
     Promise.all(
       [...files].map(async (f) => ({ label: f.name.replace(/\.[^.]+$/, ''), target: lines(await f.text()) })),
@@ -24,31 +27,42 @@ export function MultiContrastPanel(props: {
 
   return (
     <div className="input-panel">
+      <InputField kind="gmt" label="Ontology (GMT)" accept=".gmt,.txt" placeholder="paste GMT…"
+        value={gmtText} onChange={setGmtText} onHelp={() => props.onHelp('gmt')} />
+      <InputField kind="background" label="Background genes (one per line)" accept=".txt" placeholder="Paste, or load the example…"
+        value={backgroundText} onChange={setBackgroundText} onHelp={() => props.onHelp('background')} />
       <section className="input-card">
-        <label>Ontology (GMT)</label>
-        <input type="file" accept=".gmt,.txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setGmtText)} />
-        <textarea value={gmtText} onChange={(e) => setGmtText(e.target.value)} placeholder="paste GMT…" rows={4} />
-      </section>
-      <section className="input-card">
-        <label>Background genes (one per line)</label>
-        <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setBackgroundText)} />
-        <textarea value={backgroundText} onChange={(e) => setBackgroundText(e.target.value)} rows={4} />
-      </section>
-      <section className="input-card">
-        <label>Contrasts (&gt;label then genes; or upload files)</label>
-        <input type="file" accept=".txt" multiple onChange={(e) => e.target.files && addFiles(e.target.files)} />
-        {fileContrasts.length > 0 && (
-          <div className="contrasts-files">
-            {fileContrasts.map((c, i) => (
-              <span key={i} className="chip">
-                {c.label} ({c.target.length})
-                <button type="button" onClick={() => setFileContrasts((prev) => prev.filter((_, j) => j !== i))} aria-label={`remove ${c.label}`}> ×</button>
-              </span>
-            ))}
+        <div className="input-head">
+          <label>Contrasts</label>
+          <button type="button" className="help-q" aria-label="What are contrasts?" title="What is this?" onClick={() => props.onHelp('contrasts')}>?</button>
+          <span className="io-toggle pill-group">
+            <button type="button" className={contrastMode === 'paste' ? 'active' : ''} onClick={() => setContrastMode('paste')}>Paste</button>
+            <button type="button" className={contrastMode === 'upload' ? 'active' : ''} onClick={() => setContrastMode('upload')}>Upload</button>
+          </span>
+        </div>
+        {contrastMode === 'paste' ? (
+          <textarea value={contrastsText} onChange={(e) => setContrastsText(e.target.value)} rows={6}
+            placeholder={'>condition A\ngeneX\ngeneY\n>condition B\ngeneZ\n…'} />
+        ) : (
+          <div className="upload-zone">
+            <label className="file-btn">
+              ⤒ Choose files
+              <input type="file" accept=".txt" multiple hidden onChange={(e) => e.target.files && addFiles(e.target.files)} />
+            </label>
+            {fileContrasts.length > 0 ? (
+              <div className="contrasts-files">
+                {fileContrasts.map((c, i) => (
+                  <span key={i} className="chip">
+                    {c.label} ({c.target.length})
+                    <button type="button" onClick={() => setFileContrasts((prev) => prev.filter((_, j) => j !== i))} aria-label={`remove ${c.label}`}> ×</button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className="muted" style={{ fontSize: 12 }}>One .txt file per contrast — the file name is the label.</span>
+            )}
           </div>
         )}
-        <textarea value={contrastsText} onChange={(e) => setContrastsText(e.target.value)} rows={6}
-          placeholder={'>condition A\ngeneX\ngeneY\n>condition B\ngeneZ\n…'} />
       </section>
       <div className="actions">
         <button
@@ -60,6 +74,7 @@ export function MultiContrastPanel(props: {
             const half = Math.ceil(ex.target.length / 2);
             setContrastsText(`>E. coli (subset 1)\n${ex.target.slice(0, half).join('\n')}\n>E. coli (subset 2)\n${ex.target.slice(half).join('\n')}`);
             setFileContrasts([]);
+            setContrastMode('paste');
           }}
         >
           ★ Load example (2 contrasts)

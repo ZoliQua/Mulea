@@ -6,6 +6,8 @@ import { Controls } from './ui/Controls.tsx';
 import { ResultsTable } from './ui/ResultsTable.tsx';
 import { LollipopChart } from './ui/LollipopChart.tsx';
 import { PrivacyNote } from './ui/PrivacyNote.tsx';
+import { IntroAbout, IntroCite } from './ui/IntroPanel.tsx';
+import { InputHelp, type InputKind } from './ui/InputHelp.tsx';
 import { downloadTsv } from './exportTsv.ts';
 import { runAnalysis } from './analysis.ts';
 import { downloadQcCsv } from './efdrQc.ts';
@@ -58,6 +60,10 @@ export default function App() {
   const [view, setView] = useState<'landing' | 'tool'>(
     (typeof window !== 'undefined' && window.location.hash.startsWith('#c=')) ? 'tool' : 'landing',
   );
+  const [introDismissed, setIntroDismissed] = useState(() => {
+    try { return localStorage.getItem('mulealab-intro-dismissed') === '1'; } catch { return false; }
+  });
+  const [helpFor, setHelpFor] = useState<InputKind | null>(null);
   const [method, setMethod] = useState<Method>(loaded?.cap?.inputs.method ?? 'eFDR');
   const [efdrMode, setEfdrMode] = useState<EfdrMode>(loaded?.cap?.inputs.efdrMode ?? 'exact');
   const [steps, setSteps] = useState<number>(loaded?.cap?.inputs.steps ?? 100000);
@@ -150,28 +156,45 @@ export default function App() {
         <ThemeToggle />
         <OfflineBadge />
       </header>
+      {!introDismissed && (
+        <div className="intro-top">
+          <IntroAbout onClose={() => {
+            try { localStorage.setItem('mulealab-intro-dismissed', '1'); } catch { /* ignore */ }
+            setIntroDismissed(true);
+          }} />
+        </div>
+      )}
       <div className="two-panel">
         <aside className="left">
           <details className="input-disclosure" open>
             <summary>{mode === 'single' ? 'Inputs' : 'Multi-contrast'}</summary>
             {mode === 'single' ? (
-              <InputPanel onRun={start} disabled={state.status === 'running'}
+              <InputPanel onRun={start} disabled={state.status === 'running'} onHelp={setHelpFor}
                 initial={loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : undefined} />
             ) : (
-              <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} />
+              <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} onHelp={setHelpFor} />
             )}
           </details>
           <PrivacyNote />
+          <IntroCite />
         </aside>
         <main className="right">
+          {helpFor ? (
+            <InputHelp which={helpFor} onClose={() => setHelpFor(null)} />
+          ) : (
+          <>
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}
             efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} onRandomizeSeed={randomizeSeed} />
           {mode === 'single' ? (
             <>
-              {replay === 'invalid' && <p className="error">This shared link is invalid.</p>}
+              {replay === 'invalid' && (
+                <div className="error-card"><span className="error-icon">⚠</span><div><strong>Invalid shared link</strong><p>This link's analysis capsule couldn't be decoded.</p></div></div>
+              )}
               {state.status === 'idle' && replay !== 'invalid' && <div className="state-card">Load inputs (or the example) and press Run.</div>}
               {state.status === 'running' && <div className="state-card">Computing… resampling background for eFDR</div>}
-              {state.status === 'error' && <p className="error">Error: {state.error}</p>}
+              {state.status === 'error' && (
+                <div className="error-card"><span className="error-icon">⚠</span><div><strong>Couldn't run the analysis</strong><p>{state.error}</p></div></div>
+              )}
               {state.status === 'done' && (
                 <>
                   {state.result.warnings.map((w) => <p key={w} className="warn">{w}</p>)}
@@ -254,7 +277,9 @@ export default function App() {
             <>
               {mc.state.status === 'idle' && <div className="state-card">Add a shared ontology + background and ≥2 contrasts, then Compare.</div>}
               {mc.state.status === 'running' && <div className="state-card">Computing…</div>}
-              {mc.state.status === 'error' && <p className="error">Error: {mc.state.error}</p>}
+              {mc.state.status === 'error' && (
+                <div className="error-card"><span className="error-icon">⚠</span><div><strong>Couldn't run the comparison</strong><p>{mc.state.error}</p></div></div>
+              )}
               {mc.state.status === 'done' && mcMatrix && (
                 <div className="view-row">
                   <div className="view-main">
@@ -269,6 +294,8 @@ export default function App() {
                 </div>
               )}
             </>
+          )}
+          </>
           )}
         </main>
       </div>

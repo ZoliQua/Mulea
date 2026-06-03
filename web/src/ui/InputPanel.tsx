@@ -1,9 +1,77 @@
 import { useState } from 'react';
 import { loadExample } from '../samples.ts';
+import type { InputKind } from './InputHelp.tsx';
+
+const countLines = (t: string) => t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).length;
+
+/** Validity + row-count summary for the loaded/typed text, per input kind. */
+function summarize(kind: InputKind, text: string): { rows: number; ok: boolean; note: string } {
+  const rows = countLines(text);
+  if (kind === 'gmt') {
+    const terms = text.split(/\r?\n/).filter((l) => l.split('\t').length >= 3).length;
+    return terms > 0
+      ? { rows, ok: true, note: `valid GMT · ${terms} term${terms === 1 ? '' : 's'}` }
+      : { rows, ok: false, note: 'not tab-separated — need id⇥name⇥genes' };
+  }
+  return rows > 0
+    ? { rows, ok: true, note: `${rows} gene${rows === 1 ? '' : 's'}` }
+    : { rows, ok: false, note: 'no genes found' };
+}
+
+type Mode = 'paste' | 'upload';
+
+export function InputField(props: {
+  kind: InputKind;
+  label: string;
+  accept: string;
+  placeholder: string;
+  value: string;
+  onChange: (s: string) => void;
+  onHelp: () => void;
+}) {
+  const [mode, setMode] = useState<Mode>('paste');
+  const [file, setFile] = useState<{ name: string; type: string } | null>(null);
+  const s = summarize(props.kind, props.value);
+  return (
+    <section className="input-card">
+      <div className="input-head">
+        <label>{props.label}</label>
+        <button type="button" className="help-q" aria-label={`What is ${props.label}?`} title="What is this?" onClick={props.onHelp}>?</button>
+        <span className="io-toggle pill-group">
+          <button type="button" className={mode === 'paste' ? 'active' : ''} onClick={() => setMode('paste')}>Paste</button>
+          <button type="button" className={mode === 'upload' ? 'active' : ''} onClick={() => setMode('upload')}>Upload</button>
+        </span>
+      </div>
+      {mode === 'paste' ? (
+        <textarea value={props.value} onChange={(e) => props.onChange(e.target.value)} placeholder={props.placeholder} rows={4} />
+      ) : (
+        <div className="upload-zone">
+          <label className="file-btn">
+            ⤒ Choose file
+            <input type="file" accept={props.accept} hidden onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (!f) return;
+              setFile({ name: f.name, type: f.type || `.${f.name.split('.').pop() ?? 'file'}` });
+              void f.text().then(props.onChange);
+            }} />
+          </label>
+          {file && (
+            <div className="file-meta">
+              <span className="file-name" title={file.name}>{file.name}</span>
+              <span className="muted">{s.rows} row{s.rows === 1 ? '' : 's'} · {file.type}</span>
+              <span className={s.ok ? 'file-ok' : 'file-bad'}>{s.ok ? '✓' : '⚠'} {s.note}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
 
 export function InputPanel(props: {
   onRun: (i: { gmtText: string; target: string[]; background: string[] }) => void;
   disabled: boolean;
+  onHelp: (which: InputKind) => void;
   initial?: { gmtText: string; target: string[]; background: string[] };
 }) {
   const [gmtText, setGmtText] = useState(props.initial?.gmtText ?? '');
@@ -13,25 +81,14 @@ export function InputPanel(props: {
   const lines = (t: string) => t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const ready = gmtText.trim() !== '' && lines(targetText).length > 0 && lines(backgroundText).length > 0;
 
-  const readFile = (f: File, set: (s: string) => void) => f.text().then(set);
-
   return (
     <div className="input-panel">
-      <section className="input-card">
-        <label>Ontology (GMT)</label>
-        <input type="file" accept=".gmt,.txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setGmtText)} />
-        <textarea value={gmtText} onChange={(e) => setGmtText(e.target.value)} placeholder="paste GMT…" rows={4} />
-      </section>
-      <section className="input-card">
-        <label>Target genes (one per line)</label>
-        <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setTargetText)} />
-        <textarea value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder="Paste, or load the example…" rows={4} />
-      </section>
-      <section className="input-card">
-        <label>Background genes (one per line)</label>
-        <input type="file" accept=".txt" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0], setBackgroundText)} />
-        <textarea value={backgroundText} onChange={(e) => setBackgroundText(e.target.value)} placeholder="Paste, or load the example…" rows={4} />
-      </section>
+      <InputField kind="gmt" label="Ontology (GMT)" accept=".gmt,.txt" placeholder="paste GMT…"
+        value={gmtText} onChange={setGmtText} onHelp={() => props.onHelp('gmt')} />
+      <InputField kind="target" label="Target genes (one per line)" accept=".txt" placeholder="Paste, or load the example…"
+        value={targetText} onChange={setTargetText} onHelp={() => props.onHelp('target')} />
+      <InputField kind="background" label="Background genes (one per line)" accept=".txt" placeholder="Paste, or load the example…"
+        value={backgroundText} onChange={setBackgroundText} onHelp={() => props.onHelp('background')} />
       <div className="actions">
         <button
           type="button"
