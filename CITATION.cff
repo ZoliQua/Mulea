@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+message: "If you use mulea (or the muleaLab web tool / mulealab Python companion), please cite the article below."
+title: "mulea: Enrichment Analysis Using Multiple Ontologies and False Discovery Rate"
+version: 1.1.1
+license: GPL-2.0
+repository-code: "https://github.com/ELTEbioinformatics/mulea"
+url: "https://github.com/ELTEbioinformatics/mulea"
+type: software
+authors:
+  - family-names: Turek
+    given-names: Cezary
+    orcid: "https://orcid.org/0000-0002-1445-5378"
+  - family-names: Olbei
+    given-names: Marton
+    orcid: "https://orcid.org/0000-0002-4903-6237"
+  - family-names: Stirling
+    given-names: Tamas
+    email: stirling.tamas@gmail.com
+    orcid: "https://orcid.org/0000-0002-8964-6443"
+  - family-names: Fekete
+    given-names: Gergely
+    orcid: "https://orcid.org/0000-0001-9939-4860"
+  - family-names: Tasnadi
+    given-names: Ervin
+    orcid: "https://orcid.org/0000-0002-4713-5397"
+  - family-names: Gul
+    given-names: Leila
+  - family-names: Bohar
+    given-names: Balazs
+    orcid: "https://orcid.org/0000-0002-3033-5448"
+  - family-names: Papp
+    given-names: Balazs
+    orcid: "https://orcid.org/0000-0003-3093-8852"
+  - family-names: Jurkowski
+    given-names: Wiktor
+    orcid: "https://orcid.org/0000-0002-7820-1991"
+  - family-names: Ari
+    given-names: Eszter
+    orcid: "https://orcid.org/0000-0001-7774-1067"
+preferred-citation:
+  type: article
+  title: "mulea: an R package for enrichment analysis using multiple ontologies and empirical false discovery rate"
+  authors:
+    - family-names: Turek
+      given-names: Cezary
+    - family-names: Olbei
+      given-names: Marton
+    - family-names: Stirling
+      given-names: Tamas
+    - family-names: Fekete
+      given-names: Gergely
+    - family-names: Tasnadi
+      given-names: Ervin
+    - family-names: Gul
+      given-names: Leila
+    - family-names: Bohar
+      given-names: Balazs
+    - family-names: Papp
+      given-names: Balazs
+    - family-names: Jurkowski
+      given-names: Wiktor
+    - family-names: Ari
+      given-names: Eszter
+  journal: "BMC Bioinformatics"
+  year: 2024
+  volume: 25
+  start: 334
+  # DOI intentionally omitted — fill in once verified against the published article.
