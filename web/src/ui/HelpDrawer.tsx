@@ -16,6 +16,7 @@ export function HelpDrawer(props: { open: boolean; onClose: () => void }) {
         <li><strong>Bonferroni</strong> — most conservative.</li>
       </ul>
       <p>A term is "significant" when its score (eFDR / adjusted p-value) is below 0.05.</p>
+      <p className="muted">The hypergeometric test is <strong>one-tailed</strong>: it detects over-representation of your genes in a term, not depletion. (Ranked-list GSEA is available in the <em>mulea</em> R package.)</p>
 
       <h3>3 · Visualizations</h3>
       <p>Switch views with the tabs: sortable <strong>table</strong>, <strong>lollipop</strong>, <strong>bar</strong>, term–gene <strong>network</strong>, <strong>heatmap</strong>, and a <strong>Methods Venn</strong> comparing which terms are significant under eFDR vs BH vs Bonferroni. Click a term/dot to see why it is significant (its hit genes).</p>

@@ -31,7 +31,7 @@ function PyIcon() {
 const FEAT_POS = [
   { left: '12.0%', title: 'Multiple Ontologies', body: 'Analyze across 20+ ontology types and 16 public databases.' },
   { left: '35.2%', title: 'Empirical FDR', body: 'Robust significance estimation for dependent data.' },
-  { left: '58.6%', title: 'ORA & GSEA', body: 'Support for both over-representation and GSEA.' },
+  { left: '58.6%', title: 'Over-representation', body: 'Hypergeometric enrichment with eFDR, BH or Bonferroni correction.' },
   { left: '79.7%', title: 'Model Organisms', body: 'Prebuilt ontologies for 27 model organisms.' },
 ];
 

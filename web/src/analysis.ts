@@ -22,13 +22,31 @@ export function usesMcWorker(input: AnalysisInput): boolean {
   return input.method === 'eFDR' && input.efdrMode === 'resampling';
 }
 
-interface Prepared { gmt: GmtTerm[]; select: Set<string>; nTargetDropped: number; poolSize: number }
+interface Prepared {
+  gmt: GmtTerm[]; select: Set<string>; nTargetDropped: number; poolSize: number;
+  gmtPoolOverlap: number; nTargetDuplicates: number;
+}
 function prepare(input: AnalysisInput): Prepared {
   const gmt = filterOntology(parseGmt(input.gmtText), input.minNrOfElements, input.maxNrOfElements);
   const pool = new Set(input.background);
   const select = new Set(input.target.filter((g) => pool.has(g)));
   const nTargetDropped = input.target.filter((g) => !pool.has(g)).length;
-  return { gmt, select, nTargetDropped, poolSize: pool.size };
+  const nTargetDuplicates = input.target.length - new Set(input.target).size;
+  // Gene-ID namespace sanity: how many distinct ontology genes occur in the background at all?
+  // Zero overlap means every term has commonInPool == 0 → all p-values collapse to 1, which is
+  // almost always a mismatched identifier namespace (e.g. gene symbols vs Entrez/Ensembl IDs).
+  let gmtPoolOverlap = 0;
+  if (pool.size > 0) {
+    const seen = new Set<string>();
+    for (const term of gmt) {
+      for (const g of term.list_of_values) {
+        if (seen.has(g)) continue;
+        seen.add(g);
+        if (pool.has(g)) gmtPoolOverlap++;
+      }
+    }
+  }
+  return { gmt, select, nTargetDropped, poolSize: pool.size, gmtPoolOverlap, nTargetDuplicates };
 }
 
 function finalize(
@@ -42,8 +60,13 @@ function finalize(
     hits: (prep.gmt[i]?.list_of_values ?? []).filter((g) => prep.select.has(g)),
   }));
   const warnings: string[] = [];
+  if (prep.gmt.length === 0) {
+    warnings.push('No ontology terms passed the size filter.');
+  } else if (prep.poolSize > 0 && prep.gmtPoolOverlap === 0) {
+    warnings.push('None of the background genes occur in the ontology — likely a gene-ID namespace mismatch (e.g. gene symbols vs Entrez/Ensembl IDs). Results are not meaningful.');
+  }
   if (prep.nTargetDropped > 0) warnings.push(`${prep.nTargetDropped} target gene(s) are not in the background and were dropped.`);
-  if (prep.gmt.length === 0) warnings.push('No ontology terms passed the size filter.');
+  if (prep.nTargetDuplicates > 0) warnings.push(`${prep.nTargetDuplicates} duplicate gene(s) in the target list were ignored.`);
   return {
     rows: rowsWithHits,
     method: input.method,
