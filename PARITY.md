@@ -55,6 +55,44 @@ The Web/Python eFDR is computed two ways that must converge:
 diagnostic. The analytic path is the deterministic oracle; the MC path is what reproduces R's
 resampling method within Monte-Carlo noise.
 
+#### Derivation: the analytic path is the S→∞ limit of the resampling estimator
+
+The paper (Turek et al. 2024, p. 4) estimates the expected rank by resampling. Write the observed
+rank of ontology term *j* as
+
+```
+R_j = Σ_i 1(p_i ≤ p_j)
+```
+
+where `p_i` is the hypergeometric p-value of term *i*. In resampling step *s*, a target set of the
+same size `n = |select|` is drawn at random from the background of size `N`. The overlap of term *i*
+(which has `m_i = |term_i ∩ background|` genes) with that random target is therefore
+**hypergeometrically distributed**:
+
+```
+K_i^s ~ Hypergeometric(N, m_i, n),   p_i^s = P_hyp(X ≥ K_i^s),   R_j^s = Σ_i 1(p_i^s ≤ p_j)
+```
+
+mulea's expected rank is the sample mean `R̄_j = (1/S) Σ_s R_j^s`. By the law of large numbers it
+converges to its expectation, which has a **closed form** because each indicator's expectation is a
+sum over the (finite) support of the hypergeometric law:
+
+```
+R̄_j  ──S→∞──▶  E[R_j^s] = Σ_i P(p_i^s ≤ p_j)
+                         = Σ_i  Σ_{k : p_hyp(k; m_i) ≤ p_j}  PMF(k; N, m_i, n)
+```
+
+This double sum is exactly what `web/src/efdr.ts:67-94` accumulates as `rExp` (every `(term, k)` pair
+contributes its hypergeometric mass to a cumulative null-mass curve, read off at `p_j`). Hence the
+analytic eFDR `min(R̄_j / R_j, 1)` is the resampling estimator with the Monte-Carlo noise removed —
+not an approximation of it, but its exact limit.
+
+**Convergence rate.** Each `R_j^s` is a sum of Bernoulli indicators, so the resampling mean has
+`Var(R̄_j) = O(1/S)`; by the CLT the Monte-Carlo estimate deviates from the analytic value by
+`O(1/√S)`. The benchmark `web/bench/efdr-convergence.mjs` confirms this empirically: `max|Δ|` and
+`RMS|Δ|` between the WASM Monte-Carlo and the analytic eFDR fall with a fitted slope ≈ −0.5 on a
+log-log scale (see `efdr-convergence.md` / `.svg`).
+
 > Note on the clamp: the Web/Python eFDR is clamped to ≤ 1 (`min(·, 1)`); base R does not clamp. For
 > this fixture all eFDR ≤ 1, so the legs agree; the clamp only differs on terms where the raw
 > expected/observed-rank ratio exceeds 1.
