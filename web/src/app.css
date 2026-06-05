@@ -310,6 +310,16 @@ input[type="range"] { accent-color: var(--accent); }
 .pkg-code { background: #07151f; border: 1px solid rgba(140,185,200,0.14); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 0; }
 .pkg-code code { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; color: #d6e6ec; white-space: pre; }
 .pkg-cite { margin: 0; font-size: 12.5px; line-height: 1.5; color: #9fb6c2; font-style: italic; }
+
+/* eFDR derivation: trigger icon + modal */
+.deriv-icon-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(140,185,200,0.3); background: rgba(255,255,255,0.05); color: var(--accent, #46c8b2); font-size: 14px; line-height: 1; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+.deriv-icon-btn:hover { color: #eaf3f5; border-color: #46c8b2; background: rgba(70,200,178,0.12); }
+.deriv-modal p { font-size: 13.5px; line-height: 1.6; color: #cfe0e7; margin: 10px 0; }
+.deriv-eq { font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: #eaf3f5; background: #07151f; border: 1px solid rgba(140,185,200,0.16); border-radius: 8px; padding: 12px 14px; margin: 12px 0; overflow-x: auto; text-align: center; }
+.deriv-eq sub { font-size: 0.72em; } .deriv-eq sup { font-size: 0.72em; }
+.deriv-inline { font-family: var(--mono); background: #07151f; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+.deriv-fig { background: #fff; border-radius: 10px; padding: 10px; margin: 12px 0; }
+.deriv-fig img { display: block; width: 100%; height: auto; }
 .pkg-links { list-style: none; margin: 4px 0 0; padding: 0; }
 .pkg-links li { margin-bottom: 5px; }
 .pkg-links a { color: #46c8b2; text-decoration: none; font-size: 13.5px; }

@@ -30,6 +30,7 @@ import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
+import { EfdrDerivation } from './ui/EfdrDerivation.tsx';
 import { Landing } from './Landing.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
 import { SettingsDrawer } from './ui/SettingsDrawer.tsx';
@@ -77,6 +78,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [report, setReport] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [derivationOpen, setDerivationOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<'focused' | 'dashboard'>('focused');
   const [globalSettings, setGlobalSettings] = useState<Partial<FigureSettings>>({});
   const [perFigure, setPerFigure] = useState<Record<string, Partial<FigureSettings>>>({});
@@ -184,7 +186,8 @@ export default function App() {
           ) : (
           <>
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}
-            efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} onRandomizeSeed={randomizeSeed} />
+            efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} onRandomizeSeed={randomizeSeed}
+            onShowDerivation={() => setDerivationOpen(true)} />
           {mode === 'single' ? (
             <>
               {replay === 'invalid' && (
@@ -301,6 +304,7 @@ export default function App() {
       </div>
       {helpOpen && <div className="help-overlay" onClick={() => setHelpOpen(false)} />}
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+      {derivationOpen && <EfdrDerivation onClose={() => setDerivationOpen(false)} />}
       {settingsFor && <div className="help-overlay" onClick={() => setSettingsFor(null)} />}
       <SettingsDrawer
         open={settingsFor !== null}

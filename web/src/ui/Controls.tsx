@@ -13,6 +13,7 @@ export function Controls(props: {
   steps: number; onSteps: (n: number) => void;
   seed: number; onSeed: (n: number) => void;
   onRandomizeSeed: () => void;
+  onShowDerivation: () => void;
 }) {
   return (
     <div className="controls">
@@ -31,6 +32,8 @@ export function Controls(props: {
             <button type="button" className={props.efdrMode === 'exact' ? 'active' : ''} onClick={() => props.onEfdrMode('exact')}>Exact</button>
             <button type="button" className={props.efdrMode === 'resampling' ? 'active' : ''} onClick={() => props.onEfdrMode('resampling')}>Resampling</button>
           </span>
+          <button type="button" className="deriv-icon-btn" aria-label="Show the eFDR derivation"
+            title="Why the Exact eFDR is exact — derivation &amp; convergence" onClick={props.onShowDerivation}>∑</button>
           {props.efdrMode === 'resampling' && (
             <>
               <label style={{ fontSize: 12 }}>steps <input type="number" min={1} step={1000} value={props.steps}
