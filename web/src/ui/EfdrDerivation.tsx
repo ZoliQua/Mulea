@@ -44,7 +44,7 @@ export function EfdrDerivation({ onClose }: { onClose: () => void }) {
           analytic path):
         </p>
         <div className="deriv-fig">
-          <img src="/efdr-convergence.svg" alt="Log-log plot: Monte-Carlo eFDR error falls along a slope of −0.5 toward the analytic limit" />
+          <img src={`${import.meta.env.BASE_URL}efdr-convergence.svg`} alt="Log-log plot: Monte-Carlo eFDR error falls along a slope of −0.5 toward the analytic limit" />
         </div>
 
         <p className="pkg-cite">

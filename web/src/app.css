@@ -320,6 +320,11 @@ input[type="range"] { accent-color: var(--accent); }
 .deriv-inline { font-family: var(--mono); background: #07151f; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
 .deriv-fig { background: #fff; border-radius: 10px; padding: 10px; margin: 12px 0; }
 .deriv-fig img { display: block; width: 100%; height: auto; }
+
+/* validation drawer figure */
+.val-drawer { width: 420px; }
+.val-fig { background: #fff; border-radius: 10px; padding: 8px; margin: 10px 0; }
+.val-fig img { display: block; width: 100%; height: auto; }
 .pkg-links { list-style: none; margin: 4px 0 0; padding: 0; }
 .pkg-links li { margin-bottom: 5px; }
 .pkg-links a { color: #46c8b2; text-decoration: none; font-size: 13.5px; }

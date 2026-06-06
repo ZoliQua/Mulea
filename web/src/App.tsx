@@ -30,6 +30,7 @@ import { useMultiContrast } from './hooks/useMultiContrast.ts';
 import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
+import { ValidationDrawer } from './ui/ValidationDrawer.tsx';
 import { EfdrDerivation } from './ui/EfdrDerivation.tsx';
 import { Landing } from './Landing.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
@@ -78,6 +79,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [report, setReport] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [validationOpen, setValidationOpen] = useState(false);
   const [derivationOpen, setDerivationOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<'focused' | 'dashboard'>('focused');
   const [globalSettings, setGlobalSettings] = useState<Partial<FigureSettings>>({});
@@ -155,6 +157,7 @@ export default function App() {
         </span>
         <span className="spacer"></span>
         <button type="button" className="icon-btn" aria-label="Help" title="How to use muleaLab" onClick={() => setHelpOpen(true)}>?</button>
+        <button type="button" className="icon-btn" aria-label="External validation" title="External validation (vs clusterProfiler)" onClick={() => setValidationOpen(true)}>✓</button>
         <ThemeToggle />
         <OfflineBadge />
       </header>
@@ -304,6 +307,8 @@ export default function App() {
       </div>
       {helpOpen && <div className="help-overlay" onClick={() => setHelpOpen(false)} />}
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+      {validationOpen && <div className="help-overlay" onClick={() => setValidationOpen(false)} />}
+      <ValidationDrawer open={validationOpen} onClose={() => setValidationOpen(false)} />
       {derivationOpen && <EfdrDerivation onClose={() => setDerivationOpen(false)} />}
       {settingsFor && <div className="help-overlay" onClick={() => setSettingsFor(null)} />}
       <SettingsDrawer
