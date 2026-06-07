@@ -31,6 +31,7 @@ import { dotMatrix, type Contrast } from './multiContrast.ts';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
 import { ValidationDrawer } from './ui/ValidationDrawer.tsx';
+import { GseaView } from './ui/GseaView.tsx';
 import { EfdrDerivation } from './ui/EfdrDerivation.tsx';
 import { Landing } from './Landing.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
@@ -56,7 +57,7 @@ function readCapsuleFromHash(): { cap?: Capsule; invalid?: boolean } | null {
 export default function App() {
   const { state, run } = useAnalysis();
   const mc = useMultiContrast();
-  const [mode, setMode] = useState<'single' | 'multi'>('single');
+  const [mode, setMode] = useState<'single' | 'multi' | 'gsea'>('single');
   const [mcSelected, setMcSelected] = useState<{ contrast: string; term: string } | null>(null);
   const [loaded] = useState(() => readCapsuleFromHash());
   const [view, setView] = useState<'landing' | 'tool'>(
@@ -121,7 +122,7 @@ export default function App() {
   const mcMatrix = useMemo(() => (mcDoneResult ? dotMatrix(mcDoneResult) : null), [mcDoneResult]);
   const runMulti = (i: { gmtText: string; background: string[]; contrasts: Contrast[] }) =>
     mc.run({ ...i, method, efdrMode, steps, seed, ...RUN_DEFAULTS });
-  const switchMode = (m: 'single' | 'multi') => { setMode(m); setReport(false); setSelectedId(null); setMcSelected(null); };
+  const switchMode = (m: 'single' | 'multi' | 'gsea') => { setMode(m); setReport(false); setSelectedId(null); setMcSelected(null); };
 
   const settingsOf = (id: ViewId): FigureSettings => effectiveSettings(globalSettings, perFigure[id] ?? {});
   const openSettings = (id: ViewId) => { setSettingsFor(id); setSettingsTab('figure'); };
@@ -154,6 +155,7 @@ export default function App() {
         <span className="mode-toggle">
           <button type="button" className={mode === 'single' ? 'active' : ''} onClick={() => switchMode('single')}>Single</button>
           <button type="button" className={mode === 'multi' ? 'active' : ''} onClick={() => switchMode('multi')}>Multi-contrast</button>
+          <button type="button" className={mode === 'gsea' ? 'active' : ''} onClick={() => switchMode('gsea')}>GSEA (ranked)</button>
         </span>
         <span className="spacer"></span>
         <button type="button" className="icon-btn" aria-label="Help" title="How to use muleaLab" onClick={() => setHelpOpen(true)}>?</button>
@@ -172,12 +174,14 @@ export default function App() {
       <div className="two-panel">
         <aside className="left">
           <details className="input-disclosure" open>
-            <summary>{mode === 'single' ? 'Inputs' : 'Multi-contrast'}</summary>
+            <summary>{mode === 'single' ? 'Inputs' : mode === 'multi' ? 'Multi-contrast' : 'GSEA (ranked)'}</summary>
             {mode === 'single' ? (
               <InputPanel onRun={start} disabled={state.status === 'running'} onHelp={setHelpFor}
                 initial={loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : undefined} />
-            ) : (
+            ) : mode === 'multi' ? (
               <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} onHelp={setHelpFor} />
+            ) : (
+              <p className="muted" style={{ fontSize: 13 }}>Ranked-list GSEA — provide an ontology + a gene-score list in the main panel. ES &amp; leading edge match fgsea exactly; NES &amp; p use a seeded permutation null.</p>
             )}
           </details>
           <PrivacyNote />
@@ -186,6 +190,8 @@ export default function App() {
         <main className="right">
           {helpFor ? (
             <InputHelp which={helpFor} onClose={() => setHelpFor(null)} />
+          ) : mode === 'gsea' ? (
+            <GseaView />
           ) : (
           <>
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}

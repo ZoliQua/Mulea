@@ -103,6 +103,31 @@ export function gseaScores(gmt: GmtTerm[], ranked: RankedItem[]): Array<{
   });
 }
 
+/** Full running-enrichment curve for one term (for the running-ES plot). */
+export function runningEnrichment(termGenes: string[], ranked: RankedItem[]): {
+  curve: number[]; hitIndices: number[]; es: number; peak: number; n: number;
+} {
+  const sorted = rankedSorted(ranked);
+  const absScores = sorted.map((s) => Math.abs(s.score));
+  const n = sorted.length;
+  const set = new Set(termGenes);
+  const inSet = sorted.map((s) => set.has(s.gene));
+  let nr = 0; let nh = 0;
+  for (let i = 0; i < n; i++) if (inSet[i]) { nr += absScores[i]!; nh++; }
+  const curve = new Array<number>(n);
+  const hitIndices: number[] = [];
+  if (nh === 0 || nr === 0 || nh === n) { curve.fill(0); return { curve, hitIndices, es: 0, peak: -1, n }; }
+  const missStep = 1 / (n - nh);
+  let run = 0; let es = 0; let peak = -1;
+  for (let i = 0; i < n; i++) {
+    run += inSet[i] ? absScores[i]! / nr : -missStep;
+    curve[i] = run;
+    if (inSet[i]) hitIndices.push(i);
+    if (Math.abs(run) > Math.abs(es)) { es = run; peak = i; }
+  }
+  return { curve, hitIndices, es, peak, n };
+}
+
 /** Deterministic seeded PRNG (mulberry32) — reproducible permutation null. */
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
