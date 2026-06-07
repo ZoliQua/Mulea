@@ -113,6 +113,13 @@ cd python && pytest tests/test_parity_efdr_with_r.py
 Rscript python/tests/fixtures/generate_efdr_reference.R
 ```
 
+## GSEA coverage (ranked-list)
+
+Ranked-list GSEA is currently in **R** (fgsea) and the **Web** tool (weighted-KS ES + permutation,
+validated against fgsea in [VALIDATION.md](VALIDATION.md)). The **Python** leg has ORA/eFDR but **no
+GSEA yet** — a known parity gap, deferred (a future `mulealab.gsea` would restore full trifecta
+symmetry). ORA + eFDR remain in all three legs.
+
 ## Engine performance
 
 Scaling of the WASM Monte-Carlo core (wall-clock vs permutation depth and problem size) is measured by

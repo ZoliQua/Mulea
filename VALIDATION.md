@@ -39,16 +39,43 @@ muleaLab keeps at p = 1):
 muleaLab's ORA core reproduces an independent, widely-used tool to machine precision once the
 universe convention is matched.
 
+## GSEA (ranked-list): validation vs fgsea
+
+muleaLab's web GSEA is validated against **fgsea** (Bioconductor 1.38.0) — the exact engine the
+mulea R package calls (`SubramanianTest.R`: `fgsea::fgsea(pathways, stats, gseaParam, scoreType)`).
+Inputs: the E. coli `ordered_set.tsv` (gene + logFC) and the same 3<size<400 filtered ontology.
+
+| Quantity | Comparison | Result |
+|---|---|---|
+| enrichment score (ES) | exact vs `fgsea::calcGseaStat` | floating-point identical (≤ 1e-9) |
+| leading edge | deterministic from ES | identical |
+| NES | classic permutation null vs fgsea multilevel | Pearson r ≈ 0.9999, sign agrees on 153/153 |
+| significant set (adj p < 0.05) | Jaccard | ≥ 0.75 (21/24 on this data) |
+
+Two honest details:
+
+- **ES uses `calcGseaStat`, not `fgsea()`'s ES column.** `fgsea()`'s multilevel *batch* code carries a
+  ~1e-6 numerical artefact in ES on heavily-tied, low-precision scores; `calcGseaStat` is the
+  canonical ES and muleaLab matches it exactly.
+- **p-value is tolerance-parity, by design.** mulea/fgsea use the multilevel p; muleaLab uses a
+  classic seeded gene-permutation null. They agree closely except very near the 0.05 boundary. ES,
+  NES sign, and the leading edge are the exact/robust quantities.
+- **Ties:** ~92% of the example logFC values tie; both fgsea and muleaLab break ties by stable input
+  order, so the ES is reproducible.
+
 ## Reproduce
 
 ```bash
-# 1. regenerate the reference (needs R + clusterProfiler)
+# ORA vs clusterProfiler
 Rscript python/tests/fixtures/generate_clusterprofiler_reference.R
-
-# 2. parity tests (both legs, checksum-guarded fixture)
 cd web && npx vitest run tests/clusterProfiler.test.ts
 cd python && pytest tests/test_parity_clusterprofiler.py
+
+# GSEA vs fgsea
+Rscript python/tests/fixtures/generate_fgsea_reference.R
+cd web && npx vitest run tests/gseaEs.test.ts tests/gseaParity.test.ts
 ```
 
-Fixture: `python/tests/fixtures/clusterprofiler_reference.csv`
-(SHA-256 `54b181e4d6aba87c9d60ce0d5cd9878057ebd2406a9518d7331b37882b6fecd7`, guarded in the web test).
+Fixtures (checksum-guarded in the web tests):
+- `python/tests/fixtures/clusterprofiler_reference.csv` (SHA-256 `54b181e4d6aba87c9d60ce0d5cd9878057ebd2406a9518d7331b37882b6fecd7`)
+- `python/tests/fixtures/fgsea_reference.csv` (SHA-256 `ee4015830ef75b9ccbb77519df5abb7134180f802261364d881dab34cd27cc81`)
