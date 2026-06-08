@@ -340,6 +340,10 @@ input[type="range"] { accent-color: var(--accent); }
 .gsea-table td.sig { color: var(--accent); font-weight: 600; }
 .gsea-plot { border: 1px solid var(--border); border-radius: var(--r-1); padding: var(--sp-3); background: var(--surface); }
 
+/* ontology catalog picker */
+.ontology-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.ontology-picker select { font-size: 12px; padding: 4px 6px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-1); max-width: 100%; }
+
 /* validation drawer figure */
 .val-drawer { width: 420px; }
 .val-fig { background: #fff; border-radius: 10px; padding: 8px; margin: 10px 0; }

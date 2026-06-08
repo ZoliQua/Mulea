@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { loadExample } from '../samples.ts';
 import type { InputKind } from './InputHelp.tsx';
+import { OntologyPicker } from './OntologyPicker.tsx';
 
 const countLines = (t: string) => t.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).length;
 
@@ -83,6 +84,7 @@ export function InputPanel(props: {
 
   return (
     <div className="input-panel">
+      <OntologyPicker onPick={(text) => setGmtText(text)} />
       <InputField kind="gmt" label="Ontology (GMT)" accept=".gmt,.txt" placeholder="paste GMT…"
         value={gmtText} onChange={setGmtText} onHelp={() => props.onHelp('gmt')} />
       <InputField kind="target" label="Target genes (one per line)" accept=".txt" placeholder="Paste, or load the example…"

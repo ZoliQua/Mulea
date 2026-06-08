@@ -3,6 +3,7 @@ import { parseGmt } from '../io.ts';
 import { filterOntology } from '../ontology.ts';
 import { parseRanked, gsea, type GseaRow, type RankedItem, type ScoreType } from '../gsea.ts';
 import { RunningEsPlot } from './RunningEsPlot.tsx';
+import { OntologyPicker } from './OntologyPicker.tsx';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -52,6 +53,7 @@ export function GseaView() {
     <div className="gsea-view">
       <div className="gsea-inputs">
         <div className="input-head"><strong>Ontology (GMT)</strong></div>
+        <OntologyPicker onPick={(text) => { setGmtText(text); setRows(null); setSelected(null); }} />
         <textarea value={gmtText} onChange={(e) => setGmtText(e.target.value)} rows={4} placeholder="term_id&#9;name&#9;gene1&#9;gene2 …" />
         <div className="input-head"><strong>Ranked list</strong> <span className="muted">gene ⇥ score (e.g. logFC)</span></div>
         <textarea value={rankedText} onChange={(e) => setRankedText(e.target.value)} rows={4} placeholder="geneA&#9;2.31&#10;geneB&#9;-1.07 …" />
