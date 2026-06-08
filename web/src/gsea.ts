@@ -1,4 +1,7 @@
 import type { GmtTerm } from './types.ts';
+import { enrichmentScoreWeightedDetail } from './gseaWeighting.ts';
+
+export type ScoreType = 'std' | 'pos' | 'neg';
 
 /**
  * Ranked-list GSEA — the paper's method (weighted Kolmogorov–Smirnov enrichment score + a
@@ -87,18 +90,18 @@ function leadingEdge(genes: string[], inSet: boolean[], es: number, peak: number
 }
 
 /** Deterministic ES + leading edge per term (no permutation). NES/p are added by `gsea`. */
-export function gseaScores(gmt: GmtTerm[], ranked: RankedItem[]): Array<{
-  term: GmtTerm; size: number; es: number; peak: number; leading_edge: string[];
-}> {
+export function gseaScores(
+  gmt: GmtTerm[], ranked: RankedItem[], gseaParam = 1, scoreType: ScoreType = 'std',
+): Array<{ term: GmtTerm; size: number; es: number; peak: number; leading_edge: string[] }> {
   const sorted = rankedSorted(ranked);
   const genes = sorted.map((s) => s.gene);
-  const absScores = sorted.map((s) => Math.abs(s.score));
+  const signed = sorted.map((s) => s.score);
   const index = new Map(genes.map((g, i) => [g, i]));
   return gmt.map((term) => {
     const inSet = new Array<boolean>(genes.length).fill(false);
     let size = 0;
     for (const g of term.list_of_values) { const i = index.get(g); if (i !== undefined) { inSet[i] = true; size++; } }
-    const { es, peak } = enrichmentScore(absScores, inSet);
+    const { es, peak } = enrichmentScoreWeightedDetail(signed, inSet, gseaParam, scoreType);
     return { term, size, es, peak, leading_edge: leadingEdge(genes, inSet, es, peak) };
   });
 }
@@ -139,14 +142,15 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-/** ES from an (unsorted) set of hit positions in the ranked list — used for the permutation null. */
-function esFromPositions(absScores: number[], positions: number[]): number {
-  const n = absScores.length;
+/** ES from an (unsorted) set of hit positions — used for the permutation null (weighted, scoreType). */
+function esFromPositions(signedScores: number[], positions: number[], gseaParam: number, scoreType: ScoreType): number {
+  const n = signedScores.length;
   const nh = positions.length;
   if (nh === 0 || nh === n) return 0;
+  const w = (s: number): number => { const a = Math.abs(s); return gseaParam === 1 ? a : Math.pow(a, gseaParam); };
   const sorted = [...positions].sort((a, b) => a - b);
   let nr = 0;
-  for (const p of sorted) nr += absScores[p]!;
+  for (const p of sorted) nr += w(signedScores[p]!);
   if (nr === 0) return 0;
   const missDen = n - nh;
   let cum = 0; let top = 0; let bottom = 0;
@@ -154,10 +158,12 @@ function esFromPositions(absScores: number[], positions: number[]): number {
     const misses = sorted[k]! - k;
     const before = cum / nr - misses / missDen;
     if (before < bottom) bottom = before;
-    cum += absScores[sorted[k]!]!;
+    cum += w(signedScores[sorted[k]!]!);
     const after = cum / nr - misses / missDen;
     if (after > top) top = after;
   }
+  if (scoreType === 'pos') return top;
+  if (scoreType === 'neg') return bottom;
   return top >= -bottom ? top : bottom;
 }
 
@@ -171,7 +177,7 @@ function sampleDistinct(n: number, k: number, rand: () => number): number[] {
   return [...set];
 }
 
-export interface GseaOptions { permutations?: number; seed?: number }
+export interface GseaOptions { permutations?: number; seed?: number; gseaParam?: number; scoreType?: ScoreType }
 
 /**
  * Ranked-list GSEA. ES + leading edge are exact (match fgsea::calcGseaStat); NES and the p-value
@@ -180,18 +186,20 @@ export interface GseaOptions { permutations?: number; seed?: number }
  */
 export function gsea(gmt: GmtTerm[], ranked: RankedItem[], opts: GseaOptions = {}): GseaRow[] {
   const permutations = opts.permutations ?? 1000;
+  const gseaParam = opts.gseaParam ?? 1;
+  const scoreType = opts.scoreType ?? 'std';
   const rand = mulberry32(opts.seed ?? 42);
   const sorted = rankedSorted(ranked);
-  const absScores = sorted.map((s) => Math.abs(s.score));
-  const n = absScores.length;
-  const scores = gseaScores(gmt, ranked);
+  const signedScores = sorted.map((s) => s.score);
+  const n = signedScores.length;
+  const scores = gseaScores(gmt, ranked, gseaParam, scoreType);
 
   const pvals = scores.map((s) => {
     if (s.size === 0 || s.es === 0) return { nes: 0, p: 1 };
     let posCount = 0; let negCount = 0; let posSum = 0; let negSum = 0;
     let asExtreme = 0;
     for (let k = 0; k < permutations; k++) {
-      const es = esFromPositions(absScores, sampleDistinct(n, s.size, rand));
+      const es = esFromPositions(signedScores, sampleDistinct(n, s.size, rand), gseaParam, scoreType);
       if (es >= 0) { posCount++; posSum += es; } else { negCount++; negSum += -es; }
       if (s.es >= 0) { if (es >= s.es) asExtreme++; } else if (es <= s.es) asExtreme++;
     }

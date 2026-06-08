@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { parseGmt } from '../io.ts';
 import { filterOntology } from '../ontology.ts';
-import { parseRanked, gsea, type GseaRow, type RankedItem } from '../gsea.ts';
+import { parseRanked, gsea, type GseaRow, type RankedItem, type ScoreType } from '../gsea.ts';
 import { RunningEsPlot } from './RunningEsPlot.tsx';
 
 const BASE = import.meta.env.BASE_URL;
@@ -12,6 +12,8 @@ export function GseaView() {
   const [rankedText, setRankedText] = useState('');
   const [permutations, setPermutations] = useState(1000);
   const [seed, setSeed] = useState(42);
+  const [gseaParam, setGseaParam] = useState(1);
+  const [scoreType, setScoreType] = useState<ScoreType>('std');
   const [computing, setComputing] = useState(false);
   const [rows, setRows] = useState<GseaRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export function GseaView() {
     setComputing(true); setRows(null); setSelected(null);
     setTimeout(() => {
       try {
-        const res = gsea(gmt, rk, { permutations, seed }).sort((a, b) => Math.abs(b.nes) - Math.abs(a.nes));
+        const res = gsea(gmt, rk, { permutations, seed, gseaParam, scoreType }).sort((a, b) => Math.abs(b.nes) - Math.abs(a.nes));
         setRows(res);
       } catch (e) { setError(String(e)); }
       setComputing(false);
@@ -58,6 +60,14 @@ export function GseaView() {
             onChange={(e) => setPermutations(Math.max(100, Math.floor(Number(e.target.value) || 1000)))} style={{ width: 88 }} /></label>
           <label style={{ fontSize: 12 }}>seed <input type="number" value={seed}
             onChange={(e) => setSeed(Math.floor(Number(e.target.value) || 42))} style={{ width: 64 }} /></label>
+          <label style={{ fontSize: 12 }} title="fgsea gseaParam: per-gene weight = |score|^p">weight p <input type="number" min={0} max={2} step={0.1} value={gseaParam}
+            onChange={(e) => setGseaParam(Math.max(0, Number(e.target.value) || 1))} style={{ width: 56 }} /></label>
+          <label style={{ fontSize: 12 }} title="fgsea scoreType">score
+            <select value={scoreType} onChange={(e) => setScoreType(e.target.value as ScoreType)} style={{ marginLeft: 4 }}>
+              <option value="std">two-sided</option>
+              <option value="pos">enriched at top</option>
+              <option value="neg">enriched at bottom</option>
+            </select></label>
           <button type="button" onClick={loadExample}>Load example</button>
           <button type="button" className="run-btn" onClick={run} disabled={computing}>{computing ? 'Computing…' : 'Run GSEA'}</button>
           <span className="muted" style={{ fontSize: 12 }}>{ranked.length} ranked genes</span>
