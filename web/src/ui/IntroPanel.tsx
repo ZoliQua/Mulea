@@ -7,15 +7,15 @@ export function IntroAbout({ onClose }: { onClose?: () => void }) {
       )}
       <h3>What it does</h3>
       <ul>
-        <li>Finds <strong>ontology terms</strong> (gene-set categories) over-represented in your genes of interest.</li>
-        <li>Corrects for multiple testing — <strong>eFDR</strong> (empirical FDR), <strong>BH</strong>, or <strong>Bonferroni</strong>.</li>
+        <li>Finds <strong>ontology terms</strong> over-represented in your gene set (<strong>ORA</strong>), or enriched along a ranked list (<strong>GSEA</strong>).</li>
+        <li>Corrects for multiple testing — <strong>eFDR</strong> (empirical FDR), <strong>BH</strong>, or <strong>Bonferroni</strong>; cross-checked against clusterProfiler &amp; fgsea.</li>
         <li>Runs <strong>entirely in your browser</strong>: private, offline-capable, nothing uploaded.</li>
       </ul>
       <h3>How to use it</h3>
       <ol>
-        <li>Provide an <strong>ontology (GMT)</strong>, your <strong>target genes</strong>, and a <strong>background</strong> — paste, upload, or hit <strong>★ Load E. coli example</strong>.</li>
-        <li>Pick a <strong>correction</strong>; for eFDR choose <strong>Exact</strong> (instant) or <strong>Resampling</strong> (Monte-Carlo).</li>
-        <li>Press <strong>Run ▶</strong>, then explore the table and figures, click a term to drill down, and share or export.</li>
+        <li>Provide an <strong>ontology (GMT)</strong> — paste, upload, or <strong>browse the muleaData catalog</strong> (877 GMT, 27 organisms) — plus your genes.</li>
+        <li>Pick <strong>ORA</strong> (target + background) or <strong>GSEA (ranked)</strong> (a gene–score list); for eFDR choose <strong>Exact</strong> or <strong>Resampling</strong>.</li>
+        <li>Press <strong>Run ▶</strong>, then explore the figures, click a term to drill down (with an approximate eFDR confidence interval), and share or export.</li>
       </ol>
     </section>
   );

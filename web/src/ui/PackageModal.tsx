@@ -184,6 +184,14 @@ efdr = ora(gmt, target, background,
         note: 'set_based_enrichment_test(gmt, target, background, mode="resampling") exposes the histogram engine directly.',
       },
       {
+        title: 'Ranked GSEA',
+        blurb: 'Weighted-KS enrichment score + permutation NES/p.',
+        code: `from mulealab import gsea
+# ranked: DataFrame [gene, score] (e.g. logFC)
+res = gsea(gmt, ranked, permutations=1000, seed=42)`,
+        note: 'ES & leading edge match fgsea::calcGseaStat exactly; NES/p use a seeded permutation null. CLI: mulealab gsea ontology.gmt ranked.tsv.',
+      },
+      {
         title: 'GMT I/O & filtering',
         blurb: 'Read / write GMT and drop ill-sized terms.',
         code: `gmt = read_gmt("ontology.gmt")

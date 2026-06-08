@@ -5,7 +5,7 @@ import { PackageModal, type Pkg } from './ui/PackageModal.tsx';
 const SHADOW = '0 2px 14px rgba(0,0,0,0.55)';
 
 function MuleaLogo({ h = '6.2cqw' }: { h?: string }) {
-  return <img src="/mulea-logo.png" alt="Mulea" style={{ height: h, width: 'auto' }} />;
+  return <img src={`${import.meta.env.BASE_URL}mulea-logo.png`} alt="Mulea" style={{ height: h, width: 'auto' }} />;
 }
 
 function RIcon() {
@@ -31,8 +31,8 @@ function PyIcon() {
 const FEAT_POS = [
   { left: '12.0%', title: 'Multiple Ontologies', body: 'Analyze across 20+ ontology types and 16 public databases.' },
   { left: '35.2%', title: 'Empirical FDR', body: 'Robust significance estimation for dependent data.' },
-  { left: '58.6%', title: 'Over-representation', body: 'Hypergeometric enrichment with eFDR, BH or Bonferroni correction.' },
-  { left: '79.7%', title: 'Model Organisms', body: 'Prebuilt ontologies for 27 model organisms.' },
+  { left: '58.6%', title: 'ORA & GSEA', body: 'Set-based over-representation and ranked-list GSEA — validated against clusterProfiler & fgsea.' },
+  { left: '79.7%', title: 'Model Organisms', body: 'Browse 877 prebuilt ontologies for 27 organisms, or bring your own GMT.' },
 ];
 
 export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () => void }) {
@@ -65,7 +65,7 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
       <div style={{
         position: 'relative', aspectRatio: '1536 / 1024',
         width: 'min(100vw, calc(100vh * 1.5))', maxWidth: '100vw', maxHeight: '100vh',
-        backgroundImage: 'url("/hero-bg.png")', backgroundSize: 'cover', backgroundPosition: 'center',
+        backgroundImage: `url("${import.meta.env.BASE_URL}hero-bg.png")`, backgroundSize: 'cover', backgroundPosition: 'center',
         containerType: 'inline-size',
         fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', color: '#f3f8fa', userSelect: 'none',
       }}>
