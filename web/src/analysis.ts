@@ -1,8 +1,9 @@
 import { parseGmt } from './io.ts';
 import { filterOntology } from './ontology.ts';
 import { ora } from './ora.ts';
-import { setBasedEnrichmentTest } from './efdr.ts';
+import { setBasedEnrichmentTest, rObsRanks } from './efdr.ts';
 import { setBasedEnrichmentTestMc } from './efdrMc.ts';
+import { efdrStandardError } from './efdrStandardError.ts';
 import type { AnalysisInput, AnalysisResult, ResultRow, EfdrMode, EfdrDiagnostics } from './appTypes.ts';
 import type { GmtTerm } from './types.ts';
 
@@ -111,5 +112,12 @@ export async function runAnalysisMc(input: AnalysisInput): Promise<AnalysisResul
     withinNoise: maxAbsDeltaVsExact <= NOISE_FACTOR / Math.sqrt(steps),
     clampedToOne,
   };
-  return finalize(prep, input, mcRows as ResultRow[], { efdrMode: 'resampling', diagnostics });
+  // Approximate Poisson MC standard error / 95% CI per term (needs the observed rank of each p-value).
+  const rObs = rObsRanks(mcRows.map((r) => r.p_value));
+  const mcRowsWithSe: ResultRow[] = mcRows.map((r, i) => {
+    if (!Number.isFinite(r.eFDR)) return r as ResultRow;
+    const { se, ciLow, ciHigh } = efdrStandardError(r.eFDR!, steps, rObs[i]!);
+    return { ...r, efdrSe: se, efdrCiLow: ciLow, efdrCiHigh: ciHigh } as ResultRow;
+  });
+  return finalize(prep, input, mcRowsWithSe, { efdrMode: 'resampling', diagnostics });
 }

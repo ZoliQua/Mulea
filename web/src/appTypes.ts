@@ -20,6 +20,10 @@ export interface ResultRow {
   p_value: number;
   adjusted_p_value?: number;
   eFDR?: number;
+  /** Approximate Poisson Monte-Carlo standard error + 95% CI for the resampling eFDR (MC path only). */
+  efdrSe?: number;
+  efdrCiLow?: number;
+  efdrCiHigh?: number;
   nr_common_with_tested_elements?: number;
   nr_common_with_background_elements?: number;
   hits?: string[];
