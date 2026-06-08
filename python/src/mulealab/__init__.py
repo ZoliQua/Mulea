@@ -1,5 +1,6 @@
 """muleaLab — headless multi-ontology enrichment analysis (Python companion)."""
 from mulealab.efdr import set_based_enrichment_test
+from mulealab.gsea import gsea
 from mulealab.io import read_gmt, write_gmt
 from mulealab.ontology import filter_ontology
 from mulealab.ora import ora
@@ -13,6 +14,7 @@ __all__ = [
     "filter_ontology",
     "ora",
     "set_based_enrichment_test",
+    "gsea",
     "hypergeometric_pvalue",
     "p_adjust",
 ]
