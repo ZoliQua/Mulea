@@ -12,6 +12,8 @@ export interface AnalysisInput {
   efdrMode?: EfdrMode;
   steps?: number;
   seed?: number;
+  /** Hypergeometric tail for the BH/Bonferroni ORA path (eFDR is always over-representation). */
+  direction?: 'over' | 'under' | 'two-sided';
 }
 
 export interface ResultRow {
@@ -27,6 +29,15 @@ export interface ResultRow {
   nr_common_with_tested_elements?: number;
   nr_common_with_background_elements?: number;
   hits?: string[];
+  /** Tail of the hypergeometric ORA test that produced p_value. */
+  direction?: 'over' | 'under' | 'two-sided';
+  /** Fold enrichment (k/n)/(K/N) for the term (ORA path only). */
+  fold_enrichment?: number;
+  /** Natural-log odds ratio with Haldane–Anscombe correction (ORA path only). */
+  log_odds_ratio?: number;
+  /** 95% Wald CI for the (linear) odds ratio. */
+  or_ci_low?: number;
+  or_ci_high?: number;
 }
 
 export interface EfdrDiagnostics {

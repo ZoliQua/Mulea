@@ -7,6 +7,7 @@ export interface Capsule {
     gmtText: string; target: string[]; background: string[];
     method: Method; minNrOfElements: number; maxNrOfElements: number;
     efdrMode?: EfdrMode; steps?: number; seed?: number;
+    direction?: 'over' | 'under' | 'two-sided';
   };
   fp: string;
 }

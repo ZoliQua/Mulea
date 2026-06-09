@@ -13,7 +13,14 @@ export function DrilldownPanel(props: { row: ResultRow; meta: AnalysisResult['me
           <><span className="dd-key" title="Approximate Poisson Monte-Carlo 95% CI for the resampling eFDR">≈ 95% CI (MC)</span>
           <span className="dd-val">[{props.row.efdrCiLow.toPrecision(2)}, {props.row.efdrCiHigh!.toPrecision(2)}]</span></>
         )}
-        <span className="dd-key">p-value</span><span className="dd-val">{d.p_value.toExponential(2)}</span>
+        <span className="dd-key">p-value</span><span className="dd-val">{d.p_value.toExponential(2)}{props.row.direction && props.row.direction !== 'over' ? ` (${props.row.direction})` : ''}</span>
+        {props.row.fold_enrichment !== undefined && (
+          <><span className="dd-key" title="(k/n)/(K/N)">fold-enrichment</span><span className="dd-val">{props.row.fold_enrichment.toPrecision(3)}</span></>
+        )}
+        {props.row.log_odds_ratio !== undefined && props.row.or_ci_low !== undefined && (
+          <><span className="dd-key" title="Odds ratio with Haldane–Anscombe correction, 95% Wald CI">odds ratio (95% CI)</span>
+          <span className="dd-val">{Math.exp(props.row.log_odds_ratio).toPrecision(3)} [{props.row.or_ci_low.toPrecision(2)}, {props.row.or_ci_high!.toPrecision(2)}]</span></>
+        )}
         <span className="dd-key">target overlap</span><span className="dd-val">{d.nrCommonWithTested}</span>
         {d.nrCommonWithBackground !== undefined && <><span className="dd-key">background overlap</span><span className="dd-val">{d.nrCommonWithBackground}</span></>}
         <span className="dd-key">pool size</span><span className="dd-val">{d.poolSize}</span>

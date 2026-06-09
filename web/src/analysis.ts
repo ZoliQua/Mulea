@@ -83,7 +83,7 @@ export function runAnalysis(input: AnalysisInput): AnalysisResult {
   const prep = prepare(input);
   const rows: ResultRow[] = input.method === 'eFDR'
     ? setBasedEnrichmentTest(prep.gmt, input.target, input.background)
-    : ora(prep.gmt, input.target, input.background, input.method);
+    : ora(prep.gmt, input.target, input.background, input.method, input.direction ?? 'over');
   return finalize(prep, input, rows, input.method === 'eFDR' ? { efdrMode: 'exact' } : undefined);
 }
 

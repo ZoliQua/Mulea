@@ -14,6 +14,8 @@ export function Controls(props: {
   seed: number; onSeed: (n: number) => void;
   onRandomizeSeed: () => void;
   onShowDerivation: () => void;
+  direction: 'over' | 'under' | 'two-sided';
+  onDirection: (d: 'over' | 'under' | 'two-sided') => void;
 }) {
   return (
     <div className="controls">
@@ -45,6 +47,14 @@ export function Controls(props: {
             </>
           )}
         </span>
+      )}
+      {(props.method === 'BH' || props.method === 'bonferroni') && (
+        <label style={{ fontSize: 12 }} title="Hypergeometric tail (eFDR is always over-representation)">tail
+          <select value={props.direction} onChange={(e) => props.onDirection(e.target.value as 'over' | 'under' | 'two-sided')} style={{ marginLeft: 4 }}>
+            <option value="over">over-repr.</option>
+            <option value="under">depletion</option>
+            <option value="two-sided">two-sided</option>
+          </select></label>
       )}
       <label style={{ fontSize: 12 }}><input type="checkbox" checked={props.sigOnly} onChange={(e) => props.onSigOnly(e.target.checked)} /> Significant only</label>
     </div>
