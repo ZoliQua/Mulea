@@ -82,7 +82,7 @@ export function GseaView() {
           <span className="summary-pill">{rows.filter((r) => r.adjusted_p_value < 0.05).length} significant terms · BH &lt; 0.05 · {permutations} perms</span>
           <div className="gsea-table-wrap">
             <table className="gsea-table">
-              <thead><tr><th>Term</th><th>size</th><th>ES</th><th>NES</th><th>p</th><th>adj p</th></tr></thead>
+              <thead><tr><th>Term</th><th>size</th><th>ES</th><th>NES</th><th>p</th><th>adj p</th><th title="mulea progressive eFDR (rank-based), distinct from the BH adj p">eFDR</th></tr></thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.ontology_id} className={r.ontology_id === selected ? 'sel' : ''} onClick={() => setSelected(r.ontology_id)}>
@@ -90,6 +90,7 @@ export function GseaView() {
                     <td>{r.es.toFixed(3)}</td><td>{r.nes.toFixed(3)}</td>
                     <td>{r.p_value.toExponential(1)}</td>
                     <td className={r.adjusted_p_value < 0.05 ? 'sig' : ''}>{r.adjusted_p_value.toExponential(1)}</td>
+                    <td className={r.efdr < 0.05 ? 'sig' : ''}>{r.efdr.toFixed(3)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -63,6 +63,13 @@ Two honest details:
 - **Ties:** ~92% of the example logFC values tie; both fgsea and muleaLab break ties by stable input
   order, so the ES is reproducible.
 
+**mulea eFDR for GSEA.** Alongside fgsea's BH (`adjusted_p_value`), muleaLab reports the mulea
+**progressive rank-based eFDR extended from ORA to GSEA** — the NES-rank analogue of the paper's
+ORA eFDR (`R_obs_j = #{i: |NES_i| ≥ |NES_j|}`; `R_exp_j` = per-permutation mean count of pooled null
+`|NES|` reaching `|NES_j|`; `eFDR = min(R_exp/R_obs, 1)`), reusing the same gene-permutation null. It
+is a **distinct** method, not a port of fgsea's FDR. On the E. coli example: every eFDR ∈ [0,1],
+Spearman(|NES|, eFDR) = −0.997, Spearman(eFDR, BH) = +0.986 (`web/tests/gseaEfdr.test.ts`).
+
 ## Reproduce
 
 ```bash

@@ -23,6 +23,15 @@ export interface GseaRow {
   nes: number;
   p_value: number;
   adjusted_p_value: number;
+  /**
+   * mulea's progressive rank-based empirical FDR (Turek et al. 2024), extended from ORA to GSEA on
+   * the NES statistic. This is NOT a replacement for fgsea's permutation FDR (BH on the multilevel
+   * p, reported as `adjusted_p_value`): it is the same resampling-rank eFDR mulea applies in ORA,
+   * computed here from the gene-permutation null already drawn for the NES. eFDR_j =
+   * min(R_exp_j / R_obs_j, 1) where R_obs_j counts observed terms with |NES_i| ≥ |NES_j| and R_exp_j
+   * is the per-permutation mean count of pooled null |NES| reaching |NES_j|. See PARITY.md.
+   */
+  efdr: number;
   leading_edge: string[];
 }
 
@@ -167,6 +176,13 @@ function esFromPositions(signedScores: number[], positions: number[], gseaParam:
   return top >= -bottom ? top : bottom;
 }
 
+/** Index of the first element ≥ x in an ascending array (so `len - lowerBound` counts values ≥ x). */
+function lowerBound(sorted: number[], x: number): number {
+  let lo = 0; let hi = sorted.length;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (sorted[mid]! < x) lo = mid + 1; else hi = mid; }
+  return lo;
+}
+
 /** Floyd's algorithm: `k` distinct integers in [0, n) using the given PRNG. */
 function sampleDistinct(n: number, k: number, rand: () => number): number[] {
   const set = new Set<number>();
@@ -194,20 +210,56 @@ export function gsea(gmt: GmtTerm[], ranked: RankedItem[], opts: GseaOptions = {
   const n = signedScores.length;
   const scores = gseaScores(gmt, ranked, gseaParam, scoreType);
 
+  // First pass: per term, draw the gene-permutation null once and retain each permutation's null ES
+  // alongside the same-sign means needed to normalise both the observed ES (→ NES) and every null ES
+  // (→ null NES). Retaining the raw null ES per (term, perm) lets the second pass build the pooled
+  // null-NES distribution the rank-based eFDR needs (cf. ORA's pooled hypergeometric null mass).
   const pvals = scores.map((s) => {
-    if (s.size === 0 || s.es === 0) return { nes: 0, p: 1 };
+    if (s.size === 0 || s.es === 0) return { nes: 0, p: 1, nullEs: [] as number[], posMean: 0, negMean: 0 };
     let posCount = 0; let negCount = 0; let posSum = 0; let negSum = 0;
     let asExtreme = 0;
+    const nullEs = new Array<number>(permutations);
     for (let k = 0; k < permutations; k++) {
       const es = esFromPositions(signedScores, sampleDistinct(n, s.size, rand), gseaParam, scoreType);
+      nullEs[k] = es;
       if (es >= 0) { posCount++; posSum += es; } else { negCount++; negSum += -es; }
       if (s.es >= 0) { if (es >= s.es) asExtreme++; } else if (es <= s.es) asExtreme++;
     }
     const denom = s.es >= 0 ? posCount : negCount;
-    const meanAbs = s.es >= 0 ? (posCount ? posSum / posCount : 0) : (negCount ? negSum / negCount : 0);
+    const posMean = posCount ? posSum / posCount : 0;
+    const negMean = negCount ? negSum / negCount : 0;
+    const meanAbs = s.es >= 0 ? posMean : negMean;
     const nes = meanAbs > 0 ? s.es / meanAbs : 0;
     const p = (1 + asExtreme) / (1 + denom);
-    return { nes, p };
+    return { nes, p, nullEs, posMean, negMean };
+  });
+
+  // Second pass — mulea's progressive rank-based eFDR (Turek et al. 2024), extended from ORA's
+  // p-value rank to the GSEA NES statistic. Normalise each retained null ES the SAME way as the
+  // observed NES — divide by the same-sign mean |null ES| of its own term — to get a null NES, then
+  // pool every |null NES| across all (term, perm) and sort once. For each observed term j:
+  //   R_obs_j = #{ observed i : |NES_i| ≥ |NES_j| }
+  //   R_exp_j = (1/permutations) · #{ (term i, perm s) : |nullNES_i^s| ≥ |NES_j| }   (binary search)
+  //   eFDR_j  = min(R_exp_j / R_obs_j, 1)
+  // This is the resampling FDR mulea reports, NOT fgsea's BH-on-p adjusted_p_value.
+  const nullAbsNes: number[] = [];
+  for (const v of pvals) {
+    if (v.nullEs.length === 0) continue;
+    for (const e of v.nullEs) {
+      const m = e >= 0 ? v.posMean : v.negMean;
+      if (m > 0) nullAbsNes.push(Math.abs(e) / m); // |null NES|; same normalisation as the NES
+    }
+  }
+  nullAbsNes.sort((a, b) => a - b);
+
+  const absNes = pvals.map((v) => Math.abs(v.nes));
+  const efdr = absNes.map((an) => {
+    if (!(an > 0)) return 1; // NES==0 (empty/zero-ES term) — least extreme, eFDR clamps to 1
+    let rObs = 0;
+    for (const x of absNes) if (x >= an) rObs++;
+    const ge = nullAbsNes.length - lowerBound(nullAbsNes, an); // #{ |nullNES| ≥ an }
+    const rExp = ge / permutations;
+    return Math.min(rExp / rObs, 1);
   });
 
   // BH across terms
@@ -229,6 +281,7 @@ export function gsea(gmt: GmtTerm[], ranked: RankedItem[], opts: GseaOptions = {
     nes: pvals[i]!.nes,
     p_value: pvals[i]!.p,
     adjusted_p_value: adj[i]!,
+    efdr: efdr[i]!,
     leading_edge: s.leading_edge,
   }));
 }
