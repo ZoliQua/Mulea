@@ -39,6 +39,24 @@ muleaLab keeps at p = 1):
 muleaLab's ORA core reproduces an independent, widely-used tool to machine precision once the
 universe convention is matched.
 
+### External ORA parity — clusterProfiler, multi-organism (Human + Mouse)
+
+Extends the E. coli clusterProfiler::enricher parity (Bioconductor 4.20.0, R 4.6) to **Homo sapiens**
+and **Mus musculus**, showing the agreement is not organism-specific.
+
+- **Ontologies:** TRRUST transcription-factor GMTs (GeneSymbol) from `ELTEbioinformatics/GMT_files_for_mulea` — `gmt_human.gmt`, `gmt_mouse.gmt`.
+- **Inputs:** deterministic synthetic target/background, seed = 42 (`python/tests/fixtures/generate_clusterprofiler_multiorg.R`): background = union of genes in size-filtered terms (3<size<400, strict); target = all genes of the 2 largest terms (planted enrichment) + a seeded 10% random sample of the rest.
+- **Conventions:** identical to the E. coli reference (`pvalueCutoff=1, qvalueCutoff=1, minGSSize=1, maxGSSize=1e9, pAdjustMethod=BH`; size filter on full term size).
+- **GMT dedup note:** the TRRUST GMTs contain duplicate genes within terms. clusterProfiler uses unique (term, gene) pairs; mulea's C++ core (`src/set-based-enrichment-test.cpp`) and the web `ora()` count duplicates. To compare the hypergeometric *math* apples-to-apples, genes are deduplicated within each term in **both** tools (documented in the R generator and the web test). On raw GMTs the tools genuinely differ — a GMT-cleaning policy choice, not a bug.
+- **Result** (`web/tests/clusterProfilerMultiOrg.test.ts`, 6/6 passing):
+
+  | organism | tested terms | max rel. p-diff |
+  |----------|-------------:|----------------:|
+  | Homo sapiens | 378 | 3.56e-12 |
+  | Mus musculus | 379 | 4.46e-12 |
+
+  Hypergeometric and BH-adjusted p-values match clusterProfiler to < 1e-9 (floating-point identical). Fixtures SHA-256-pinned.
+
 ## GSEA (ranked-list): validation vs fgsea
 
 muleaLab's web GSEA is validated against **fgsea** (Bioconductor 1.38.0) — the exact engine the
@@ -69,6 +87,30 @@ ORA eFDR (`R_obs_j = #{i: |NES_i| ≥ |NES_j|}`; `R_exp_j` = per-permutation mea
 `|NES|` reaching `|NES_j|`; `eFDR = min(R_exp/R_obs, 1)`), reusing the same gene-permutation null. It
 is a **distinct** method, not a port of fgsea's FDR. On the E. coli example: every eFDR ∈ [0,1],
 Spearman(|NES|, eFDR) = −0.997, Spearman(eFDR, BH) = +0.986 (`web/tests/gseaEfdr.test.ts`).
+
+## Concordance with g:Profiler (external tool, g:SCS correction)
+
+**This is concordance, NOT p-value parity.** g:Profiler corrects with g:SCS (Set Counts and Sizes),
+fundamentally different from muleaLab's hypergeometric + Benjamini–Hochberg. We assert agreement of
+ranking and significant sets, not equality of p-values.
+
+g:Profiler was run via `gprofiler2::upload_GMT_file()` (CRAN gprofiler2 0.2.4) on the E. coli target
+(`inst/extdata/target_set.txt`, 241 genes) against the **same RegulonDB GMT** uploaded as a custom
+source (the GMT's leading `#` comment lines had to be stripped — g:Profiler's parser rejects them);
+`gost(..., correction_method='g_SCS')`. The muleaLab side was recomputed with the web `ora()` engine.
+
+| Metric | Value |
+|---|---|
+| Shared tested terms | 51 (g:Profiler tested 53; mulea's [3,400] filter drops CspA size 2 and CRP size 531) |
+| Spearman of −log10(p), shared terms | **0.58** (positive) |
+| Jaccard of significant sets | **0.29** |
+| muleaLab significant (BH<0.05) | 7: DnaA, FNR, FadR, LexA, NsrR, Rob, SoxS |
+| g:Profiler significant (g:SCS<0.05) | 2: FNR, LexA — a **strict subset** of muleaLab's, top hits agree |
+
+g:SCS is more conservative → fewer significant terms, but its significant set is contained in
+muleaLab's and the rankings correlate positively. No parity is claimed.
+Fixture `python/tests/fixtures/gprofiler_concordance.csv` (SHA-256-pinned); test
+`web/tests/gprofilerConcordance.test.ts` (4/4).
 
 ## Reproduce
 
