@@ -1,6 +1,9 @@
 import { runAnalysis, runAnalysisMc } from './analysis.ts';
 import type { AnalysisResult, Method, EfdrMode } from './appTypes.ts';
 import { rowScore } from './lollipop.ts';
+import { parseGmt } from './io.ts';
+import { filterOntology } from './ontology.ts';
+import { gsea, type GseaRow, type RankedItem, type ScoreType } from './gsea.ts';
 
 export interface Contrast { label: string; target: string[] }
 
@@ -93,4 +96,110 @@ export function dotMatrix(mc: MultiContrastResult): DotMatrix {
     }
   }
   return { terms, contrasts: mc.contrasts.map((c) => c.label), cells };
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// GSEA multi-contrast — run ranked-list GSEA per contrast against a shared GMT.
+// Mirrors the ORA multi-contrast structure above but keyed on NES/eFDR per (term,
+// contrast) rather than ORA score/hits. ORA paths above are unchanged.
+// ──────────────────────────────────────────────────────────────────────────────
+
+/** One named ranked list (gene→score), the GSEA analogue of a `Contrast`'s target set. */
+export interface RankedContrast { label: string; ranked: RankedItem[] }
+
+export interface MultiContrastGseaInput {
+  gmtText: string;
+  contrasts: RankedContrast[];
+  minNrOfElements: number;
+  maxNrOfElements: number;
+  /** Forwarded verbatim to `gsea()` so every contrast shares one null model. */
+  permutations?: number;
+  seed?: number;
+  gseaParam?: number;
+  scoreType?: ScoreType;
+}
+
+export interface MultiContrastGseaResult {
+  contrasts: { label: string; rows: GseaRow[] }[];
+}
+
+/** Which GseaRow field drives dot colour and the <0.05 significance flag. */
+export type GseaSigMetric = 'efdr' | 'adjusted_p_value';
+
+export interface GseaDotCell {
+  term: string;
+  contrast: string;
+  nes: number;
+  /** The significance metric value (eFDR or BH-adjusted p) — drives colour + the flag. */
+  score: number;
+  leadingEdge: number;
+  significant: boolean;
+}
+export interface GseaDotMatrix {
+  terms: { id: string; name: string }[];
+  contrasts: string[];
+  cells: GseaDotCell[];
+  metric: GseaSigMetric;
+}
+
+const GSEA_THRESHOLD = 0.05;
+
+/** GseaRow's significance score under the chosen metric (default: mulea's rank-based eFDR). */
+function gseaScore(row: GseaRow, metric: GseaSigMetric): number {
+  return metric === 'adjusted_p_value' ? row.adjusted_p_value : row.efdr;
+}
+
+/**
+ * Run ranked-list GSEA once per contrast against one shared, once-filtered GMT. Every contrast
+ * uses the SAME seed / permutations / scoreType / gseaParam so the null models are comparable
+ * across columns (cf. `runMultiContrastMc` sharing steps/seed for ORA eFDR).
+ */
+export function runMultiContrastGsea(input: MultiContrastGseaInput): MultiContrastGseaResult {
+  const gmt = filterOntology(parseGmt(input.gmtText), input.minNrOfElements, input.maxNrOfElements);
+  return {
+    contrasts: input.contrasts.map((c) => ({
+      label: c.label,
+      rows: gsea(gmt, c.ranked, {
+        permutations: input.permutations,
+        seed: input.seed,
+        gseaParam: input.gseaParam,
+        scoreType: input.scoreType,
+      }),
+    })),
+  };
+}
+
+/**
+ * Build the GSEA dot-plot matrix: rows = terms significant (metric < 0.05) in ≥1 contrast,
+ * columns = contrasts. Per cell: `nes` (sign + magnitude), `score` (the chosen metric → colour),
+ * `leadingEdge` (leading-edge gene count → dot size). Mirrors `dotMatrix` for ORA.
+ */
+export function gseaDotMatrix(
+  mc: MultiContrastGseaResult, metric: GseaSigMetric = 'efdr',
+): GseaDotMatrix {
+  const sig = new Map<string, string>();
+  for (const c of mc.contrasts) {
+    for (const row of c.rows) {
+      if (gseaScore(row, metric) < GSEA_THRESHOLD) sig.set(row.ontology_id, row.ontology_name);
+    }
+  }
+  const terms = [...sig].map(([id, name]) => ({ id, name }));
+  const cells: GseaDotCell[] = [];
+  for (const c of mc.contrasts) {
+    const byId = new Map(c.rows.map((row) => [row.ontology_id, row]));
+    for (const { id } of terms) {
+      const row = byId.get(id);
+      if (!row) continue;
+      const score = gseaScore(row, metric);
+      cells.push({
+        term: id,
+        contrast: c.label,
+        nes: row.nes,
+        score,
+        leadingEdge: row.leading_edge.length,
+        significant: score < GSEA_THRESHOLD,
+      });
+    }
+  }
+  return { terms, contrasts: mc.contrasts.map((c) => c.label), cells, metric };
 }
