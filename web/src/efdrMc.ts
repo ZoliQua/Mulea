@@ -25,6 +25,7 @@ export function efdrFromSimulation(
   poolSize: number,
   selectSize: number,
   steps: number,
+  clamp = true,
 ): number[] {
   if (selectSize === 0) return commonInPool.map(() => NaN);
   const pairs = histogram.map((b) => ({
@@ -41,7 +42,10 @@ export function efdrFromSimulation(
   return pObs.map((po, j) => {
     const idx = upperBound(nullP, round15(po));
     const rExp = idx > 0 ? cum[idx - 1]! : 0;
-    return Math.min((rExp / steps) / rObs[j]!, 1);
+    const ratio = (rExp / steps) / rObs[j]!;
+    // base R mulea does NOT clamp the eFDR ratio to <=1 (see PARITY.md); clamp=true
+    // (default) keeps the bit-identical web/Python behaviour.
+    return clamp ? Math.min(ratio, 1) : ratio;
   });
 }
 
@@ -56,6 +60,7 @@ export async function setBasedEnrichmentTestMc(
   backgroundElementNames: string[],
   steps: number,
   seed: number,
+  clamp = true,
 ): Promise<EfdrRow[]> {
   const pool = new Set(backgroundElementNames);
   const select = new Set<string>();
@@ -99,7 +104,7 @@ export async function setBasedEnrichmentTestMc(
     nGenes: poolSize,
   });
 
-  const eFDR = efdrFromSimulation(commonInSelect, commonInPool, histogram, poolSize, selectSize, steps);
+  const eFDR = efdrFromSimulation(commonInSelect, commonInPool, histogram, poolSize, selectSize, steps, clamp);
   return gmt.map((term, i) => ({
     ontology_id: term.ontology_id,
     ontology_name: term.ontology_name,

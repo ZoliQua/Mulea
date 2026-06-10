@@ -8,6 +8,7 @@ export interface Capsule {
     method: Method; minNrOfElements: number; maxNrOfElements: number;
     efdrMode?: EfdrMode; steps?: number; seed?: number;
     direction?: 'over' | 'under' | 'two-sided';
+    efdrClamp?: boolean;
   };
   fp: string;
 }

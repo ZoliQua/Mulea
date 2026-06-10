@@ -16,6 +16,8 @@ export function Controls(props: {
   onShowDerivation: () => void;
   direction: 'over' | 'under' | 'two-sided';
   onDirection: (d: 'over' | 'under' | 'two-sided') => void;
+  efdrClamp: boolean;
+  onEfdrClamp: (v: boolean) => void;
 }) {
   return (
     <div className="controls">
@@ -46,6 +48,8 @@ export function Controls(props: {
               <button type="button" className="dice-btn" aria-label="Randomize seed" title="Random seed" onClick={props.onRandomizeSeed}>🎲</button>
             </>
           )}
+          <label style={{ fontSize: 12 }} title="Off = base-R match (raw rExp/rObs ratio, may exceed 1)">
+            <input type="checkbox" checked={props.efdrClamp} onChange={(e) => props.onEfdrClamp(e.target.checked)} /> clamp ≤1</label>
         </span>
       )}
       {(props.method === 'BH' || props.method === 'bonferroni') && (

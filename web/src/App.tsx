@@ -72,6 +72,7 @@ export default function App() {
   const [steps, setSteps] = useState<number>(loaded?.cap?.inputs.steps ?? 100000);
   const [seed, setSeed] = useState<number>(loaded?.cap?.inputs.seed ?? 42);
   const [direction, setDirection] = useState<'over' | 'under' | 'two-sided'>(loaded?.cap?.inputs.direction ?? 'over');
+  const [efdrClamp, setEfdrClamp] = useState<boolean>(loaded?.cap?.inputs.efdrClamp ?? true);
   const [sigOnly, setSigOnly] = useState(false);
   const [lastInputs, setLastInputs] = useState<Omit<AnalysisInput, 'method' | 'minNrOfElements' | 'maxNrOfElements'> | null>(
     loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : null,
@@ -95,13 +96,13 @@ export default function App() {
   const start = (i: { gmtText: string; target: string[]; background: string[] }) => {
     setShareUrl(null);
     setLastInputs(i);
-    run({ ...i, method, efdrMode, steps, seed, direction, ...RUN_DEFAULTS });
+    run({ ...i, method, efdrMode, steps, seed, direction, efdrClamp, ...RUN_DEFAULTS });
   };
   useEffect(() => {
     setShareUrl(null);
-    if (lastInputs && mode === 'single') run({ ...lastInputs, method, efdrMode, steps, seed, direction, ...RUN_DEFAULTS });
+    if (lastInputs && mode === 'single') run({ ...lastInputs, method, efdrMode, steps, seed, direction, efdrClamp, ...RUN_DEFAULTS });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [method, efdrMode, direction]);
+  }, [method, efdrMode, direction, efdrClamp]);
 
   const doneResult = state.status === 'done' ? state.result : null;
   const currentFp = useMemo(() => (doneResult ? fingerprintResult(doneResult) : null), [doneResult]);
@@ -116,7 +117,7 @@ export default function App() {
   // so the guard below reduces to the URL-size check (the only reason the share button is disabled there).
   const shareDisabled = useMemo(() => {
     if (!lastInputs || !currentFp) return true;
-    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, direction, ...RUN_DEFAULTS }, fp: currentFp }));
+    return !capsuleFitsUrl(encodeCapsule({ v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, direction, efdrClamp, ...RUN_DEFAULTS }, fp: currentFp }));
   }, [lastInputs, currentFp, method, efdrMode, shareSteps, shareSeed]);
 
   const mcDoneResult = mc.state.status === 'done' ? mc.state.result : null;
@@ -197,7 +198,7 @@ export default function App() {
           <>
           <Controls method={method} onMethod={setMethod} sigOnly={sigOnly} onSigOnly={setSigOnly}
             efdrMode={efdrMode} onEfdrMode={setEfdrMode} steps={steps} onSteps={setSteps} seed={seed} onSeed={setSeed} onRandomizeSeed={randomizeSeed}
-            onShowDerivation={() => setDerivationOpen(true)} direction={direction} onDirection={setDirection} />
+            onShowDerivation={() => setDerivationOpen(true)} direction={direction} onDirection={setDirection} efdrClamp={efdrClamp} onEfdrClamp={setEfdrClamp} />
           {mode === 'single' ? (
             <>
               {replay === 'invalid' && (
@@ -227,7 +228,7 @@ export default function App() {
                   <CapsuleBar
                     onShare={() => {
                       if (!lastInputs || !currentFp) return;
-                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, direction, ...RUN_DEFAULTS }, fp: currentFp };
+                      const capsule: Capsule = { v: 1, inputs: { ...lastInputs, method, efdrMode, steps: shareSteps, seed: shareSeed, direction, efdrClamp, ...RUN_DEFAULTS }, fp: currentFp };
                       const enc = encodeCapsule(capsule);
                       const url = `${window.location.origin}${window.location.pathname}#c=${enc}`;
                       setShareUrl(url);

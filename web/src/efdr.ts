@@ -37,6 +37,7 @@ export function setBasedEnrichmentTest(
   gmt: GmtTerm[],
   elementNames: string[],
   backgroundElementNames: string[],
+  clamp = true,
 ): EfdrRow[] {
   const pool = new Set(backgroundElementNames);
   const select = new Set<string>();
@@ -90,7 +91,10 @@ export function setBasedEnrichmentTest(
     eFDR = pObs.map((po, j) => {
       const idx = upperBound(nullP, round15(po));
       const rExp = idx > 0 ? cummass[idx - 1]! : 0;
-      return Math.min(rExp / rObs[j]!, 1);
+      const ratio = rExp / rObs[j]!;
+      // base R mulea does NOT clamp the eFDR ratio to <=1 (see PARITY.md); clamp=true
+      // (default) keeps the bit-identical web/Python behaviour.
+      return clamp ? Math.min(ratio, 1) : ratio;
     });
   }
 

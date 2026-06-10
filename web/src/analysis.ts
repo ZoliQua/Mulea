@@ -82,7 +82,7 @@ function finalize(
 export function runAnalysis(input: AnalysisInput): AnalysisResult {
   const prep = prepare(input);
   const rows: ResultRow[] = input.method === 'eFDR'
-    ? setBasedEnrichmentTest(prep.gmt, input.target, input.background)
+    ? setBasedEnrichmentTest(prep.gmt, input.target, input.background, input.efdrClamp ?? true)
     : ora(prep.gmt, input.target, input.background, input.method, input.direction ?? 'over');
   return finalize(prep, input, rows, input.method === 'eFDR' ? { efdrMode: 'exact' } : undefined);
 }
@@ -92,7 +92,7 @@ export async function runAnalysisMc(input: AnalysisInput): Promise<AnalysisResul
   const { steps, seed } = resolveEfdr(input);
   const prep = prepare(input);
   const t0 = performance.now();
-  const mcRows = await setBasedEnrichmentTestMc(prep.gmt, input.target, input.background, steps, seed);
+  const mcRows = await setBasedEnrichmentTestMc(prep.gmt, input.target, input.background, steps, seed, input.efdrClamp ?? true);
   const runtimeMs = performance.now() - t0;
   const exactRows = setBasedEnrichmentTest(prep.gmt, input.target, input.background);
   let maxAbsDeltaVsExact = 0;

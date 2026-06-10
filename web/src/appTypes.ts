@@ -14,6 +14,8 @@ export interface AnalysisInput {
   seed?: number;
   /** Hypergeometric tail for the BH/Bonferroni ORA path (eFDR is always over-representation). */
   direction?: 'over' | 'under' | 'two-sided';
+  /** Clamp eFDR to ≤1 (default true). false = raw rExp/rObs ratio, matching base-R mulea. */
+  efdrClamp?: boolean;
 }
 
 export interface ResultRow {
