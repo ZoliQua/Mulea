@@ -3,7 +3,7 @@ import type { AnalysisResult, Method, EfdrMode } from './appTypes.ts';
 import { rowScore } from './lollipop.ts';
 import { parseGmt } from './io.ts';
 import { filterOntology } from './ontology.ts';
-import { gsea, type GseaRow, type RankedItem, type ScoreType } from './gsea.ts';
+import { gsea, parseRanked, type GseaRow, type RankedItem, type ScoreType } from './gsea.ts';
 
 export interface Contrast { label: string; target: string[] }
 
@@ -106,6 +106,21 @@ export function dotMatrix(mc: MultiContrastResult): DotMatrix {
 
 /** One named ranked list (gene→score), the GSEA analogue of a `Contrast`'s target set. */
 export interface RankedContrast { label: string; ranked: RankedItem[] }
+
+/** Parse `>label`-delimited blocks of `gene<TAB>score` rows into ranked contrasts. */
+export function parseRankedContrasts(text: string): RankedContrast[] {
+  const out: RankedContrast[] = [];
+  let label: string | null = null;
+  let buf: string[] = [];
+  const flush = () => { if (label !== null) out.push({ label, ranked: parseRanked(buf.join('\n')) }); };
+  for (const raw of text.split(/\r?\n/)) {
+    const t = raw.trim();
+    if (t.startsWith('>')) { flush(); label = t.slice(1).trim() || `contrast ${out.length + 1}`; buf = []; }
+    else if (label !== null && t !== '') buf.push(raw);
+  }
+  flush();
+  return out;
+}
 
 export interface MultiContrastGseaInput {
   gmtText: string;

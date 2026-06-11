@@ -27,7 +27,8 @@ import { MultiContrastPanel } from './ui/MultiContrastPanel.tsx';
 import { DotPlot } from './ui/DotPlot.tsx';
 import { MultiDiagnostics } from './ui/MultiDiagnostics.tsx';
 import { useMultiContrast } from './hooks/useMultiContrast.ts';
-import { dotMatrix, type Contrast } from './multiContrast.ts';
+import { dotMatrix, runMultiContrastGsea, gseaDotMatrix, type Contrast, type RankedContrast, type MultiContrastGseaResult } from './multiContrast.ts';
+import { GseaDotPlot } from './ui/GseaDotPlot.tsx';
 import { ThemeToggle } from './ui/ThemeToggle.tsx';
 import { HelpDrawer } from './ui/HelpDrawer.tsx';
 import { ValidationDrawer } from './ui/ValidationDrawer.tsx';
@@ -59,6 +60,9 @@ export default function App() {
   const mc = useMultiContrast();
   const [mode, setMode] = useState<'single' | 'multi' | 'gsea'>('single');
   const [mcSelected, setMcSelected] = useState<{ contrast: string; term: string } | null>(null);
+  const [mcKind, setMcKind] = useState<'ora' | 'gsea'>('ora');
+  const [mcGsea, setMcGsea] = useState<MultiContrastGseaResult | null>(null);
+  const [mcGseaComputing, setMcGseaComputing] = useState(false);
   const [loaded] = useState(() => readCapsuleFromHash());
   const [view, setView] = useState<'landing' | 'tool'>(
     (typeof window !== 'undefined' && window.location.hash.startsWith('#c=')) ? 'tool' : 'landing',
@@ -124,6 +128,12 @@ export default function App() {
   const mcMatrix = useMemo(() => (mcDoneResult ? dotMatrix(mcDoneResult) : null), [mcDoneResult]);
   const runMulti = (i: { gmtText: string; background: string[]; contrasts: Contrast[] }) =>
     mc.run({ ...i, method, efdrMode, steps, seed, ...RUN_DEFAULTS });
+  const runMultiGsea = (i: { gmtText: string; contrasts: RankedContrast[] }) => {
+    setMcGseaComputing(true); setMcGsea(null); setMcSelected(null);
+    setTimeout(() => {
+      try { setMcGsea(runMultiContrastGsea({ ...i, minNrOfElements: 3, maxNrOfElements: 400, permutations: 1000, seed })); } finally { setMcGseaComputing(false); }
+    }, 20);
+  };
   const switchMode = (m: 'single' | 'multi' | 'gsea') => { setMode(m); setReport(false); setSelectedId(null); setMcSelected(null); };
 
   const settingsOf = (id: ViewId): FigureSettings => effectiveSettings(globalSettings, perFigure[id] ?? {});
@@ -181,7 +191,13 @@ export default function App() {
               <InputPanel onRun={start} disabled={state.status === 'running'} onHelp={setHelpFor}
                 initial={loaded?.cap ? { gmtText: loaded.cap.inputs.gmtText, target: loaded.cap.inputs.target, background: loaded.cap.inputs.background } : undefined} />
             ) : mode === 'multi' ? (
-              <MultiContrastPanel onRun={runMulti} disabled={mc.state.status === 'running'} onHelp={setHelpFor} />
+              <>
+                <span className="pill-group" style={{ display: 'inline-flex', marginBottom: 8 }}>
+                  <button type="button" className={mcKind === 'ora' ? 'active' : ''} onClick={() => setMcKind('ora')}>ORA</button>
+                  <button type="button" className={mcKind === 'gsea' ? 'active' : ''} onClick={() => setMcKind('gsea')}>GSEA</button>
+                </span>
+                <MultiContrastPanel kind={mcKind} onRun={runMulti} onRunGsea={runMultiGsea} disabled={mc.state.status === 'running' || mcGseaComputing} onHelp={setHelpFor} />
+              </>
             ) : (
               <p className="muted" style={{ fontSize: 13 }}>Ranked-list GSEA — provide an ontology + a gene-score list in the main panel. ES &amp; leading edge match fgsea exactly; NES &amp; p use a seeded permutation null.</p>
             )}
@@ -285,6 +301,16 @@ export default function App() {
                     </>
                   )}
                 </>
+              )}
+            </>
+          ) : mcKind === 'gsea' ? (
+            <>
+              {mcGseaComputing && <div className="state-card">Computing GSEA…</div>}
+              {!mcGseaComputing && !mcGsea && <div className="state-card">Add a shared ontology + ≥2 ranked contrasts, then Compare.</div>}
+              {mcGsea && (
+                <div className="view-row"><div className="view-main">
+                  <GseaDotPlot matrix={gseaDotMatrix(mcGsea, 'efdr')} onSelect={setMcSelected} />
+                </div></div>
               )}
             </>
           ) : (
