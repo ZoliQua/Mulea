@@ -21,7 +21,10 @@ def test_ora_columns_and_values():
     target = ["g1", "g2", "g3", "g4", "g6"]        # 4 hits in T1, 1 hit in T2
     res = ora(_gmt(), element_names=target, background_element_names=background,
               p_value_adjustment_method="BH")
-    assert list(res.columns) == ["ontology_id", "ontology_name", "p_value", "adjusted_p_value"]
+    assert list(res.columns) == [
+        "ontology_id", "ontology_name", "p_value", "adjusted_p_value",
+        "direction", "fold_enrichment", "log_odds_ratio", "or_ci_low", "or_ci_high",
+    ]
     assert set(res["ontology_id"]) == {"T1", "T2"}
     from scipy.stats import hypergeom
     t1 = res.set_index("ontology_id").loc["T1"]

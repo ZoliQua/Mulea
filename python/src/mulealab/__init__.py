@@ -4,7 +4,7 @@ from mulealab.gsea import gsea
 from mulealab.io import read_gmt, write_gmt
 from mulealab.ontology import filter_ontology
 from mulealab.ora import ora
-from mulealab.statistics import hypergeometric_pvalue, p_adjust
+from mulealab.statistics import HypergeometricDirection, effect_size, hypergeometric_pvalue, p_adjust
 from mulealab.version import __version__
 
 __all__ = [
@@ -16,5 +16,7 @@ __all__ = [
     "set_based_enrichment_test",
     "gsea",
     "hypergeometric_pvalue",
+    "HypergeometricDirection",
+    "effect_size",
     "p_adjust",
 ]

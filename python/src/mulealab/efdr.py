@@ -77,12 +77,24 @@ def _exact_null_sorted(common_in_pool: np.ndarray, pool_size: int, select_size: 
     return pvals[order], np.cumsum(mass[order])
 
 
-def _efdr_from_sorted_null(p_obs: np.ndarray, r_obs: np.ndarray, null_pvals_sorted: np.ndarray, null_cummass: np.ndarray) -> np.ndarray:
-    """eFDR per term: R_exp = total null mass with p ≤ p_obs; eFDR = min(R_exp / R_obs, 1)."""
+def _efdr_from_sorted_null(
+    p_obs: np.ndarray,
+    r_obs: np.ndarray,
+    null_pvals_sorted: np.ndarray,
+    null_cummass: np.ndarray,
+    clamp: bool = True,
+) -> np.ndarray:
+    """eFDR per term: R_exp = total null mass with p ≤ p_obs.
+
+    When ``clamp=True`` (default) the ratio is capped at 1, giving the
+    bit-identical web/Python behaviour.  When ``clamp=False`` the raw
+    ``r_exp / r_obs`` ratio is returned (may exceed 1), matching base-R mulea.
+    """
     p_obs_r = np.round(np.asarray(p_obs, dtype=float), 15)
     idx = np.searchsorted(null_pvals_sorted, p_obs_r, side="right")  # count of null p ≤ p_obs
     r_exp = np.where(idx > 0, null_cummass[np.clip(idx - 1, 0, None)], 0.0)
-    return np.minimum(r_exp / r_obs, 1.0)
+    ratio = r_exp / r_obs
+    return np.minimum(ratio, 1.0) if clamp else ratio
 
 
 def _observed_stats(gmt: pd.DataFrame, element_names, background_element_names) -> tuple[int, int, np.ndarray, np.ndarray, np.ndarray, list[np.ndarray]]:
@@ -122,11 +134,18 @@ def set_based_enrichment_test(
     mode: str = "exact",
     number_of_permutations: int = 10000,
     random_seed: int = 0,
+    clamp: bool = True,
 ) -> pd.DataFrame:
     """eFDR-based set enrichment, returning EFDR_COLUMNS.
 
     mode="exact" (default): deterministic analytic eFDR (no RNG).
     mode="mc": Monte-Carlo resampling eFDR mirroring mulea (seeded by random_seed).
+
+    clamp : bool, default True
+        When True (default) the eFDR ratio ``r_exp / r_obs`` is capped at 1,
+        giving the bit-identical web/Python behaviour.  When False the raw ratio
+        is returned (may exceed 1), matching base-R mulea behaviour.  This mirrors
+        the ``clamp`` parameter in ``web/src/efdr.ts`` ``setBasedEnrichmentTest``.
     """
     pool_size, select_size, common_in_pool, common_in_select, p_obs, term_pool_indices = (
         _observed_stats(gmt, element_names, background_element_names)
@@ -137,14 +156,14 @@ def set_based_enrichment_test(
         r_obs = r_obs_ranks(p_obs)
         if mode == "exact":
             null_p, null_cummass = _exact_null_sorted(common_in_pool, pool_size, select_size)
-            efdr = _efdr_from_sorted_null(p_obs, r_obs, null_p, null_cummass)
+            efdr = _efdr_from_sorted_null(p_obs, r_obs, null_p, null_cummass, clamp=clamp)
         elif mode == "mc":
             null_p = _simulate_null_pvalues(
                 term_pool_indices, pool_size, select_size, number_of_permutations,
                 np.random.default_rng(random_seed),
             )
             null_cummass = np.arange(1, null_p.size + 1, dtype=float) / number_of_permutations
-            efdr = _efdr_from_sorted_null(p_obs, r_obs, null_p, null_cummass)
+            efdr = _efdr_from_sorted_null(p_obs, r_obs, null_p, null_cummass, clamp=clamp)
         else:
             raise MuleaLabError(f"Unknown eFDR mode: {mode!r} (use 'exact' or 'mc')")
 
