@@ -35,6 +35,7 @@ import { ValidationDrawer } from './ui/ValidationDrawer.tsx';
 import { GseaView } from './ui/GseaView.tsx';
 import { EfdrDerivation } from './ui/EfdrDerivation.tsx';
 import { Landing } from './Landing.tsx';
+import { DocsView } from './ui/DocsView.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
 import { SettingsDrawer } from './ui/SettingsDrawer.tsx';
 import { effectiveSettings, type FigureSettings, type Palette } from './figureSettings.ts';
@@ -64,7 +65,7 @@ export default function App() {
   const [mcGsea, setMcGsea] = useState<MultiContrastGseaResult | null>(null);
   const [mcGseaComputing, setMcGseaComputing] = useState(false);
   const [loaded] = useState(() => readCapsuleFromHash());
-  const [view, setView] = useState<'landing' | 'tool'>(
+  const [view, setView] = useState<'landing' | 'tool' | 'docs'>(
     (typeof window !== 'undefined' && window.location.hash.startsWith('#c=')) ? 'tool' : 'landing',
   );
   const [introDismissed, setIntroDismissed] = useState(() => {
@@ -151,9 +152,12 @@ export default function App() {
     return (
       <Landing
         onStart={() => setView('tool')}
-        onDocs={() => window.open('https://github.com/ELTEbioinformatics/mulea', '_blank', 'noopener')}
+        onDocs={() => setView('docs')}
       />
     );
+  }
+  if (view === 'docs') {
+    return <DocsView onHome={() => setView('landing')} onStart={() => setView('tool')} />;
   }
 
   return (
