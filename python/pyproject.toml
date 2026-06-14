@@ -9,6 +9,37 @@ description = "Headless multi-ontology enrichment analysis — companion to the 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "GPL-2.0-only" }
+authors = [
+    { name = "Zoltán Dul", email = "ssdbtc@gmail.com" },
+    { name = "Márton Ölbei" },
+    { name = "Cezary Turek" },
+    { name = "Tamás Stirling" },
+    { name = "Eszter Ári" },
+]
+maintainers = [{ name = "Zoltán Dul", email = "ssdbtc@gmail.com" }]
+keywords = [
+    "bioinformatics",
+    "enrichment-analysis",
+    "ontology",
+    "gene-set-enrichment",
+    "GSEA",
+    "overrepresentation",
+    "false-discovery-rate",
+    "gmt",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Typing :: Typed",
+]
 dependencies = [
     "pandas>=2.0",
     "numpy>=1.24",
@@ -17,7 +48,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10", "build>=1.2", "twine>=5.0"]
+
+[project.urls]
+Repository = "https://github.com/ZoliQua/Mulea"
+Issues = "https://github.com/ZoliQua/Mulea/issues"
+"R package (CRAN)" = "https://cran.r-project.org/package=mulea"
 
 [project.scripts]
 mulealab = "mulealab.cli:app"
