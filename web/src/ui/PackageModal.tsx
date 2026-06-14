@@ -3,6 +3,14 @@ import { useState } from 'react';
 export type Pkg = 'r' | 'python';
 type Tab = 'quickstart' | 'features' | 'links';
 
+function hostOf(href: string): string {
+  try {
+    return new URL(href).hostname.replace(/^www\./, '');
+  } catch {
+    return href;
+  }
+}
+
 interface Block { label: string; code: string; note?: string }
 interface Feature { title: string; blurb: string; code: string; note?: string }
 interface PkgInfo {
@@ -128,6 +136,7 @@ library(muleaData)
     ],
     cite: 'Turek et al. mulea: an R package for enrichment analysis using multiple ontologies and empirical false discovery rate. BMC Bioinformatics 2024, 25:334.',
     links: [
+      { label: 'mulea on CRAN', href: 'https://cran.r-project.org/package=mulea' },
       { label: 'Source + vignette (GitHub)', href: 'https://github.com/ELTEbioinformatics/mulea' },
       { label: 'Ontology GMT files (879)', href: 'https://github.com/ELTEbioinformatics/GMT_files_for_mulea' },
       { label: 'muleaData (Bioconductor)', href: 'https://bioconductor.org/packages/release/data/experiment/html/muleaData.html' },
@@ -297,11 +306,14 @@ export function PackageModal({ pkg, onClose }: { pkg: Pkg; onClose: () => void }
 
         {tab === 'links' && (
           <div className="pkg-tabpanel">
-            <ul className="pkg-links">
+            <div className="pkg-link-cards">
               {d.links.map((l) => (
-                <li key={l.href}><a href={l.href} target="_blank" rel="noopener noreferrer">{l.label} ↗</a></li>
+                <a key={l.href} className="pkg-link-card" href={l.href} target="_blank" rel="noopener noreferrer">
+                  <span className="pkg-link-card-label">{l.label}</span>
+                  <span className="pkg-link-card-host">{hostOf(l.href)} ↗</span>
+                </a>
               ))}
-            </ul>
+            </div>
             {d.cite && (
               <>
                 <div className="pkg-block-label">Cite</div>

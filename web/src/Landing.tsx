@@ -31,7 +31,7 @@ function PyIcon() {
 const FEAT_POS = [
   { left: '12.0%', title: 'Multiple Ontologies', body: 'Analyze across 20+ ontology types and 16 public databases.' },
   { left: '35.2%', title: 'Empirical FDR', body: 'Robust significance estimation for dependent data.' },
-  { left: '58.6%', title: 'ORA & GSEA', body: 'Set-based over-representation and ranked-list GSEA — validated against clusterProfiler & fgsea.' },
+  { left: '58.6%', title: 'ORA & GSEA', body: 'Set-based ORA and ranked-list GSEA, validated vs clusterProfiler and fgsea.' },
   { left: '79.7%', title: 'Model Organisms', body: 'Browse 877 prebuilt ontologies for 27 organisms, or bring your own GMT.' },
 ];
 
@@ -92,9 +92,9 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
           </div>
         </div>
         {FEAT_POS.map((f) => (
-          <div key={f.title} style={{ position: 'absolute', left: f.left, top: '80.4%', width: '18.5%' }}>
+          <div key={f.title} style={{ position: 'absolute', left: f.left, top: '80.4%', width: '18%', overflowWrap: 'break-word' }}>
             <div style={{ fontSize: '1.04cqw', fontWeight: 600, marginBottom: '0.35cqw', color: '#eaf3f5', textShadow: SHADOW }}>{f.title}</div>
-            <div style={{ fontSize: '0.84cqw', lineHeight: 1.5, color: '#9fb6c2', textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{f.body}</div>
+            <div style={{ fontSize: '0.84cqw', lineHeight: 1.5, color: '#9fb6c2', textShadow: '0 1px 6px rgba(0,0,0,0.4)', overflowWrap: 'break-word' }}>{f.body}</div>
           </div>
         ))}
         <div style={{ position: 'absolute', left: 0, right: 0, top: '93.3%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3.6cqw' }}>
@@ -104,7 +104,7 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
           <span style={{ fontSize: '1.4cqw', color: '#4fc1cf', fontWeight: 500, letterSpacing: '0.01em', textShadow: SHADOW }}>
             From gene lists to biological insights.
           </span>
-          <button type="button" style={pkgBtn} onClick={() => setPkg('python')} title="mulealab — Python package">
+          <button type="button" style={{ ...pkgBtn, marginLeft: '2.4cqw' }} onClick={() => setPkg('python')} title="mulealab — Python package">
             <PyIcon /> Python package
           </button>
         </div>
