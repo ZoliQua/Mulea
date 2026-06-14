@@ -1,11 +1,26 @@
 # Workflow derived from
 # https://github.com/r-lib/actions/blob/v2-branch/examples/check-standard.yaml
 
+# Only run for changes to the R package itself — this polyglot repo also holds python/ and
+# web/ legs (each with their own CI), so a Python- or web-only push should not trigger the
+# full multi-OS R CMD check matrix.
 on:
   push:
     branches: [main, master]
+    paths: &r-paths
+      - 'R/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'man/**'
+      - 'vignettes/**'
+      - 'inst/**'
+      - 'data/**'
+      - 'DESCRIPTION'
+      - 'NAMESPACE'
+      - '.github/workflows/R-CMD-check.yaml'
   pull_request:
     branches: [main, master]
+    paths: *r-paths
 
 name: R-CMD-check
 
@@ -31,6 +46,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      # The GitHub-hosted Ubuntu image ships Microsoft apt repositories that
+      # intermittently return HTTP 403, breaking `apt-get update` inside setup-r.
+      # We don't need them, so drop them before any apt operation runs.
+      - name: Remove flaky Microsoft apt repositories (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list \
+                     /etc/apt/sources.list.d/azure-cli.list \
+                     /etc/apt/sources.list.d/*microsoft* \
+                     /etc/apt/sources.list.d/*azure* || true
 
       - uses: r-lib/actions/setup-pandoc@v2
 
