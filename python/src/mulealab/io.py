@@ -1,10 +1,27 @@
 from __future__ import annotations
 
+from typing import Mapping, Sequence
+
 import pandas as pd
 
 from mulealab.errors import GmtParseError
 
 GMT_COLUMNS = ["ontology_id", "ontology_name", "list_of_values"]
+
+
+def list_to_gmt(mapping: Mapping[str, Sequence[str]]) -> pd.DataFrame:
+    """Build a GMT DataFrame from a ``{ontology_id: [elements]}`` mapping.
+
+    Mirrors ``list_to_gmt`` from the mulea R package (``R/Utils.R``): each key becomes an
+    ``ontology_id`` and its values the ``list_of_values``.  Unlike the R version — which fills
+    ``ontology_name`` with a random 5-character string — this sets ``ontology_name`` to the key,
+    so the result is deterministic and reproducible.
+    """
+    rows = [
+        {"ontology_id": str(key), "ontology_name": str(key), "list_of_values": list(values)}
+        for key, values in mapping.items()
+    ]
+    return pd.DataFrame(rows, columns=GMT_COLUMNS)
 
 
 def read_gmt(path: str) -> pd.DataFrame:
