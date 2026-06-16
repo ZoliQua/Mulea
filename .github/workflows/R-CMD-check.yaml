@@ -30,6 +30,14 @@ jobs:
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
+    # The oldrel-1 leg resolves the Bioconductor dependency (fgsea) for an older
+    # R/Bioconductor pair whose packages are served from the Bioconductor OSN host
+    # (mghp.osn.xsede.org). That host has recurring outages that make `pak` fail to
+    # solve dependencies — an upstream infrastructure problem, not a package issue.
+    # Allow that single leg to fail without gating the board; it still runs and turns
+    # green again on its own once Bioconductor's hosting recovers.
+    continue-on-error: ${{ matrix.config.allow_failure || false }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +46,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+          - {os: ubuntu-latest,   r: 'oldrel-1', allow_failure: true}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
