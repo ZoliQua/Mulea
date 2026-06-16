@@ -6,14 +6,14 @@ export function ValidationDrawer({ open, onClose }: { open: boolean; onClose: ()
       <button type="button" className="close" onClick={onClose} aria-label="Close validation">×</button>
       <h2>External validation</h2>
       <p>
-        muleaLab's overrepresentation core is checked against an independent, published tool —
+        mulea's overrepresentation core is checked against an independent, published tool —
         <strong> clusterProfiler::enricher</strong> (Bioconductor 4.20.0) — on the same
         <em> E. coli</em> RegulonDB data, so the agreement isn't just “we match ourselves”.
       </p>
 
       <div className="val-fig">
         <img src={`${import.meta.env.BASE_URL}validation-cp.svg`}
-          alt="Scatter of muleaLab vs clusterProfiler p-values; all 153 points lie on the y = x line" />
+          alt="Scatter of mulea vs clusterProfiler p-values; all 153 points lie on the y = x line" />
       </div>
 
       <h3>Result</h3>
@@ -26,8 +26,8 @@ export function ValidationDrawer({ open, onClose }: { open: boolean; onClose: ()
       <h3>The one matched convention</h3>
       <p>
         clusterProfiler tests against the <em>annotated</em> universe (genes in ≥ 1 term: N = 1326,
-        n = 81), while muleaLab defaults to the full background (7381 / 241). Neither is wrong — it is a
-        choice about unannotated genes. We run muleaLab on that same annotated universe, so the
+        n = 81), while mulea defaults to the full background (7381 / 241). Neither is wrong — it is a
+        choice about unannotated genes. We run mulea on that same annotated universe, so the
         statistic is compared, not the convention.
       </p>
 

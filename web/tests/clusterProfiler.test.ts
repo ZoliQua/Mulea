@@ -9,7 +9,7 @@ import { pAdjust } from '../src/statistics.ts';
 
 // Independent ORA reference from clusterProfiler::enricher (Bioconductor 4.20.0) on the SAME
 // E. coli inputs — see VALIDATION.md. clusterProfiler restricts the test to the ANNOTATED
-// universe (background ∩ union of term genes), so we run muleaLab on that same universe to make
+// universe (background ∩ union of term genes), so we run mulea on that same universe to make
 // the hypergeometric test apples-to-apples. The fixture is immutable (regenerate → update hash).
 const EX = join(import.meta.dirname, '..', 'public', 'examples');
 const FIXTURE = join(import.meta.dirname, '..', '..', 'python', 'tests', 'fixtures', 'clusterprofiler_reference.csv');
@@ -42,7 +42,7 @@ describe('ORA parity with clusterProfiler::enricher (external tool)', () => {
     let compared = 0;
     for (const c of cp) {
       const w = web.get(c.id);
-      if (!w) continue; // clusterProfiler drops 0-background-overlap terms (e.g. DhaR); muleaLab keeps them at p=1
+      if (!w) continue; // clusterProfiler drops 0-background-overlap terms (e.g. DhaR); mulea keeps them at p=1
       compared++;
       if (c.p > 0) maxRel = Math.max(maxRel, Math.abs(w.p_value - c.p) / c.p);
     }

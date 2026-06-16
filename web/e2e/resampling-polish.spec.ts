@@ -25,7 +25,7 @@ test('per-term QC download contains the QC header and columns', async ({ page })
   const chunks: Buffer[] = [];
   for await (const ch of stream) chunks.push(ch as Buffer);
   const text = Buffer.concat(chunks).toString('utf8');
-  expect(text).toContain('# muleaLab — eFDR QC (MC vs exact analytic)');
+  expect(text).toContain('# mulea — eFDR QC (MC vs exact analytic)');
   expect(text).toContain('eFDR_mc\teFDR_exact\tabs_delta');
 });
 

@@ -9,10 +9,10 @@ import { pAdjust } from '../src/statistics.ts';
 
 // Multi-organism extension of clusterProfiler.test.ts: the same external ORA reference
 // (clusterProfiler::enricher, Bioconductor 4.20.0) on HUMAN and MOUSE TRRUST transcription-factor
-// GMTs, proving muleaLab's hypergeometric/BH parity is not E. coli-specific. The synthetic
+// GMTs, proving mulea's hypergeometric/BH parity is not E. coli-specific. The synthetic
 // target/background are deterministic (seed = 42 in generate_clusterprofiler_multiorg.R).
 // clusterProfiler restricts the test to the ANNOTATED universe (background ∩ union of term genes),
-// so we run muleaLab on that same universe to keep the hypergeometric test apples-to-apples.
+// so we run mulea on that same universe to keep the hypergeometric test apples-to-apples.
 // Fixtures are immutable (regenerate → update each SHA-256).
 const FIX = join(import.meta.dirname, '..', '..', 'python', 'tests', 'fixtures');
 
@@ -85,7 +85,7 @@ describe.each(ORGS)('ORA parity with clusterProfiler::enricher — $name (extern
     let compared = 0;
     for (const c of cp) {
       const w = web.get(c.id);
-      if (!w) continue; // clusterProfiler drops 0-background-overlap terms; muleaLab keeps them at p=1
+      if (!w) continue; // clusterProfiler drops 0-background-overlap terms; mulea keeps them at p=1
       compared++;
       if (c.p > 0) maxRel = Math.max(maxRel, Math.abs(w.p_value - c.p) / c.p);
     }

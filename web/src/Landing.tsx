@@ -104,7 +104,7 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
           <span style={{ fontSize: '1.4cqw', color: '#4fc1cf', fontWeight: 500, letterSpacing: '0.01em', textShadow: SHADOW }}>
             From gene lists to biological insights.
           </span>
-          <button type="button" style={{ ...pkgBtn, marginLeft: '2.4cqw' }} onClick={() => setPkg('python')} title="mulealab — Python package">
+          <button type="button" style={{ ...pkgBtn, marginLeft: '2.4cqw' }} onClick={() => setPkg('python')} title="mulea — Python package">
             <PyIcon /> Python package
           </button>
         </div>

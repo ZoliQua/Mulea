@@ -1,5 +1,5 @@
 export type Theme = 'light' | 'dark';
-const KEY = 'mulealab-theme';
+const KEY = 'mulea-theme';
 
 /** Stored choice if present, else the OS preference, else light. SSR-safe. */
 export function getInitialTheme(): Theme {

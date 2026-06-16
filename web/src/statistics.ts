@@ -1,4 +1,4 @@
-import { MuleaLabError } from './errors.ts';
+import { MuleaError } from './errors.ts';
 
 /** Overflow-safe log-binomial coefficient (mirrors vennDiagramLab). */
 export function logChoose(n: number, k: number): number {
@@ -172,5 +172,5 @@ export function pAdjust(pValues: number[], method: 'BH' | 'bonferroni'): number[
     }
     return adjusted.map((v) => Math.min(Math.max(v, 0), 1));
   }
-  throw new MuleaLabError(`Unsupported p.adjust method: ${method} (supported: 'BH', 'bonferroni')`);
+  throw new MuleaError(`Unsupported p.adjust method: ${method} (supported: 'BH', 'bonferroni')`);
 }

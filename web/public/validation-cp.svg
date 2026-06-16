@@ -190,6 +190,6 @@
 <circle cx="364.0" cy="30.0" r="3" fill="#2f6fd0" fill-opacity="0.7"/>
 <circle cx="364.0" cy="30.0" r="3" fill="#2f6fd0" fill-opacity="0.7"/>
 <text x="210" y="354" font-size="11" text-anchor="middle" fill="#111">clusterProfiler p-value</text>
-<text x="14" y="172" font-size="11" text-anchor="middle" fill="#111" transform="rotate(-90 14 172)">muleaLab p-value</text>
+<text x="14" y="172" font-size="11" text-anchor="middle" fill="#111" transform="rotate(-90 14 172)">mulea p-value</text>
 <text x="62" y="18" font-size="11" fill="#111">153 shared terms · max rel. Δ 2.5e-13</text>
 </svg>

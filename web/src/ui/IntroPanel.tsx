@@ -1,7 +1,7 @@
-/** Intro "about" card — what muleaLab does + how to use it (shown centered above the workspace). */
+/** Intro "about" card — what mulea does + how to use it (shown centered above the workspace). */
 export function IntroAbout({ onClose }: { onClose?: () => void }) {
   return (
-    <section className="intro-card intro-top-card" aria-label="About muleaLab">
+    <section className="intro-card intro-top-card" aria-label="About mulea">
       {onClose && (
         <button type="button" className="intro-close" aria-label="Dismiss intro" title="Dismiss" onClick={onClose}>×</button>
       )}

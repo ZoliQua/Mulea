@@ -8,7 +8,7 @@ const QC_COLS = ['ontology_id', 'ontology_name', 'eFDR_mc', 'eFDR_exact', 'abs_d
  */
 export function qcCsv(mcRows: ResultRow[], exactRows: ResultRow[], d: EfdrDiagnostics): string {
   const prov = [
-    '# muleaLab — eFDR QC (MC vs exact analytic)',
+    '# mulea — eFDR QC (MC vs exact analytic)',
     `# steps=${d.steps}; seed=${d.seed}`,
   ];
   const header = QC_COLS.join('\t');
@@ -24,7 +24,7 @@ export function qcCsv(mcRows: ResultRow[], exactRows: ResultRow[], d: EfdrDiagno
 }
 
 /** Trigger a browser download of the QC table. Browser-only (Blob/document). No-op without diagnostics. */
-export function downloadQcCsv(mcResult: AnalysisResult, exactResult: AnalysisResult, filename = 'mulealab_efdr_qc.tsv'): void {
+export function downloadQcCsv(mcResult: AnalysisResult, exactResult: AnalysisResult, filename = 'mulea_efdr_qc.tsv'): void {
   if (!mcResult.diagnostics) return;
   const blob = new Blob([qcCsv(mcResult.rows, exactResult.rows, mcResult.diagnostics)], { type: 'text/tab-separated-values' });
   const url = URL.createObjectURL(blob);

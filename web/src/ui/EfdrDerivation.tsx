@@ -7,7 +7,7 @@ export function EfdrDerivation({ onClose }: { onClose: () => void }) {
         <h2>The analytic eFDR is exact</h2>
         <p>
           mulea's empirical FDR (Turek et al. 2024) estimates an expected rank by <em>resampling</em>.
-          muleaLab also computes that estimate in <strong>closed form</strong> — its deterministic
+          mulea also computes that estimate in <strong>closed form</strong> — its deterministic
           S→∞ limit — so the “Exact” result carries no Monte-Carlo noise and is bit-reproducible.
         </p>
 
@@ -32,7 +32,7 @@ export function EfdrDerivation({ onClose }: { onClose: () => void }) {
         </div>
 
         <p>
-          That double sum is exactly what muleaLab's exact path accumulates. The eFDR is then
+          That double sum is exactly what mulea's exact path accumulates. The eFDR is then
           {' '}<span className="deriv-inline">min(R̄<sub>j</sub> / R<sub>j</sub>, 1)</span>.
         </p>
 

@@ -25,12 +25,12 @@ function ArchDiagram() {
     </g>
   );
   return (
-    <svg className="docs-arch" viewBox="0 0 560 180" width="100%" role="img" aria-label="muleaLab architecture">
+    <svg className="docs-arch" viewBox="0 0 560 180" width="100%" role="img" aria-label="mulea architecture">
       <rect x={180} y={140} width={200} height={30} rx={8} fill="#0d1e2b" stroke="rgba(140,185,200,0.25)" />
       <text x={280} y={159} textAnchor="middle" fontSize={12} fill="#cfe0e7">empirical FDR method (Turek et al. 2024)</text>
       {box(20, 'R · mulea', 'reference / oracle', '#10243a')}
-      {box(205, 'Python · mulealab', 'headless library + CLI', '#10243a')}
-      {box(390, 'Web · muleaLab', 'client-side, in-browser', '#10243a')}
+      {box(205, 'Python · mulea', 'headless library + CLI', '#10243a')}
+      {box(390, 'Web · mulea', 'client-side, in-browser', '#10243a')}
       {[95, 280, 465].map((x) => <line key={x} x1={x} y1={106} x2={x === 280 ? 280 : 280} y2={140} stroke="rgba(140,185,200,0.3)" strokeDasharray="4 3" />)}
       <text x={280} y={126} textAnchor="middle" fontSize={11} fill="#46c8b2">numerical parity (checksummed gold-standard)</text>
     </svg>
@@ -42,16 +42,16 @@ interface Section { id: string; leg: string; title: string; body: ReactNode }
 const SECTIONS: Section[] = [
   // ---------------- Overview ----------------
   {
-    id: 'overview', leg: 'Overview', title: 'What is muleaLab?',
+    id: 'overview', leg: 'Overview', title: 'What is mulea?',
     body: (
       <>
-        <p><strong>muleaLab</strong> brings the <em>mulea</em> empirical-FDR (eFDR) enrichment method
+        <p><strong>mulea</strong> brings the <em>mulea</em> empirical-FDR (eFDR) enrichment method
           (Turek et al., <em>BMC Bioinformatics</em> 2024, 25:334) to three interoperating legs that
           share one method but no server:</p>
         <ul>
           <li><strong>R · <code>mulea</code></strong> — the original package and numerical reference.</li>
-          <li><strong>Python · <code>mulealab</code></strong> — a headless NumPy/SciPy library + CLI for scripted pipelines.</li>
-          <li><strong>Web · muleaLab</strong> — a 100% client-side, install-free, privacy-preserving browser tool.</li>
+          <li><strong>Python · <code>mulea</code></strong> — a headless NumPy/SciPy library + CLI for scripted pipelines.</li>
+          <li><strong>Web · mulea</strong> — a 100% client-side, install-free, privacy-preserving browser tool.</li>
         </ul>
         <ArchDiagram />
         <p>The three legs are kept in <strong>numerical parity</strong>, enforced by a checksummed
@@ -71,7 +71,7 @@ const SECTIONS: Section[] = [
           one-tailed hypergeometric (Fisher exact) test. Also supports the depletion and two-sided tails.</p>
         <h4>Empirical FDR (eFDR)</h4>
         <p>A resampling-based false discovery rate designed for the interdependent terms of biological
-          ontologies, where Bonferroni/BH over-correct. muleaLab computes it two ways: a <strong>resampling</strong>
+          ontologies, where Bonferroni/BH over-correct. mulea computes it two ways: a <strong>resampling</strong>
           Monte-Carlo estimate and its <strong>deterministic analytic limit</strong> (noise-free, bit-reproducible).</p>
         <h4>GSEA</h4>
         <p>Ranked-list enrichment via the weighted Kolmogorov–Smirnov score, with a rank-based eFDR
@@ -137,7 +137,7 @@ LexA\tLexA regulon\tlexA\trecA\tuvrA\tsulA …`}</Code>
     id: 'web-gsea', leg: 'Web tool', title: 'Ranked-list GSEA',
     body: (
       <>
-        <p>Switch to <strong>GSEA (ranked)</strong> and supply a gene–score list (e.g. logFC). muleaLab
+        <p>Switch to <strong>GSEA (ranked)</strong> and supply a gene–score list (e.g. logFC). mulea
           computes the weighted-KS <strong>enrichment score</strong> (exact match to <code>fgsea::calcGseaStat</code>),
           the <strong>NES</strong>, a permutation <strong>p-value</strong>, and the mulea rank-based
           <strong> eFDR</strong> extended to the NES statistic — shown together in the results table.</p>
@@ -173,8 +173,8 @@ LexA\tLexA regulon\tlexA\trecA\tuvrA\tsulA …`}</Code>
           <strong> clusterProfiler</strong> to floating-point precision (E. coli, human, mouse), and is
           concordant with <strong>g:Profiler</strong> (different g:SCS correction). The ✓ button opens
           this validation in-app.</p>
-        <Fig src="validation-cp.svg" alt="muleaLab vs clusterProfiler p-value scatter on the y=x line"
-          caption="muleaLab’s hypergeometric p-values are floating-point identical to clusterProfiler (every point on y = x)." />
+        <Fig src="validation-cp.svg" alt="mulea vs clusterProfiler p-value scatter on the y=x line"
+          caption="mulea’s hypergeometric p-values are floating-point identical to clusterProfiler (every point on y = x)." />
       </>
     ),
   },
@@ -183,10 +183,10 @@ LexA\tLexA regulon\tlexA\trecA\tuvrA\tsulA …`}</Code>
     id: 'py-install', leg: 'Python package', title: 'Install & overview',
     body: (
       <>
-        <p>The <code>mulealab</code> Python companion mirrors the web tool for scripted, reproducible
+        <p>The <code>mulea</code> Python companion mirrors the web tool for scripted, reproducible
           pipelines (NumPy/SciPy), in numerical parity with the R package.</p>
-        <Code lang="bash">{`pip install mulealab     # requires Python ≥ 3.10`}</Code>
-        <Code lang="python">{`from mulealab import (read_gmt, write_gmt, filter_ontology, ora,
+        <Code lang="bash">{`pip install mulea     # requires Python ≥ 3.10`}</Code>
+        <Code lang="python">{`from mulea import (read_gmt, write_gmt, filter_ontology, ora,
                       set_based_enrichment_test, gsea,
                       hypergeometric_pvalue, p_adjust, effect_size)`}</Code>
       </>
@@ -268,9 +268,9 @@ effect_size(k, K, N, n)  # → fold_enrichment, log_odds_ratio, or_ci_low, or_ci
     id: 'py-cli', leg: 'Python package', title: 'Command-line interface',
     body: (
       <>
-        <p>The <code>mulealab</code> entry point lands on your PATH:</p>
-        <Code lang="bash">{`mulealab ora ontology.gmt target.txt background.txt --method BH
-mulealab gsea ontology.gmt ranked.tsv --permutations 1000 --seed 42`}</Code>
+        <p>The <code>mulea</code> entry point lands on your PATH:</p>
+        <Code lang="bash">{`mulea ora ontology.gmt target.txt background.txt --method BH
+mulea gsea ontology.gmt ranked.tsv --permutations 1000 --seed 42`}</Code>
         <p>Each prints the result table as CSV to stdout.</p>
       </>
     ),

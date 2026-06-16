@@ -5,7 +5,7 @@ const HELP: Record<InputKind, { title: string; body: React.ReactNode }> = {
     title: 'Ontology (GMT)',
     body: (
       <>
-        <p>The <strong>ontology</strong> defines the gene-set categories (ontology terms) that muleaLab tests for over-representation — e.g. GO Biological Processes, KEGG pathways, or transcription-factor target sets.</p>
+        <p>The <strong>ontology</strong> defines the gene-set categories (ontology terms) that mulea tests for over-representation — e.g. GO Biological Processes, KEGG pathways, or transcription-factor target sets.</p>
         <h4>Format — GMT (tab-separated)</h4>
         <p>One term per line. Each line is:</p>
         <pre>term_id&#9;term_name&#9;gene1&#9;gene2&#9;gene3 …</pre>
@@ -29,7 +29,7 @@ const HELP: Record<InputKind, { title: string; body: React.ReactNode }> = {
           <li>Symbols must match the genes used in the ontology (GMT) and be a subset of the background.</li>
           <li>Genes not present in the background are dropped (you'll see a warning).</li>
         </ul>
-        <p className="muted">muleaLab counts how many target genes fall in each ontology term vs. how many would be expected by chance from the background.</p>
+        <p className="muted">mulea counts how many target genes fall in each ontology term vs. how many would be expected by chance from the background.</p>
       </>
     ),
   },
@@ -37,7 +37,7 @@ const HELP: Record<InputKind, { title: string; body: React.ReactNode }> = {
     title: 'Contrasts',
     body: (
       <>
-        <p>In <strong>multi-contrast</strong> mode you compare several target gene lists against one shared ontology + background. Each list is a <strong>contrast</strong> (e.g. a time point, treatment, or cell type); muleaLab runs the same enrichment per contrast and shows them side-by-side on a dot plot.</p>
+        <p>In <strong>multi-contrast</strong> mode you compare several target gene lists against one shared ontology + background. Each list is a <strong>contrast</strong> (e.g. a time point, treatment, or cell type); mulea runs the same enrichment per contrast and shows them side-by-side on a dot plot.</p>
         <h4>Format</h4>
         <p><strong>Paste</strong> — label each contrast with a <code>&gt;label</code> line, then its genes (one per line):</p>
         <pre>&gt;condition A&#10;geneX&#10;geneY&#10;&gt;condition B&#10;geneZ …</pre>

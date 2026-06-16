@@ -1,8 +1,8 @@
 export function HelpDrawer(props: { open: boolean; onClose: () => void }) {
   return (
-    <aside className={props.open ? 'help-drawer open' : 'help-drawer'} aria-hidden={!props.open} aria-label="How to use muleaLab">
+    <aside className={props.open ? 'help-drawer open' : 'help-drawer'} aria-hidden={!props.open} aria-label="How to use mulea">
       <button type="button" className="close" onClick={props.onClose} aria-label="Close help">×</button>
-      <h2>How to use muleaLab</h2>
+      <h2>How to use mulea</h2>
       <p>A client-side functional enrichment tool: set-based <strong>over-representation (ORA)</strong> and ranked-list <strong>GSEA</strong>, with an empirical FDR. Everything runs in your browser — no data is uploaded, and it works offline after the first visit.</p>
 
       <h3>1 · Inputs</h3>
@@ -20,7 +20,7 @@ export function HelpDrawer(props: { open: boolean; onClose: () => void }) {
       <p className="muted">The hypergeometric test is <strong>one-tailed</strong>: it detects over-representation, not depletion.</p>
 
       <h3>3 · Ranked-list GSEA</h3>
-      <p>Switch to <strong>GSEA (ranked)</strong> for a gene–score list. muleaLab computes the weighted Kolmogorov–Smirnov <strong>enrichment score</strong> (an exact match to <strong>fgsea</strong>), the <strong>NES</strong> and a permutation <strong>p-value</strong>, and draws the classic running-enrichment plot with leading-edge genes. The <strong>score type</strong> (two-sided / enriched at top / at bottom) and the <strong>weighting exponent</strong> are configurable. ES is exact; the p-value is a seeded permutation null (tolerance-parity with fgsea's multilevel p).</p>
+      <p>Switch to <strong>GSEA (ranked)</strong> for a gene–score list. mulea computes the weighted Kolmogorov–Smirnov <strong>enrichment score</strong> (an exact match to <strong>fgsea</strong>), the <strong>NES</strong> and a permutation <strong>p-value</strong>, and draws the classic running-enrichment plot with leading-edge genes. The <strong>score type</strong> (two-sided / enriched at top / at bottom) and the <strong>weighting exponent</strong> are configurable. ES is exact; the p-value is a seeded permutation null (tolerance-parity with fgsea's multilevel p).</p>
 
       <h3>4 · Visualizations</h3>
       <p>Switch views with the tabs: sortable <strong>table</strong>, <strong>lollipop</strong>, <strong>bar</strong>, term–gene <strong>network</strong>, <strong>heatmap</strong>, and a <strong>Methods Venn</strong> comparing which terms are significant under eFDR vs BH vs Bonferroni. Click a term/dot to see why it is significant (its hit genes).</p>

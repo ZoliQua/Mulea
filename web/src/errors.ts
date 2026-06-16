@@ -1,6 +1,6 @@
-export class MuleaLabError extends Error {
+export class MuleaError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'MuleaLabError';
+    this.name = 'MuleaError';
   }
 }

@@ -16,8 +16,8 @@ describe('resultToTsv', () => {
   it('writes the eFDR columns with a header and tab-separated rows', () => {
     const tsv = resultToTsv(efdrResult);
     const ls = tsv.trimEnd().split('\n');
-    // ls[0] = '# muleaLab — method=eFDR', ls[1] = '# efdrMode=exact (analytic)', ls[2] = data header
-    expect(ls[0]).toBe('# muleaLab — method=eFDR');
+    // ls[0] = '# mulea — method=eFDR', ls[1] = '# efdrMode=exact (analytic)', ls[2] = data header
+    expect(ls[0]).toBe('# mulea — method=eFDR');
     expect(ls[2]).toBe('ontology_id\tontology_name\tnr_common_with_tested_elements\tnr_common_with_background_elements\tp_value\teFDR');
     expect(ls[3]).toBe('A\taname\t5\t20\t0.001\t0.01');
     expect(ls).toHaveLength(5);
@@ -29,8 +29,8 @@ describe('resultToTsv', () => {
       rows: [{ ontology_id: 'A', ontology_name: 'aname', p_value: 0.01, adjusted_p_value: 0.02 }],
     };
     const ls = resultToTsv(bh).trimEnd().split('\n');
-    // ls[0] = '# muleaLab — method=BH', ls[1] = data header (no eFDR-specific prov line for BH)
-    expect(ls[0]).toBe('# muleaLab — method=BH');
+    // ls[0] = '# mulea — method=BH', ls[1] = data header (no eFDR-specific prov line for BH)
+    expect(ls[0]).toBe('# mulea — method=BH');
     expect(ls[1]).toBe('ontology_id\tontology_name\tp_value\tadjusted_p_value');
     expect(ls[2]).toBe('A\taname\t0.01\t0.02');
   });
@@ -44,7 +44,7 @@ describe('resultToTsv provenance', () => {
   it('prepends resampling provenance, data header next', () => {
     const tsv = resultToTsv(mk({ efdrMode: 'resampling', diagnostics: { steps: 100000, seed: 42, runtimeMs: 1, maxAbsDeltaVsExact: 0.001, termsCompared: 1, withinNoise: true, clampedToOne: false } }));
     const lines = tsv.split('\n');
-    expect(lines[0]).toBe('# muleaLab — method=eFDR');
+    expect(lines[0]).toBe('# mulea — method=eFDR');
     expect(lines[1]).toBe('# efdrMode=resampling; steps=100000; seed=42');
     expect(lines[2]).toBe('ontology_id\tontology_name\tnr_common_with_tested_elements\tnr_common_with_background_elements\tp_value\teFDR');
     expect(lines[3]).toContain('T1');

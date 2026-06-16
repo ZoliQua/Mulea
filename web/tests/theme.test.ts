@@ -19,7 +19,7 @@ const mockOsLight = () => vi.stubGlobal('matchMedia', (q: string) => ({ matches:
 
 describe('getInitialTheme', () => {
   it('uses a stored light/dark choice', () => {
-    store['mulealab-theme'] = 'dark';
+    store['mulea-theme'] = 'dark';
     expect(getInitialTheme()).toBe('dark');
   });
   it('defaults to dark regardless of OS preference when nothing stored', () => {
@@ -35,7 +35,7 @@ describe('getInitialTheme', () => {
 describe('setTheme / toggleTheme', () => {
   it('persists and applies to documentElement', () => {
     setTheme('dark');
-    expect(store['mulealab-theme']).toBe('dark');
+    expect(store['mulea-theme']).toBe('dark');
     expect((globalThis as unknown as { document: { documentElement: { dataset: Record<string, string> } } }).document.documentElement.dataset.theme).toBe('dark');
   });
   it('toggles between light and dark', () => {

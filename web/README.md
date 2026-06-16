@@ -1,8 +1,8 @@
-# muleaLab — web
+# mulea — web
 
 Client-side enrichment analysis (ORA + exact eFDR) that runs entirely in the browser.
 Companion to the [mulea](https://github.com/ELTEbioinformatics/mulea) R package and the
-`mulealab` Python package; numerically in parity with both.
+`mulea` Python package; numerically in parity with both.
 
 The app opens on a dark **Deep Lab** landing screen; **Start Analysis** enters the workspace
 (dark-teal glass surfaces, a blue→purple→red diverging significance ramp). The ☾/☀ toggle still
@@ -21,7 +21,7 @@ The full eFDR feature, captured in a real browser (Chromium) on the bundled *E. 
 
 ## How it works
 
-muleaLab finds gene-set categories (ontology terms) that are over-represented in a list of
+mulea finds gene-set categories (ontology terms) that are over-represented in a list of
 genes of interest, and corrects for multiple testing — all in the browser. Open the `?` button
 in the top bar for the same walkthrough inside the app.
 

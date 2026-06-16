@@ -15,7 +15,7 @@ const exact: ResultRow[] = [
 describe('qcCsv', () => {
   it('emits provenance header, column header, and one row per term', () => {
     const lines = qcCsv(mc, exact, d).split('\n');
-    expect(lines[0]).toBe('# muleaLab — eFDR QC (MC vs exact analytic)');
+    expect(lines[0]).toBe('# mulea — eFDR QC (MC vs exact analytic)');
     expect(lines[1]).toBe('# steps=100000; seed=42');
     expect(lines[2]).toBe('ontology_id\tontology_name\teFDR_mc\teFDR_exact\tabs_delta\tp_value');
     expect(lines[3]).toBe('T1\tone\t0.02\t0.018\t0.0020000000000000018\t0.01');

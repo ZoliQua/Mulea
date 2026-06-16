@@ -25,7 +25,7 @@ export function ReportView(props: {
       </div>
       <div className="print-report">
         <header className="report-header">
-          <h1>muleaLab — enrichment report</h1>
+          <h1>mulea — enrichment report</h1>
           <p className="report-method">Multiple-testing correction: <strong>{s.method}</strong></p>
           {props.result.method === 'eFDR' && (
             <p className="report-method">eFDR: <strong>{

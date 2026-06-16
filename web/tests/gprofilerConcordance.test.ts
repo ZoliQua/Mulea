@@ -10,7 +10,7 @@ import { ora } from '../src/ora.ts';
 // CONCORDANCE (NOT parity) with g:Profiler — a second, independent enrichment
 // tool. g:Profiler corrects p-values with g:SCS (Set Counts and Sizes), which
 // is fundamentally different from the hypergeometric + Benjamini–Hochberg used
-// by muleaLab. So we deliberately do NOT assert p-value equality. We assert:
+// by mulea. So we deliberately do NOT assert p-value equality. We assert:
 //   1. the recorded g:Profiler fixture is byte-identical (immutable evidence),
 //   2. Spearman of -log10(p) on shared terms is POSITIVE (same ranking signal),
 //   3. Jaccard of the significant-term sets is reasonable (the tools broadly
@@ -21,11 +21,11 @@ import { ora } from '../src/ora.ts';
 //     against the SAME RegulonDB GMT, uploaded as a CUSTOM source via
 //     gprofiler2::upload_GMT_file() (token gp__1Oiy_tEOL_3bs).
 //   - g:Profiler applies its OWN term-size filtering and uses its OWN effective
-//     domain (background) by default, so it tested only 53 terms vs muleaLab's
+//     domain (background) by default, so it tested only 53 terms vs mulea's
 //     154; comparisons are restricted to the shared tested terms.
 //   - g:SCS is markedly more conservative than BH, so g:Profiler calls fewer
 //     terms significant (its 2 significant terms are a strict subset of
-//     muleaLab's 7). This is the expected method difference, not a discrepancy.
+//     mulea's 7). This is the expected method difference, not a discrepancy.
 // ---------------------------------------------------------------------------
 
 const EX = join(import.meta.dirname, '..', 'public', 'examples');
@@ -33,7 +33,7 @@ const FIXTURE = join(import.meta.dirname, '..', '..', 'python', 'tests', 'fixtur
 const SHA256 = '7ea1b17ff7999027199744c3eec8a4e7ed88aa005a95b418205901f562bfbb3e';
 
 const rd = (f: string) => readFileSync(join(EX, f), 'utf8').split('\n').map((s) => s.trim()).filter(Boolean);
-// muleaLab pipeline on the same inputs (same term-size filter the web UI uses).
+// mulea pipeline on the same inputs (same term-size filter the web UI uses).
 const gmt = filterOntology(parseGmt(readFileSync(join(EX, 'ecoli_regulondb.gmt'), 'utf8')), 3, 400);
 const target = rd('ecoli_target.txt');
 const background = rd('ecoli_background.txt');
@@ -82,7 +82,7 @@ describe('ORA concordance with g:Profiler (external tool, g:SCS correction)', ()
 
   it('shared tested terms reflect the term-size filtering difference', () => {
     const shared = gp.filter((g) => web.has(g.term));
-    // g:Profiler tested 53 terms against the custom GMT. muleaLab's [3,400]
+    // g:Profiler tested 53 terms against the custom GMT. mulea's [3,400]
     // term-size filter drops exactly 2 of them — CspA (size 2, < min) and CRP
     // (size 531, > max) — so 51 terms are truly shared. This is the expected
     // filtering difference, documented in VALIDATION.md.
@@ -107,7 +107,7 @@ describe('ORA concordance with g:Profiler (external tool, g:SCS correction)', ()
     const union = new Set([...muSig, ...gpSig]);
     const jaccard = inter.length / union.size;
     expect(jaccard).toBeGreaterThan(0.2); // observed ~0.29
-    // The conservative g:SCS significant set is a strict subset of muleaLab's BH set.
+    // The conservative g:SCS significant set is a strict subset of mulea's BH set.
     for (const t of gpSig) expect(muSig.has(t)).toBe(true);
     // Both tools' strongest hits agree.
     expect(gpSig.has('LexA')).toBe(true);

@@ -11,8 +11,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'muleaLab',
-        short_name: 'muleaLab',
+        name: 'mulea',
+        short_name: 'mulea',
         description: 'Client-side functional enrichment analysis with empirical FDR',
         theme_color: '#2f7d5d',
         background_color: '#ffffff',

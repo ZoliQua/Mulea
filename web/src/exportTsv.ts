@@ -6,7 +6,7 @@ const STAT_COLS = ['ontology_id', 'ontology_name', 'p_value', 'adjusted_p_value'
 /** Serialize an AnalysisResult to a TSV string (header + one row per term). */
 export function resultToTsv(result: AnalysisResult): string {
   const cols = result.method === 'eFDR' ? EFDR_COLS : STAT_COLS;
-  const prov: string[] = [`# muleaLab — method=${result.method}`];
+  const prov: string[] = [`# mulea — method=${result.method}`];
   if (result.method === 'eFDR') {
     if (result.efdrMode === 'resampling' && result.diagnostics) {
       prov.push(`# efdrMode=resampling; steps=${result.diagnostics.steps}; seed=${result.diagnostics.seed}`);
@@ -27,7 +27,7 @@ function formatCell(v: unknown): string {
 }
 
 /** Trigger a browser download of the TSV. Browser-only (uses Blob/document). */
-export function downloadTsv(result: AnalysisResult, filename = 'mulealab_results.tsv'): void {
+export function downloadTsv(result: AnalysisResult, filename = 'mulea_results.tsv'): void {
   const blob = new Blob([resultToTsv(result)], { type: 'text/tab-separated-values' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

@@ -69,7 +69,7 @@ export default function App() {
     (typeof window !== 'undefined' && window.location.hash.startsWith('#c=')) ? 'tool' : 'landing',
   );
   const [introDismissed, setIntroDismissed] = useState(() => {
-    try { return localStorage.getItem('mulealab-intro-dismissed') === '1'; } catch { return false; }
+    try { return localStorage.getItem('mulea-intro-dismissed') === '1'; } catch { return false; }
   });
   const [helpFor, setHelpFor] = useState<InputKind | null>(null);
   const [method, setMethod] = useState<Method>(loaded?.cap?.inputs.method ?? 'eFDR');
@@ -174,7 +174,7 @@ export default function App() {
           <button type="button" className={mode === 'gsea' ? 'active' : ''} onClick={() => switchMode('gsea')}>GSEA (ranked)</button>
         </span>
         <span className="spacer"></span>
-        <button type="button" className="icon-btn" aria-label="Help" title="How to use muleaLab" onClick={() => setHelpOpen(true)}>?</button>
+        <button type="button" className="icon-btn" aria-label="Help" title="How to use mulea" onClick={() => setHelpOpen(true)}>?</button>
         <button type="button" className="icon-btn" aria-label="External validation" title="External validation (vs clusterProfiler)" onClick={() => setValidationOpen(true)}>✓</button>
         <ThemeToggle />
         <OfflineBadge />
@@ -182,7 +182,7 @@ export default function App() {
       {!introDismissed && (
         <div className="intro-top">
           <IntroAbout onClose={() => {
-            try { localStorage.setItem('mulealab-intro-dismissed', '1'); } catch { /* ignore */ }
+            try { localStorage.setItem('mulea-intro-dismissed', '1'); } catch { /* ignore */ }
             setIntroDismissed(true);
           }} />
         </div>

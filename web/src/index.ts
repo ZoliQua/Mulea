@@ -6,5 +6,5 @@ export { hypergeometricPValue, hypergeometricPmf, pAdjust, effectSize } from './
 export type { HypergeometricDirection, EffectSize } from './statistics.ts';
 export { ora } from './ora.ts';
 export { rObsRanks, setBasedEnrichmentTest } from './efdr.ts';
-export { MuleaLabError } from './errors.ts';
+export { MuleaError } from './errors.ts';
 export type { GmtTerm, OraRow, EfdrRow } from './types.ts';

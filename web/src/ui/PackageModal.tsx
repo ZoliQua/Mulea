@@ -143,24 +143,24 @@ library(muleaData)
     ],
   },
   python: {
-    name: 'mulealab',
+    name: 'mulea',
     kind: 'Python package · pip + CLI',
     version: 'v0.1.0',
     tagline: 'Headless multi-ontology enrichment — NumPy/SciPy, in numerical parity with the R package.',
     quickstart: [
       {
         label: '1 · Install',
-        code: `pip install mulealab     # requires Python ≥ 3.10`,
-        note: 'Pulls pandas, numpy, scipy and typer. The CLI entry point mulealab lands on your PATH.',
+        code: `pip install mulea     # requires Python ≥ 3.10`,
+        note: 'Pulls pandas, numpy, scipy and typer. The CLI entry point mulea lands on your PATH.',
       },
       {
         label: '2 · Command line',
-        code: `mulealab ora ontology.gmt target.txt background.txt --method BH`,
+        code: `mulea ora ontology.gmt target.txt background.txt --method BH`,
         note: 'Pass the GMT, a target gene file and a background gene file (one gene per line). --method is BH (default) or bonferroni.',
       },
       {
         label: '3 · As a library',
-        code: `from mulealab import read_gmt, filter_ontology, ora
+        code: `from mulea import read_gmt, filter_ontology, ora
 
 gmt = read_gmt("ontology.gmt")
 gmt = filter_ontology(gmt, min_nr_of_elements=3, max_nr_of_elements=400)
@@ -195,10 +195,10 @@ efdr = ora(gmt, target, background,
       {
         title: 'Ranked GSEA',
         blurb: 'Weighted-KS enrichment score + permutation NES/p.',
-        code: `from mulealab import gsea
+        code: `from mulea import gsea
 # ranked: DataFrame [gene, score] (e.g. logFC)
 res = gsea(gmt, ranked, permutations=1000, seed=42)`,
-        note: 'ES & leading edge match fgsea::calcGseaStat exactly; NES/p use a seeded permutation null. CLI: mulealab gsea ontology.gmt ranked.tsv.',
+        note: 'ES & leading edge match fgsea::calcGseaStat exactly; NES/p use a seeded permutation null. CLI: mulea gsea ontology.gmt ranked.tsv.',
       },
       {
         title: 'GMT I/O & filtering',
@@ -212,13 +212,13 @@ write_gmt(gmt, "filtered.gmt")`,
       {
         title: 'Command-line tool',
         blurb: 'One-shot enrichment from the shell (Typer).',
-        code: `mulealab ora ontology.gmt target.txt background.txt --method BH`,
+        code: `mulea ora ontology.gmt target.txt background.txt --method BH`,
         note: '--method: BH (default) or bonferroni.',
       },
       {
         title: 'Stats building blocks',
         blurb: 'The primitives, exported for reuse.',
-        code: `from mulealab import hypergeometric_pvalue, p_adjust
+        code: `from mulea import hypergeometric_pvalue, p_adjust
 
 p   = hypergeometric_pvalue(common_in_select, common_in_pool,
                             pool_size, select_size)
