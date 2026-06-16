@@ -39,6 +39,14 @@ jobs:
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
+    # This is a Linux-only check, so it shares the same exposure as the ubuntu legs of
+    # the main R-CMD-check workflow: `pak` resolves the Bioconductor dependency (fgsea)
+    # through the Bioconductor OSN host (mghp.osn.xsede.org), which has recurring outages
+    # that break dependency resolution before R CMD check runs. That is upstream
+    # infrastructure, not a package issue, so do not gate the board on it; the job still
+    # runs and turns green again on its own once OSN recovers.
+    continue-on-error: true
+
     strategy:
       fail-fast: false
       matrix:
