@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from mulealab.model import Model
+from mulea.model import Model
 
 
 def reshape_results(
@@ -28,10 +28,10 @@ def reshape_results(
     Parameters
     ----------
     model
-        The :class:`~mulealab.model.OraModel` / :class:`~mulealab.model.GseaModel` that produced
+        The :class:`~mulea.model.OraModel` / :class:`~mulea.model.GseaModel` that produced
         ``model_results`` (its ``gmt`` and ``element_names`` are used).
     model_results
-        The DataFrame returned by ``model.run_test()`` / :func:`mulealab.model.run_test`.
+        The DataFrame returned by ``model.run_test()`` / :func:`mulea.model.run_test`.
     model_ontology_col_name, ontology_id_colname
         Column to join the ontology (``model.gmt``) and the results on. Both default to
         ``'ontology_id'``.

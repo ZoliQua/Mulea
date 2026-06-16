@@ -3,10 +3,10 @@
 The R package builds an enrichment *model* (an S4 object holding the inputs and parameters)
 and then executes it with the generic ``run_test(model)``.  These dataclasses are the
 Pythonic equivalent: construct a model, then call ``model.run_test()`` or the free function
-``run_test(model)``.  They wrap the existing functional :func:`mulealab.ora.ora` /
-:func:`mulealab.gsea.gsea` entry points, so the numbers are identical — the model layer adds
+``run_test(model)``.  They wrap the existing functional :func:`mulea.ora.ora` /
+:func:`mulea.gsea.gsea` entry points, so the numbers are identical — the model layer adds
 no new statistics, only the R-style call shape and the ``.gmt`` / ``.element_names`` slots that
-:func:`mulealab.reshape.reshape_results` needs for plotting.
+:func:`mulea.reshape.reshape_results` needs for plotting.
 
 The R ``ora`` slot ``nthreads`` has no Python counterpart (the NumPy/SciPy core is single
 process); it is intentionally omitted.
@@ -19,9 +19,9 @@ from typing import Sequence
 
 import pandas as pd
 
-from mulealab.gsea import ScoreType, gsea
-from mulealab.ora import ora
-from mulealab.statistics import HypergeometricDirection
+from mulea.gsea import ScoreType, gsea
+from mulea.ora import ora
+from mulea.statistics import HypergeometricDirection
 
 
 @dataclass
@@ -30,7 +30,7 @@ class OraModel:
 
     Construct with the ontology, target and background, then run with
     :meth:`run_test` (or ``run_test(model)``).  Parameters match
-    :func:`mulealab.ora.ora`; ``direction`` / ``efdr_mode`` / ``clamp`` are the
+    :func:`mulea.ora.ora`; ``direction`` / ``efdr_mode`` / ``clamp`` are the
     web/Python extensions over the R base API and have sensible parity defaults.
     """
 
@@ -65,7 +65,7 @@ class GseaModel:
 
     Like the R model, this takes ``element_names`` and a parallel ``element_scores``
     vector (rather than a pre-built ranked DataFrame); :meth:`run_test` assembles the
-    ranked frame and calls :func:`mulealab.gsea.gsea`.  ``gsea_power`` maps to fgsea's
+    ranked frame and calls :func:`mulea.gsea.gsea`.  ``gsea_power`` maps to fgsea's
     ``gseaParam`` and ``element_score_type`` to fgsea's ``scoreType``.
     """
 

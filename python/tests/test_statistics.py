@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from mulealab.statistics import hypergeometric_pvalue, p_adjust
+from mulea.statistics import hypergeometric_pvalue, p_adjust
 
 
 def test_hypergeometric_known_case():

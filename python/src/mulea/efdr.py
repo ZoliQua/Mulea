@@ -5,8 +5,8 @@ import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.stats import hypergeom
 
-from mulealab.errors import MuleaLabError
-from mulealab.statistics import hypergeometric_pvalue
+from mulea.errors import MuleaError
+from mulea.statistics import hypergeometric_pvalue
 
 
 def r_obs_ranks(p_values: np.ndarray) -> np.ndarray:
@@ -165,7 +165,7 @@ def set_based_enrichment_test(
             null_cummass = np.arange(1, null_p.size + 1, dtype=float) / number_of_permutations
             efdr = _efdr_from_sorted_null(p_obs, r_obs, null_p, null_cummass, clamp=clamp)
         else:
-            raise MuleaLabError(f"Unknown eFDR mode: {mode!r} (use 'exact' or 'mc')")
+            raise MuleaError(f"Unknown eFDR mode: {mode!r} (use 'exact' or 'mc')")
 
     return pd.DataFrame(
         {

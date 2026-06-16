@@ -1,5 +1,5 @@
 import pandas as pd
-from mulealab.ontology import filter_ontology
+from mulea.ontology import filter_ontology
 
 
 def _gmt():

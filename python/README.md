@@ -1,10 +1,10 @@
-# muleaLab (Python companion)
+# mulea (Python companion)
 
-Headless multi-ontology enrichment analysis — the Python companion to the muleaLab web tool
+Headless multi-ontology enrichment analysis — the Python companion to the mulea web tool
 and the [mulea](https://github.com/ELTEbioinformatics/mulea) R package
 ([Turek et al., *BMC Bioinformatics* 2024, 25:334](https://cran.r-project.org/package=mulea)).
 
-`mulealab` runs set-based **overrepresentation analysis (ORA)** and ranked-list **GSEA** over any
+`mulea` runs set-based **overrepresentation analysis (ORA)** and ranked-list **GSEA** over any
 GMT ontology, with both the resampling **empirical FDR (eFDR)** of the R package and a
 deterministic closed-form eFDR. Its numeric core is kept in validated parity with the R reference
 (see `PARITY.md` in the repository).
@@ -12,8 +12,8 @@ deterministic closed-form eFDR. Its numeric core is kept in validated parity wit
 ## Install
 
 ```bash
-pip install mulealab            # core (pandas, numpy, scipy, typer)
-pip install "mulealab[plot]"    # + matplotlib / networkx for the plots
+pip install mulea            # core (pandas, numpy, scipy, typer)
+pip install "mulea[plot]"    # + matplotlib / networkx for the plots
 ```
 
 ## Quick start
@@ -21,7 +21,7 @@ pip install "mulealab[plot]"    # + matplotlib / networkx for the plots
 Two equivalent APIs: direct functions, or the R-style *model → `run_test`* objects.
 
 ```python
-import mulealab as ml
+import mulea as ml
 
 gmt = ml.read_gmt("ontology.gmt")
 gmt = ml.filter_ontology(gmt, min_nr_of_elements=3, max_nr_of_elements=400)
@@ -59,8 +59,8 @@ ax.figure.savefig("enrichment.png", bbox_inches="tight")
 ## Command line
 
 ```bash
-mulealab ora ontology.gmt target.txt background.txt --method BH
-mulealab gsea ontology.gmt ranked.tsv
+mulea ora ontology.gmt target.txt background.txt --method BH
+mulea gsea ontology.gmt ranked.tsv
 ```
 
 ## Parity with the R package

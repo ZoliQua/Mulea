@@ -1,5 +1,5 @@
 import pandas as pd
-from mulealab.io import list_to_gmt, read_gmt, write_gmt
+from mulea.io import list_to_gmt, read_gmt, write_gmt
 
 
 def test_list_to_gmt_builds_expected_frame():

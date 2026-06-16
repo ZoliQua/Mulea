@@ -4,8 +4,8 @@ from collections.abc import Sequence
 
 import pandas as pd
 
-from mulealab.efdr import set_based_enrichment_test
-from mulealab.statistics import HypergeometricDirection, effect_size, hypergeometric_pvalue, p_adjust
+from mulea.efdr import set_based_enrichment_test
+from mulea.statistics import HypergeometricDirection, effect_size, hypergeometric_pvalue, p_adjust
 
 
 def ora(
@@ -34,11 +34,11 @@ def ora(
     ----------
     direction : {"over", "under", "two-sided"}, default "over"
         Tail direction for the hypergeometric test (see
-        :func:`~mulealab.statistics.hypergeometric_pvalue`).  Has no effect when
+        :func:`~mulea.statistics.hypergeometric_pvalue`).  Has no effect when
         ``p_value_adjustment_method='eFDR'`` (eFDR always uses over-representation).
     clamp : bool, default True
         When ``p_value_adjustment_method='eFDR'``, passed through to
-        :func:`~mulealab.efdr.set_based_enrichment_test`.  ``True`` (default) clamps
+        :func:`~mulea.efdr.set_based_enrichment_test`.  ``True`` (default) clamps
         the eFDR ratio to ≤ 1; ``False`` returns the raw ``r_exp / r_obs`` ratio,
         which may exceed 1, matching base-R mulea behaviour.
     """

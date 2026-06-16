@@ -2,11 +2,11 @@
 
 These mirror ``R/Plotting.R``: a barplot and a lollipop of the per-term significance, a
 term-by-element heatmap, and a term-term network whose edges are shared elements.  They all
-consume the long ("relaxed") table from :func:`mulealab.reshape.reshape_results` and use the
+consume the long ("relaxed") table from :func:`mulea.reshape.reshape_results` and use the
 same ``#ff6361`` → ``grey90`` colour ramp over ``[0, p_value_max_threshold]`` as the R plots.
 
 Plotting needs ``matplotlib`` (and ``networkx`` for :func:`plot_graph`), which are optional
-extras — install with ``pip install "mulealab[plot]"``.  They are imported lazily so the core
+extras — install with ``pip install "mulea[plot]"``.  They are imported lazily so the core
 library stays dependency-light; a missing extra raises a clear :class:`ImportError`.
 
 Each function returns the ``matplotlib`` ``Axes`` it drew on, so callers can further customise
@@ -32,7 +32,7 @@ def _require(module: str, extra: str = "plot") -> Any:
     except ImportError as exc:  # pragma: no cover - exercised only without the extra
         raise ImportError(
             f"{module} is required for plotting. Install the optional extra with "
-            f'`pip install "mulealab[{extra}]"`.'
+            f'`pip install "mulea[{extra}]"`.'
         ) from exc
 
 

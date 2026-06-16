@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from mulealab import OraModel, reshape_results, run_test
+from mulea import OraModel, reshape_results, run_test
 
 
 def _gmt():

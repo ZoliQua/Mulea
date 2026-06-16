@@ -1,6 +1,6 @@
 # python/tests/fixtures/generate_clusterprofiler_reference.R
 # Independent ORA reference from clusterProfiler::enricher (Bioconductor) — an external,
-# published tool — on the SAME E. coli RegulonDB inputs muleaLab uses. Validates muleaLab's
+# published tool — on the SAME E. coli RegulonDB inputs mulea uses. Validates mulea's
 # hypergeometric p-value (+ BH) against a second implementation (apples-to-apples).
 #
 # Usage (from repo root): Rscript python/tests/fixtures/generate_clusterprofiler_reference.R
@@ -13,7 +13,7 @@ t2g_all <- read.gmt(gmt_path)  # data.frame: term, gene
 
 # mulea's filter_ontology is on the FULL term size, STRICT/exclusive: 3 < size < 400.
 # Apply it here (NOT enricher's universe-intersected min/maxGSSize) so the tested term set
-# matches muleaLab exactly.
+# matches mulea exactly.
 term_sizes <- table(t2g_all$term)
 keep <- names(term_sizes)[term_sizes > 3 & term_sizes < 400]
 t2g <- t2g_all[t2g_all$term %in% keep, ]

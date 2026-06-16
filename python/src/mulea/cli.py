@@ -5,12 +5,12 @@ from pathlib import Path
 import pandas as pd
 import typer
 
-from mulealab.gsea import gsea as run_gsea
-from mulealab.io import read_gmt
-from mulealab.ontology import filter_ontology
-from mulealab.ora import ora as run_ora
+from mulea.gsea import gsea as run_gsea
+from mulea.io import read_gmt
+from mulea.ontology import filter_ontology
+from mulea.ora import ora as run_ora
 
-app = typer.Typer(help="muleaLab — multi-ontology enrichment analysis.")
+app = typer.Typer(help="mulea — multi-ontology enrichment analysis.")
 
 
 @app.callback(invoke_without_command=True)

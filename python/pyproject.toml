@@ -3,9 +3,9 @@ requires = ["hatchling>=1.21"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mulealab"
+name = "mulea"
 dynamic = ["version"]
-description = "Headless multi-ontology enrichment analysis — companion to the muleaLab web tool and the mulea R package."
+description = "Headless multi-ontology enrichment analysis — Python companion to the mulea web tool and R package."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "GPL-2.0-only" }
@@ -66,13 +66,13 @@ Issues = "https://github.com/ZoliQua/Mulea/issues"
 "R package (CRAN)" = "https://cran.r-project.org/package=mulea"
 
 [project.scripts]
-mulealab = "mulealab.cli:app"
+mulea = "mulea.cli:app"
 
 [tool.hatch.version]
-path = "src/mulealab/version.py"
+path = "src/mulea/version.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mulealab"]
+packages = ["src/mulea"]
 
 # pandas / scipy ship no type stubs in CI's fresh install (pandas-stubs is not a
 # dependency), and matplotlib / networkx are optional plot extras — treat all as

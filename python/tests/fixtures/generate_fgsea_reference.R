@@ -1,7 +1,7 @@
 # python/tests/fixtures/generate_fgsea_reference.R
 # Independent GSEA reference from fgsea (Bioconductor) — exactly the call mulea's gsea() makes
 # (SubramanianTest.R): fgsea::fgsea(pathways, stats, gseaParam, scoreType), no nperm → multilevel.
-# Validates muleaLab's web GSEA: ES/NES exact, p-value tolerance (web uses a classic permutation p).
+# Validates mulea's web GSEA: ES/NES exact, p-value tolerance (web uses a classic permutation p).
 #
 # Usage (from repo root): Rscript python/tests/fixtures/generate_fgsea_reference.R
 # Requires R + fgsea.

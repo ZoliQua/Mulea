@@ -1,5 +1,5 @@
 from typer.testing import CliRunner
-from mulealab.cli import app
+from mulea.cli import app
 
 runner = CliRunner()
 

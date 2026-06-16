@@ -7,7 +7,7 @@ import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")  # headless backend for testing
 
-from mulealab import (  # noqa: E402
+from mulea import (  # noqa: E402
     OraModel,
     plot_barplot,
     plot_graph,

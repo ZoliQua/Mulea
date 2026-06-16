@@ -1,8 +1,8 @@
 """ORA parity with clusterProfiler::enricher (an external, published Bioconductor tool).
 
 clusterProfiler restricts the hypergeometric test to the ANNOTATED universe (background ∩ union
-of term genes), so we run mulealab on that same universe to make the comparison apples-to-apples.
-It validates mulealab's ORA core (hypergeometric p-value + BH) against a second implementation;
+of term genes), so we run mulea on that same universe to make the comparison apples-to-apples.
+It validates mulea's ORA core (hypergeometric p-value + BH) against a second implementation;
 clusterProfiler has no eFDR, so eFDR is covered by the R-fixture parity, not here. See VALIDATION.md.
 """
 
@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mulealab.io import read_gmt
-from mulealab.ontology import filter_ontology
-from mulealab.ora import ora
-from mulealab.statistics import p_adjust
+from mulea.io import read_gmt
+from mulea.ontology import filter_ontology
+from mulea.ora import ora
+from mulea.statistics import p_adjust
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXTDATA = REPO_ROOT / "inst" / "extdata"
@@ -37,7 +37,7 @@ def test_ora_matches_clusterprofiler_on_annotated_universe():
              p_value_adjustment_method="BH").set_index("ontology_id")
     cp = pd.read_csv(FIXTURE).set_index("ID")
 
-    # clusterProfiler drops 0-background-overlap terms (e.g. DhaR) that mulealab keeps at p=1.
+    # clusterProfiler drops 0-background-overlap terms (e.g. DhaR) that mulea keeps at p=1.
     common = cp.index.intersection(py.index)
     assert len(common) == 153
 

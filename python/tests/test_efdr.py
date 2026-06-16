@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from mulealab.efdr import EFDR_COLUMNS, r_obs_ranks, set_based_enrichment_test
+from mulea.efdr import EFDR_COLUMNS, r_obs_ranks, set_based_enrichment_test
 
 
 def test_r_obs_ranks_no_ties_ascending():

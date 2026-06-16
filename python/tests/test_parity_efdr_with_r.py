@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mulealab.efdr import set_based_enrichment_test
-from mulealab.io import read_gmt
-from mulealab.ontology import filter_ontology
+from mulea.efdr import set_based_enrichment_test
+from mulea.io import read_gmt
+from mulea.ontology import filter_ontology
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXTDATA = REPO_ROOT / "inst" / "extdata"

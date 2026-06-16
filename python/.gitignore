@@ -1,4 +1,4 @@
-# Python build & cache artifacts (muleaLab companion)
+# Python build & cache artifacts (mulea companion)
 __pycache__/
 *.py[cod]
 *.egg-info/

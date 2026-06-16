@@ -23,8 +23,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mulealab import effect_size, hypergeometric_pvalue, ora
-from mulealab.efdr import set_based_enrichment_test
+from mulea import effect_size, hypergeometric_pvalue, ora
+from mulea.efdr import set_based_enrichment_test
 
 # ---------------------------------------------------------------------------
 # Helpers

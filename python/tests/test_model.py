@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from mulealab import GseaModel, OraModel, gsea, ora, run_test
+from mulea import GseaModel, OraModel, gsea, ora, run_test
 from pandas.testing import assert_frame_equal
 
 

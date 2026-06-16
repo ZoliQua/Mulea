@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from mulealab.ora import ora
+from mulea.ora import ora
 
 
 def _gmt():

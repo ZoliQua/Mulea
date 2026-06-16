@@ -4,7 +4,7 @@ from typing import Mapping, Sequence
 
 import pandas as pd
 
-from mulealab.errors import GmtParseError
+from mulea.errors import GmtParseError
 
 GMT_COLUMNS = ["ontology_id", "ontology_name", "list_of_values"]
 

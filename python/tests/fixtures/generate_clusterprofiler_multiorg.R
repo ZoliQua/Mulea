@@ -1,7 +1,7 @@
 # python/tests/fixtures/generate_clusterprofiler_multiorg.R
 # Multi-organism extension of generate_clusterprofiler_reference.R: an independent ORA reference
 # from clusterProfiler::enricher (Bioconductor) on HUMAN and MOUSE TRRUST transcription-factor
-# GMTs, proving muleaLab's hypergeometric/BH parity is not E. coli-specific.
+# GMTs, proving mulea's hypergeometric/BH parity is not E. coli-specific.
 #
 # The target/background are SYNTHETIC but fully deterministic (seeded), so the fixtures replay
 # exactly. Construction per organism (seed = 42):

@@ -17,9 +17,9 @@ import pandas as pd
 
 from scipy.stats import spearmanr
 
-from mulealab.gsea import enrichment_score_weighted_detail, gsea
-from mulealab.io import read_gmt
-from mulealab.ontology import filter_ontology
+from mulea.gsea import enrichment_score_weighted_detail, gsea
+from mulea.io import read_gmt
+from mulea.ontology import filter_ontology
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXTDATA = REPO_ROOT / "inst" / "extdata"
@@ -63,7 +63,7 @@ def test_nes_sign_and_correlation():
 
 def _ranked_mask_helper():
     """Sorted ranked list + a per-term boolean mask (same as the gsea() pipeline)."""
-    from mulealab.gsea import _ranked_sorted
+    from mulea.gsea import _ranked_sorted
 
     gmt_f, ranked = _inputs()
     genes = ranked.iloc[:, 0].astype(str).tolist()

@@ -7,7 +7,7 @@ from typing import Literal
 import numpy as np
 from scipy.stats import hypergeom
 
-from mulealab.errors import MuleaLabError
+from mulea.errors import MuleaError
 
 # Tail direction for the hypergeometric test, mirroring web/src/statistics.ts
 # HypergeometricDirection and the R mulea ORA convention.
@@ -73,7 +73,7 @@ def hypergeometric_pvalue(
         total = float(pmf_vals[pmf_vals <= p_obs * (1 + 1e-7)].sum())
         return min(total, 1.0)
 
-    raise MuleaLabError(
+    raise MuleaError(
         f"Unknown direction: {direction!r} (supported: 'over', 'under', 'two-sided')"
     )
 
@@ -163,7 +163,7 @@ def p_adjust(pvalues: Sequence[float], method: str) -> np.ndarray:
         out = np.empty(n, dtype=float)
         out[order] = adj_sorted
         return out
-    raise MuleaLabError(
+    raise MuleaError(
         f"Unsupported p.adjust method: {method!r} "
         "(supported: 'BH', 'bonferroni'; for eFDR use ora(..., p_value_adjustment_method='eFDR'))"
     )

@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mulealab.io import read_gmt
-from mulealab.ontology import filter_ontology
-from mulealab.ora import ora
+from mulea.io import read_gmt
+from mulea.ontology import filter_ontology
+from mulea.ora import ora
 
 # python/tests/test_parity_with_r.py -> parents: [0]=tests, [1]=python, [2]=repo root
 REPO_ROOT = Path(__file__).resolve().parents[2]
