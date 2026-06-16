@@ -10,7 +10,8 @@ Paper: Turek et al., BMC Bioinformatics 2024, 25:334 (`docs/` — gitignored).
 - **This repo:** fork `https://github.com/ZoliQua/Mulea` (`origin`, branch `master`).
 - **Upstream:** `https://github.com/ELTEbioinformatics/mulea`.
 - **Package version:** `1.1.1` (in `DESCRIPTION`); license GPL-2; R ≥ 4.0.0.
-- **Active side-project plan:** turn mulea into a web tool + Python companion ("muleaLab").
+- **Active side-project plan:** turn mulea into a web tool + Python companion — all unified
+  under the single name **mulea** (the "muleaLab" name was dropped; R on CRAN, Python on PyPI, web).
   Spec: `docs/superpowers/specs/2026-06-01-mulea-web-python-platform-design.md` (gitignored).
 
 ## Strict Rules (non-negotiable)
@@ -53,10 +54,10 @@ src/                   C++ (Rcpp)
 man/                   Roxygen2-generated docs (do not hand-edit; regenerate)
 tests/testthat/        testthat (edition 3)
 vignettes/mulea.Rmd    Vignette
-docs/                  gitignored: the paper PDF + the muleaLab spec
+docs/                  gitignored: the paper PDF + the mulea spec
 ```
 
-## Planned architecture — "muleaLab" (target; NOT yet in this repo)
+## Planned architecture — "mulea" (target; NOT yet in this repo)
 
 Per the spec, mulea grows new legs (web tool + Python companion) kept in numerical **parity**
 with the R package. **Decision (2026-06-02): the R package stays at the repo root** as the

@@ -1,7 +1,7 @@
 # Cross-language parity (R ↔ Python ↔ Web)
 
 `mulea` ships as three implementations kept in **numerical parity**: the **R** package (reference),
-the **mulealab** Python library, and the **muleaLab** web tool (TypeScript + a WebAssembly eFDR
+the **mulea** Python library, and the **mulea** web tool (TypeScript + a WebAssembly eFDR
 core). This document is the single source of truth for how that parity is established and verified.
 
 ## Gold-standard fixture
@@ -117,7 +117,7 @@ Rscript python/tests/fixtures/generate_efdr_reference.R
 
 Ranked-list GSEA is currently in **R** (fgsea) and the **Web** tool (weighted-KS ES + permutation,
 validated against fgsea in [VALIDATION.md](VALIDATION.md)). The **Python** leg has ORA/eFDR but **no
-GSEA yet** — a known parity gap, deferred (a future `mulealab.gsea` would restore full trifecta
+GSEA yet** — a known parity gap, deferred (a future `mulea.gsea` would restore full trifecta
 symmetry). ORA + eFDR remain in all three legs.
 
 ## Engine performance

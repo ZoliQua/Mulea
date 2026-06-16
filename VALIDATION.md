@@ -1,14 +1,14 @@
 # External validation (vs clusterProfiler)
 
 [PARITY.md](PARITY.md) shows the three mulea legs (R / Python / Web) agree with each other. This
-document goes further: it validates muleaLab's **overrepresentation core** against an *independent,
+document goes further: it validates mulea's **overrepresentation core** against an *independent,
 published* tool — [`clusterProfiler::enricher`](https://bioconductor.org/packages/clusterProfiler/)
 (Bioconductor 4.20.0) — on the same E. coli RegulonDB inputs, so the agreement is not merely
 "we match ourselves".
 
 ## What is validated
 
-clusterProfiler computes the **same hypergeometric ORA + Benjamini–Hochberg** that muleaLab does, so
+clusterProfiler computes the **same hypergeometric ORA + Benjamini–Hochberg** that mulea does, so
 this is an apples-to-apples check of the p-value and BH machinery. clusterProfiler has **no eFDR**, so
 the eFDR is *not* covered here — it is covered by the R gold-standard fixture in PARITY.md. We do not
 overclaim: this validates the ORA core, not the eFDR.
@@ -21,22 +21,22 @@ one ontology term. On this dataset it reports `BgRatio = M/1326` and `GeneRatio 
 - `N = 1326` = |background ∩ ⋃ term genes|   (not the full 7381-gene background), and
 - `n = 81`  = |target ∩ ⋃ term genes|        (not all 241 target genes).
 
-muleaLab (like mulea R) uses the **full supplied background** by default. Neither is wrong — it is a
+mulea (like mulea R) uses the **full supplied background** by default. Neither is wrong — it is a
 documented choice about whether unannotated genes count toward the universe. To compare the
-*statistics* rather than this convention, we run muleaLab on the same annotated universe
+*statistics* rather than this convention, we run mulea on the same annotated universe
 (`background ∩ ⋃ term genes`). With the universe matched, the hypergeometric test is identical.
 
 ## Result
 
 On the 153 terms clusterProfiler tests (it drops 0-background-overlap terms such as `DhaR`, which
-muleaLab keeps at p = 1):
+mulea keeps at p = 1):
 
 | Quantity | Agreement (max relative difference) |
 |---|---|
 | hypergeometric `p_value` | **≈ 2.5 × 10⁻¹³** (floating-point identical) |
 | BH-adjusted p-value (recomputed over the shared tested set) | floating-point identical |
 
-muleaLab's ORA core reproduces an independent, widely-used tool to machine precision once the
+mulea's ORA core reproduces an independent, widely-used tool to machine precision once the
 universe convention is matched.
 
 ### External ORA parity — clusterProfiler, multi-organism (Human + Mouse)
@@ -59,7 +59,7 @@ and **Mus musculus**, showing the agreement is not organism-specific.
 
 ## GSEA (ranked-list): validation vs fgsea
 
-muleaLab's web GSEA is validated against **fgsea** (Bioconductor 1.38.0) — the exact engine the
+mulea's web GSEA is validated against **fgsea** (Bioconductor 1.38.0) — the exact engine the
 mulea R package calls (`SubramanianTest.R`: `fgsea::fgsea(pathways, stats, gseaParam, scoreType)`).
 Inputs: the E. coli `ordered_set.tsv` (gene + logFC) and the same 3<size<400 filtered ontology.
 
@@ -74,14 +74,14 @@ Two honest details:
 
 - **ES uses `calcGseaStat`, not `fgsea()`'s ES column.** `fgsea()`'s multilevel *batch* code carries a
   ~1e-6 numerical artefact in ES on heavily-tied, low-precision scores; `calcGseaStat` is the
-  canonical ES and muleaLab matches it exactly.
-- **p-value is tolerance-parity, by design.** mulea/fgsea use the multilevel p; muleaLab uses a
+  canonical ES and mulea matches it exactly.
+- **p-value is tolerance-parity, by design.** mulea/fgsea use the multilevel p; mulea uses a
   classic seeded gene-permutation null. They agree closely except very near the 0.05 boundary. ES,
   NES sign, and the leading edge are the exact/robust quantities.
-- **Ties:** ~92% of the example logFC values tie; both fgsea and muleaLab break ties by stable input
+- **Ties:** ~92% of the example logFC values tie; both fgsea and mulea break ties by stable input
   order, so the ES is reproducible.
 
-**mulea eFDR for GSEA.** Alongside fgsea's BH (`adjusted_p_value`), muleaLab reports the mulea
+**mulea eFDR for GSEA.** Alongside fgsea's BH (`adjusted_p_value`), mulea reports the mulea
 **progressive rank-based eFDR extended from ORA to GSEA** — the NES-rank analogue of the paper's
 ORA eFDR (`R_obs_j = #{i: |NES_i| ≥ |NES_j|}`; `R_exp_j` = per-permutation mean count of pooled null
 `|NES|` reaching `|NES_j|`; `eFDR = min(R_exp/R_obs, 1)`), reusing the same gene-permutation null. It
@@ -91,24 +91,24 @@ Spearman(|NES|, eFDR) = −0.997, Spearman(eFDR, BH) = +0.986 (`web/tests/gseaEf
 ## Concordance with g:Profiler (external tool, g:SCS correction)
 
 **This is concordance, NOT p-value parity.** g:Profiler corrects with g:SCS (Set Counts and Sizes),
-fundamentally different from muleaLab's hypergeometric + Benjamini–Hochberg. We assert agreement of
+fundamentally different from mulea's hypergeometric + Benjamini–Hochberg. We assert agreement of
 ranking and significant sets, not equality of p-values.
 
 g:Profiler was run via `gprofiler2::upload_GMT_file()` (CRAN gprofiler2 0.2.4) on the E. coli target
 (`inst/extdata/target_set.txt`, 241 genes) against the **same RegulonDB GMT** uploaded as a custom
 source (the GMT's leading `#` comment lines had to be stripped — g:Profiler's parser rejects them);
-`gost(..., correction_method='g_SCS')`. The muleaLab side was recomputed with the web `ora()` engine.
+`gost(..., correction_method='g_SCS')`. The mulea side was recomputed with the web `ora()` engine.
 
 | Metric | Value |
 |---|---|
 | Shared tested terms | 51 (g:Profiler tested 53; mulea's [3,400] filter drops CspA size 2 and CRP size 531) |
 | Spearman of −log10(p), shared terms | **0.58** (positive) |
 | Jaccard of significant sets | **0.29** |
-| muleaLab significant (BH<0.05) | 7: DnaA, FNR, FadR, LexA, NsrR, Rob, SoxS |
-| g:Profiler significant (g:SCS<0.05) | 2: FNR, LexA — a **strict subset** of muleaLab's, top hits agree |
+| mulea significant (BH<0.05) | 7: DnaA, FNR, FadR, LexA, NsrR, Rob, SoxS |
+| g:Profiler significant (g:SCS<0.05) | 2: FNR, LexA — a **strict subset** of mulea's, top hits agree |
 
 g:SCS is more conservative → fewer significant terms, but its significant set is contained in
-muleaLab's and the rankings correlate positively. No parity is claimed.
+mulea's and the rankings correlate positively. No parity is claimed.
 Fixture `python/tests/fixtures/gprofiler_concordance.csv` (SHA-256-pinned); test
 `web/tests/gprofilerConcordance.test.ts` (4/4).
 

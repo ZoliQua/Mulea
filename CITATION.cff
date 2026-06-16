@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use mulea (or the muleaLab web tool / mulealab Python companion), please cite the article below."
+message: "If you use mulea (the R package, the web tool, or the Python companion), please cite the article below."
 title: "mulea: Enrichment Analysis Using Multiple Ontologies and False Discovery Rate"
 version: 1.1.1
 license: GPL-2.0
