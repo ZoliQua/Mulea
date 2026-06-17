@@ -22,7 +22,7 @@ export function Barplot(props: { result: AnalysisResult; onSelect?: (id: string)
         ))}
         {layout.items.map((it) => (
           <g key={it.id} onClick={() => props.onSelect?.(it.id)} style={{ cursor: 'pointer' }}>
-            <rect x={0} y={it.y} width={width} height={ROW} fill="transparent" />
+            <rect x={0} y={it.y} width={width} height={ROW} style={{ fill: 'transparent' }} />
             <text x={layout.plot.x - 6} y={it.y + 14} textAnchor="end">{it.label}</text>
             <rect x={layout.plot.x} y={it.y + 4} width={it.barWidth} height={14} rx={2} style={{ fill: scoreToColor(it.score) }} />
             <text className="fig-value" x={layout.plot.x + it.barWidth + 4} y={it.y + 14}>{fmtScore(it.score)}</text>
