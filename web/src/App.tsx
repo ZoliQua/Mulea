@@ -34,6 +34,7 @@ import { HelpDrawer } from './ui/HelpDrawer.tsx';
 import { ValidationDrawer } from './ui/ValidationDrawer.tsx';
 import { GseaView } from './ui/GseaView.tsx';
 import { EfdrDerivation } from './ui/EfdrDerivation.tsx';
+import { CreditsModal } from './ui/CreditsModal.tsx';
 import { Landing } from './Landing.tsx';
 import { DocsView } from './ui/DocsView.tsx';
 import { FigureCard } from './ui/FigureCard.tsx';
@@ -89,6 +90,7 @@ export default function App() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [validationOpen, setValidationOpen] = useState(false);
   const [derivationOpen, setDerivationOpen] = useState(false);
+  const [creditsOpen, setCreditsOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<'focused' | 'dashboard'>('focused');
   const [globalSettings, setGlobalSettings] = useState<Partial<FigureSettings>>({});
   const [perFigure, setPerFigure] = useState<Record<string, Partial<FigureSettings>>>({});
@@ -150,10 +152,14 @@ export default function App() {
 
   if (view === 'landing') {
     return (
-      <Landing
-        onStart={() => setView('tool')}
-        onDocs={() => setView('docs')}
-      />
+      <>
+        <Landing
+          onStart={() => setView('tool')}
+          onDocs={() => setView('docs')}
+          onCredits={() => setCreditsOpen(true)}
+        />
+        {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} />}
+      </>
     );
   }
   if (view === 'docs') {
@@ -168,6 +174,7 @@ export default function App() {
           <strong>Mulea</strong>
         </button>
         <span className="muted">· enrichment workspace</span>
+        <span className="dev-badge" title="Research software under active development — manuscript in preparation">Development preview</span>
         <span className="mode-toggle">
           <button type="button" className={mode === 'single' ? 'active' : ''} onClick={() => switchMode('single')}>Single</button>
           <button type="button" className={mode === 'multi' ? 'active' : ''} onClick={() => switchMode('multi')}>Multi-contrast</button>
@@ -176,6 +183,14 @@ export default function App() {
         <span className="spacer"></span>
         <button type="button" className="icon-btn" aria-label="Help" title="How to use mulea" onClick={() => setHelpOpen(true)}>?</button>
         <button type="button" className="icon-btn" aria-label="External validation" title="External validation (vs clusterProfiler)" onClick={() => setValidationOpen(true)}>✓</button>
+        <button type="button" className="icon-btn" aria-label="Credits" title="Credits — the people behind mulea" onClick={() => setCreditsOpen(true)}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="9" cy="8" r="3.1" />
+            <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" />
+            <circle cx="17.2" cy="8.5" r="2.3" />
+            <path d="M16.2 13.7c2.5.2 4.3 2.1 4.3 4.8" />
+          </svg>
+        </button>
         <ThemeToggle />
         <OfflineBadge />
       </header>
@@ -348,6 +363,7 @@ export default function App() {
       {validationOpen && <div className="help-overlay" onClick={() => setValidationOpen(false)} />}
       <ValidationDrawer open={validationOpen} onClose={() => setValidationOpen(false)} />
       {derivationOpen && <EfdrDerivation onClose={() => setDerivationOpen(false)} />}
+      {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} />}
       {settingsFor && <div className="help-overlay" onClick={() => setSettingsFor(null)} />}
       <SettingsDrawer
         open={settingsFor !== null}

@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  // Deployed under a subpath (https://venndiagramlab.org/mulea/). All asset,
-  // worker, WASM and service-worker URLs must be resolved relative to it.
-  base: '/mulea/',
+  // Deployed at the domain root (https://mulea.org/). Asset, worker, WASM and
+  // service-worker URLs resolve from '/'. All in-code public-asset references go
+  // through import.meta.env.BASE_URL, so this stays correct if the base changes.
+  base: '/',
   plugins: [
     react(),
     VitePWA({
@@ -25,7 +26,7 @@ export default defineConfig({
       workbox: {
         // Precache the bundled catalog index (public/ontology-catalog.json) so the
         // OntologyPicker works offline; `json` is included here.
-        globPatterns: ['**/*.{js,css,html,svg,png,json,gmt,txt}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,json,gmt,txt}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
           {

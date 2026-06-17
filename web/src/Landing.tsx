@@ -35,7 +35,7 @@ const FEAT_POS = [
   { left: '79.7%', title: 'Model Organisms', body: 'Browse 877 prebuilt ontologies for 27 organisms, or bring your own GMT.' },
 ];
 
-export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () => void }) {
+export function Landing({ onStart, onDocs, onCredits }: { onStart: () => void; onDocs: () => void; onCredits: () => void }) {
   const [hover, setHover] = useState<'start' | 'docs' | null>(null);
   const [pkg, setPkg] = useState<Pkg | null>(null);
   const pkgBtn: CSSProperties = {
@@ -69,10 +69,22 @@ export function Landing({ onStart, onDocs }: { onStart: () => void; onDocs: () =
         containerType: 'inline-size',
         fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', color: '#f3f8fa', userSelect: 'none',
       }}>
+        <button type="button" onClick={onCredits} title="Credits — the people behind mulea"
+          style={{ ...pkgBtn, position: 'absolute', right: '4.3%', top: '5.2%', zIndex: 5 }}>
+          Credits
+        </button>
         <div style={{ position: 'absolute', left: '4.3%', top: '11%', width: '46%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.1cqw', marginBottom: '4.6cqw' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.1cqw', marginBottom: '2.2cqw' }}>
             <MuleaLogo h="6.2cqw" />
             <span style={{ fontSize: '4.4cqw', fontWeight: 600, letterSpacing: '-0.02em', textShadow: SHADOW }}>Mulea</span>
+          </div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '0.5cqw', marginBottom: '1.8cqw',
+            fontSize: '0.95cqw', fontWeight: 600, color: '#ffd9a8',
+            background: 'rgba(255,150,60,0.12)', border: '1px solid rgba(255,170,90,0.4)',
+            borderRadius: '0.6cqw', padding: '0.35cqw 0.9cqw', textShadow: SHADOW,
+          }}>
+            🚧 Development preview — manuscript in preparation
           </div>
           <h1 style={{ fontSize: '3.35cqw', lineHeight: 1.13, fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 1.5cqw', textShadow: SHADOW }}>
             Multi-ontology enrichment<br />analysis made <span style={{ color: '#5fd6c2' }}>smarter</span>

@@ -101,7 +101,6 @@ select { font-family: var(--font); background: var(--surface); color: var(--text
 .methods-venn text { font-size: var(--fig-label, 13px); }
 .lollipop line { stroke: var(--muted); }
 .lollipop circle { fill: var(--fig-accent, var(--accent)); }
-.barplot rect { fill: var(--fig-accent, var(--accent)); }
 .network line { stroke: var(--border); }
 .network circle { stroke: var(--fig-outline, transparent); stroke-width: var(--fig-outline-w, 0); }
 
@@ -310,6 +309,26 @@ input[type="range"] { accent-color: var(--accent); }
 .pkg-code { background: #07151f; border: 1px solid rgba(140,185,200,0.14); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 0; }
 .pkg-code code { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; color: #d6e6ec; white-space: pre; }
 .pkg-cite { margin: 0; font-size: 12.5px; line-height: 1.5; color: #9fb6c2; font-style: italic; }
+
+/* Development-status badge (topbar) + Credits button + Credits modal */
+.dev-badge { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase;
+  color: #c98a3a; background: rgba(214,142,60,0.14); border: 1px solid rgba(214,142,60,0.45);
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+[data-theme="dark"] .dev-badge { color: #ffd9a8; background: rgba(255,150,60,0.13); border-color: rgba(255,170,90,0.4); }
+
+.dev-status { font-size: 12.5px; line-height: 1.55; color: #ffd9a8; background: rgba(255,150,60,0.10);
+  border: 1px solid rgba(255,170,90,0.35); border-radius: 10px; padding: 10px 14px; margin: 14px 0 18px; }
+.dev-status strong { color: #ffcaa0; }
+
+.credits-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.credits-item { display: flex; align-items: flex-start; gap: 14px; }
+.credits-photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex: 0 0 auto;
+  border: 1px solid rgba(86,178,178,0.3); background: #0a1822; }
+.credits-text { min-width: 0; }
+.credits-name { font-size: 15px; font-weight: 600; color: #eaf3f5; margin-bottom: 3px; }
+.credits-aff { font-size: 12.5px; line-height: 1.45; color: #aec3ce; }
+.credits-aff + .credits-aff { margin-top: 2px; }
+.credits-modal .pkg-cite { margin-top: 18px; }
 
 /* eFDR derivation: trigger icon + modal */
 .deriv-icon-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(140,185,200,0.3); background: rgba(255,255,255,0.05); color: var(--accent, #46c8b2); font-size: 14px; line-height: 1; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
